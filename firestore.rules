@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+
+    function isMember(hid) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/households/$(hid))
+        && get(/databases/$(database)/documents/households/$(hid)).data.members[request.auth.uid] == 'member';
+    }
+
+    // Le rôle 'viewer' est prévu au schéma mais pas encore activé : aucun accès.
+    match /households/{hid} {
+      allow read: if isMember(hid);
+      allow write: if false; // géré à la main depuis la console
+    }
+
+    match /{col}/{docId} {
+      allow read: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
+        && isMember(resource.data.hid)
+        && (resource.data.visibility == 'household' || resource.data.ownerId == request.auth.uid);
+
+      allow create: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
+        && isMember(request.resource.data.hid)
+        && request.resource.data.visibility in ['private','household']
+        && (request.resource.data.ownerId == request.auth.uid || request.resource.data.ownerId == null)
+        // Journal : toujours privé, propriétaire = auteur
+        && (col != 'journalEntries'
+            || (request.resource.data.visibility == 'private' && request.resource.data.ownerId == request.auth.uid));
+
+      allow update: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
+        && isMember(resource.data.hid)
+        && (resource.data.visibility == 'household' || resource.data.ownerId == request.auth.uid)
+        && request.resource.data.hid == resource.data.hid
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.visibility == resource.data.visibility;
+
+      allow delete: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
+        && isMember(resource.data.hid)
+        && (resource.data.visibility == 'household' || resource.data.ownerId == request.auth.uid);
+    }
+  }
+}
