@@ -64,3 +64,35 @@
   Carnet de voyage (sera fourni). Pour la Bobine, reprise des seuls
   identifiants IMDb d'une liste existante, enrichis ensuite via l'API TMDb
   (endpoint /find). Journal et Habitudes repartent de zéro.
+
+## 2026-09-28 — Automatisation de session en lecture seule
+- Décision : hook SessionStart en lecture seule + CLAUDE.md + skills
+  /demarrer-session et /finir-session. Fusion via pull request sur GitHub.
+- Écarté : création automatique de branche, fusion et déploiement
+  automatiques.
+- Raison : deux personnes travaillent en parallèle, une erreur
+  automatique toucherait main ou les données de production.
+- Conséquences : la branche est créée après confirmation, la fin de
+  session est déclenchée à la main.
+
+## 2026-09-28 — Fusion à deux étages avec revue de code obligatoire
+- Décision : workflow de fusion à deux étages, branche perso → préprod
+  (branche unifiée de test) → main (prod). Revue de code complète via
+  /code-review, intégrée au skill /finir-session, avant toute fusion vers
+  préprod et avant toute fusion préprod → main.
+- Écarté : fusion directe branche perso → main ; skill de revue dédié au
+  projet plutôt que réutilisation de /code-review.
+- Raison : détecter les régressions et effets de bord avant qu'ils
+  n'atteignent la production, sans dupliquer un outil de revue déjà
+  disponible.
+- Conséquences : la branche préprod reste à créer (hors de ce lot) avant
+  que /finir-session puisse comparer les diffs dessus. La revue reste un
+  rapport informatif : elle n'exécute ni ne bloque aucune fusion, la
+  décision humaine finale se prend en pull request.
+
+## 2026-10-12 — Icône PWA provisoire, à remplacer
+- Décision : icône provisoire (`public/icon.svg`, « AA » sur fond vert) pour
+  ne pas bloquer le développement des modules.
+- Conséquences : à faire plus tard — remplacer par la vraie icône et ajouter
+  les versions PNG 192×192 et 512×512 dans le manifeste (`vite.config.ts`),
+  car iOS gère mal le SVG pour l'écran d'accueil.
