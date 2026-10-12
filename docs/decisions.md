@@ -64,3 +64,10 @@
   Carnet de voyage (sera fourni). Pour la Bobine, reprise des seuls
   identifiants IMDb d'une liste existante, enrichis ensuite via l'API TMDb
   (endpoint /find). Journal et Habitudes repartent de zéro.
+
+## 2026-10-12 — Icône PWA provisoire, à remplacer
+- Décision : icône provisoire (`public/icon.svg`, « AA » sur fond vert) pour
+  ne pas bloquer le développement des modules.
+- Conséquences : à faire plus tard — remplacer par la vraie icône et ajouter
+  les versions PNG 192×192 et 512×512 dans le manifeste (`vite.config.ts`),
+  car iOS gère mal le SVG pour l'écran d'accueil.
