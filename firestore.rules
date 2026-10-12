@@ -17,9 +17,12 @@ service cloud.firestore {
     }
 
     match /{col}/{docId} {
+      // resource == null : lecture d'un document inexistant (ex. supprimé par l'autre), renvoie "introuvable".
       allow read: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
-        && isMember(resource.data.hid)
-        && (resource.data.visibility == 'household' || resource.data.ownerId == request.auth.uid);
+        && signedIn()
+        && (resource == null
+            || (isMember(resource.data.hid)
+                && (resource.data.visibility == 'household' || resource.data.ownerId == request.auth.uid)));
 
       allow create: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
         && isMember(request.resource.data.hid)
