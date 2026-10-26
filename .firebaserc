@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "REMPLACER-PAR-ID-PROJET-DEV",
-    "dev": "REMPLACER-PAR-ID-PROJET-DEV",
+    "default": "new-aa-s-preprod",
+    "dev": "new-aa-s-preprod",
     "prod": "REMPLACER-PAR-ID-PROJET-PROD"
   }
 }
