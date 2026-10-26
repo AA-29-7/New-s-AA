@@ -1,10 +1,10 @@
 ---
 name: finir-session
-description: Termine une session de travail sur New AA's — vérifications, revue de code si le travail est prêt pour préprod/main, commit et push de la branche courante uniquement.
+description: Termine une session de travail sur Le QG — vérifications, revue de code si le travail est prêt pour préprod/main, commit et push de la branche courante uniquement.
 disable-model-invocation: true
 ---
 
-Tu exécutes le rituel de fin de session du projet New AA's. Suis ces
+Tu exécutes le rituel de fin de session du projet Le QG. Suis ces
 étapes dans l'ordre.
 
 ## 1. Garde-fou main

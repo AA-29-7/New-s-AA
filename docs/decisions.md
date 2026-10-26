@@ -96,3 +96,11 @@
 - Conséquences : à faire plus tard — remplacer par la vraie icône et ajouter
   les versions PNG 192×192 et 512×512 dans le manifeste (`vite.config.ts`),
   car iOS gère mal le SVG pour l'écran d'accueil.
+
+## 2026-10-26 — L'application s'appelle « Le QG »
+- Décision : le nom de l'application devient « Le QG » (anciennement « New AA's »).
+- Conséquences : documentation mise à jour (CLAUDE.md, README, skills de
+  session). Les anciennes entrées de ce journal gardent l'ancien nom, par
+  fidélité à l'historique. Le nom affiché dans l'interface (AuthGate, AppShell,
+  index.html, manifeste PWA dans vite.config.ts), le nom du paquet npm, le
+  dépôt GitHub et les noms de projets Firebase restent à renommer si voulu.

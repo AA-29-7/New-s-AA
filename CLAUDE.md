@@ -1,4 +1,4 @@
-# New AA's — règles permanentes
+# Le QG — règles permanentes
 
 - Lis `docs/decisions.md` avant de commencer toute tâche.
 - Jamais de commit ni de push direct sur `main`.
