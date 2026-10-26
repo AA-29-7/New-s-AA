@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "REMPLACER-PAR-ID-PROJET-DEV",
+    "dev": "REMPLACER-PAR-ID-PROJET-DEV",
+    "prod": "REMPLACER-PAR-ID-PROJET-PROD"
+  }
+}
