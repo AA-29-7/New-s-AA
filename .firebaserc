@@ -2,6 +2,6 @@
   "projects": {
     "default": "new-aa-s-preprod",
     "dev": "new-aa-s-preprod",
-    "prod": "REMPLACER-PAR-ID-PROJET-PROD"
+    "prod": "new-aa-s-prod"
   }
 }
