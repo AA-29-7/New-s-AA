@@ -10,3 +10,6 @@ Respecter CHARTE_GRAPHIQUE.md pour tout le style. Ne jamais écrire de couleur, 
 - Les composants utilisent `--user-*` / `--other-*`, pas `--alex-*` / `--antoine-*` (sauf commun et duel).
 - Le Journal est strictement privé (voir `docs/decisions.md`).
 - Décisions techniques : `docs/decisions.md`.
+
+## Au démarrage de session
+Lire `docs/a-trancher.md` : les points ouverts y sont listés et assignés à PC 1. Rappeler à l'utilisateur ceux qui restent non cochés.
