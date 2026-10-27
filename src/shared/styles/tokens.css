@@ -1,0 +1,93 @@
+:root {
+  /* Surfaces */
+  --color-bg-top: #ecdfd1;            /* haut du fond cachemire */
+  --color-bg-bottom: #e7dacb;         /* bas du fond cachemire */
+  --color-surface: #f9f2ea;           /* cartes, barre de navigation, feuilles */
+  --color-surface-sunken: #efe3d4;    /* encart dans une carte */
+  --color-surface-muted: rgba(249, 242, 234, 0.55); /* carte en lecture seule */
+  --color-sidebar: #e3d4c3;           /* barre latérale bureau */
+  --color-input: #fffaf3;             /* champ de saisie */
+
+  /* Traits et remplissages neutres */
+  --color-border: #ecdfd2;            /* séparateur de ligne */
+  --color-border-strong: #d3c1ad;     /* case vide, contour de champ inactif */
+  --color-track: #e6d6c4;             /* piste de barre de progression */
+  --color-chip: #e0d0bf;              /* puce, segment inactif, bouton secondaire */
+
+  /* Encre */
+  --color-ink: #3a2c24;               /* texte principal */
+  --color-ink-soft: #6f5a4a;          /* texte secondaire, méta */
+  --color-ink-faint: #a8907a;         /* jours à venir, élément désactivé */
+  --color-ink-inverse: #f9f2ea;       /* texte sur fond encre */
+
+  /* Personnes (valeurs fixes, jamais modifiées par le thème) */
+  --alex-base: #b8434f;   --alex-tint: #f6e0e1;   --alex-ink: #8f2f3a;
+  --antoine-base: #8a5a8c; --antoine-tint: #efe2ef; --antoine-ink: #6a4270;
+
+  /* Série (streak) et quête */
+  --color-streak-bg: #f6dfc6;
+  --color-streak-ink: #8a4a12;
+  --color-quest-soft: #f0d9a8;
+  --color-quest-stripe: #e8c36a;
+
+  /* États */
+  --color-success: #5e7d33;           /* « Synchronisé », rond vert */
+  --color-gain: #3f7a4f;              /* ▲ */
+  --color-loss: #a33a3a;              /* ▼ */
+
+  /* Journal (espace privé, dedans) */
+  --journal-bg: #e6ebf1;
+  --journal-surface: #f5f7fa;
+  --journal-ink: #1f2a3d;
+  --journal-ink-soft: #5a6578;
+  --journal-border: #d3dbe6;
+  --journal-accent: #2c3d5c;
+
+  /* Voile des feuilles et modales */
+  --color-scrim: rgba(40, 28, 22, 0.45);
+
+  /* Espacements (échelle de 4) */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px;
+
+  /* Rayons */
+  --radius-sm: 12px;   /* encart, mini-carte */
+  --radius-md: 20px;   /* carte module */
+  --radius-lg: 24px;   /* carte principale */
+  --radius-xl: 30px;   /* feuille du bas */
+  --radius-pill: 999px;
+  --radius-device: 38px; /* cadre téléphone, maquette uniquement */
+
+  /* Ombres */
+  --shadow-card: 0 1px 0 rgba(90, 60, 40, 0.05), 0 10px 24px rgba(90, 60, 40, 0.08);
+  --shadow-nav: 0 8px 22px rgba(60, 40, 30, 0.12);
+  --shadow-sheet: 0 20px 50px rgba(40, 28, 22, 0.35);
+  --shadow-sticker: 0 2px 0 rgba(60, 40, 30, 0.14);
+
+  /* Typographie */
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+
+  /* Cibles tactiles */
+  --tap-min: 44px;
+  --tap-cta: 54px;
+}
+
+/* La personne connectée fixe --user-* ; l'autre fixe --other-*. */
+[data-user="alex"] {
+  --user-base: var(--alex-base);   --user-tint: var(--alex-tint);   --user-ink: var(--alex-ink);
+  --other-base: var(--antoine-base); --other-tint: var(--antoine-tint); --other-ink: var(--antoine-ink);
+}
+[data-user="antoine"] {
+  --user-base: var(--antoine-base); --user-tint: var(--antoine-tint); --user-ink: var(--antoine-ink);
+  --other-base: var(--alex-base);   --other-tint: var(--alex-tint);   --other-ink: var(--alex-ink);
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--color-bg-top), var(--color-bg-bottom)) fixed;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+a { color: var(--user-ink); text-decoration: none; }
+a:hover { color: var(--color-ink); }

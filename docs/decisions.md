@@ -64,3 +64,11 @@
   Carnet de voyage (sera fourni). Pour la Bobine, reprise des seuls
   identifiants IMDb d'une liste existante, enrichis ensuite via l'API TMDb
   (endpoint /find). Journal et Habitudes repartent de zéro.
+
+## 2026-10-27 — Nom de l'app et charte graphique
+- Décision : l'application s'appelle « Le QG » (plus « New AA's »). La charte
+  graphique v1.0 (`CHARTE_GRAPHIQUE.md`) est la source de vérité du design,
+  appliquée à tout le projet. Ses tokens sont repris dans
+  `src/shared/styles/tokens.css`.
+- Conséquences : aucune couleur, rayon ni espacement en dur dans le code ;
+  police Manrope hébergée en local (`public/fonts`), pas de CDN.
