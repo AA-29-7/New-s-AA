@@ -256,7 +256,7 @@
   flex: none;
   min-height: 36px;
   font-size: 13px;
-  border-radius: 15px;
+  border-radius: var(--radius-seg-sm);
 }
 .segment--inline {
   display: inline-flex;
