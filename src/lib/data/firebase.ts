@@ -21,6 +21,8 @@ export const auth = getAuth(app)
 
 // Cache persistant : l'app reste utilisable hors connexion.
 export const db = initializeFirestore(app, {
+  // Un champ optionnel absent (undefined) est ignoré au lieu de faire échouer l'écriture.
+  ignoreUndefinedProperties: true,
   localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
 })
 

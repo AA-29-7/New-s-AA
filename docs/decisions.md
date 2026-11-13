@@ -171,3 +171,22 @@
   connexion) ; choix du profil sur l'appareil (usurpation possible).
 - Conséquences : les règles et `people` doivent être déployés / renseignés sur
   Firebase avant d'ouvrir la préprod (sinon « Profil non configuré »).
+
+## 2026-11-13 — Données du Carnet sur Firestore : photos, carnet, préparations
+- Décision : photos dans `tripPhotos` (JPEG 1280 px, boucle de qualité pour rester
+  sous ~900 000 caractères), chargées voyage par voyage ; une page du carnet = un
+  document (`tripNotes`), le format du carnet un document `<voyage>_mode` ; une
+  préparation = un document `tripPreps` dont les étapes sont une table
+  (`steps.<id>`), pour que deux personnes modifiant deux étapes ne s'écrasent pas.
+  Préférences personnelles (offres enregistrées / écartées, accueil, filtres) :
+  `userPrefs/carnet_<uid>`, toujours privé.
+- Décision : les saisies de texte sont envoyées après 700 ms sans frappe ou à la
+  perte du focus (hook `useDraft`), pas à chaque touche.
+- Écarté : tableaux de tableaux dans les documents (refusés par Firestore :
+  repères et propositions sont stockés comme objets) ; une écriture par frappe.
+- Conséquences : `ignoreUndefinedProperties` activé. Un voyage sans dépenses
+  saisies garde l'affichage généré d'après son total ; la première dépense le
+  rend réel. Les voyages personnels de l'autre sont visibles mais en lecture seule.
+- Démo : `VITE_SEED_DEMO=true` (préprod seulement) ; chaque personne sème ses propres
+  documents, la première arrivée sème aussi les communs ; un semis ne se fait que si
+  le serveur est vide (lecture serveur, jamais le cache).

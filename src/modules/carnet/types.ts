@@ -20,7 +20,9 @@ export interface Expense {
   amount: number
   who: Payer
   day: string
-  /** Saisie hors connexion, pas encore envoyée. */
+  /** Ordre de saisie (millisecondes) ; les plus récentes sont en bas. */
+  at: number
+  /** Saisie hors connexion, pas encore envoyée (posé à la lecture). */
   pending?: boolean
 }
 
@@ -43,6 +45,8 @@ export interface Trip {
   limit?: number
   /** Nombre de photos de démonstration (vignettes rayées). */
   photos: number
+  /** Comptes réglés (« Marquer comme réglé »). */
+  settled?: boolean
   /** Coordonnées des repères : [libellé, longitude, latitude]. */
   pins: [string, number, number][]
   itinerary: string[]
@@ -52,6 +56,8 @@ export interface Photo {
   id: string
   /** Vignette de démonstration (rayures) quand il n'y a pas de vraie photo. */
   color?: StickerColor
+  /** Photo redimensionnée (data URL JPEG, < 1 Mo) stockée dans le document. */
+  data?: string
 }
 
 export interface NotebookPage {
@@ -63,8 +69,6 @@ export interface NotebookPage {
 
 export interface Notebook {
   mode: 'free' | 'daily' | null
-  view: 'write' | 'book'
-  current: number
   pages: NotebookPage[]
 }
 
@@ -162,14 +166,8 @@ export interface Offer {
 
 export type HomeSectionId = 'prep' | 'frise' | 'saved' | 'souv' | 'solde' | 'budget'
 
-/** Tout ce que le module garde sur l'appareil. */
-export interface CarnetState {
-  expenses: Record<string, Expense[]>
-  settled: Record<string, boolean>
-  photos: Record<string, Photo[]>
-  notebooks: Record<string, Notebook>
-  preps: Record<string, PrepTrip>
-  prepOrder: string[]
+/** Préférences de la personne connectée dans le Carnet (document privé `userPrefs`). */
+export interface Prefs {
   saved: number[]
   dismissed: number[]
   homeOrder: HomeSectionId[]

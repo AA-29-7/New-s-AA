@@ -9,8 +9,7 @@ Spécification : `docs/design/habitudes/README.md` ; planche :
 - `parts/` : ligne d'habitude, carte de l'accueil, feuilles (fiche, création, catégories, séries).
 - `logic.ts` : règles pures (séries avec règle « À deux » et joker, régularité,
   récaps, duel), testées dans `tests/unit/habitudes.test.ts`.
-- `store.ts` : état gardé sur l'appareil ; `data/demo.ts` : données de démonstration
-  avec un historique de coches généré.
+- `store.ts` : données Firestore (`habits`, `habitCategories`, `habitGoals`, `habitLogs`) via
+  `src/lib/data/` ; `data/demo.ts` : démo (historique de coches généré), semée si `VITE_SEED_DEMO=true`.
 
-À faire : brancher `habits` / `habitLogs` (Firestore) via `src/lib/data/`,
-modification et suppression d'une habitude, création d'un objectif, rappels.
+À faire : modification et suppression d'une habitude, création d'un objectif, rappels.

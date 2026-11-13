@@ -37,7 +37,7 @@ export function ExpenseSheet({ trip, open, onClose }: { trip: Trip; open: boolea
       toast('Indique un montant')
       return
     }
-    carnet.addExpense(trip, { cat, label: label.trim() || CATEGORY[cat].name, amount: value, who, day: shortDay(), pending: !online })
+    carnet.addExpense(trip, { cat, label: label.trim() || CATEGORY[cat].name, amount: value, who, day: shortDay() })
     toast(`+${value.toLocaleString('fr-FR')} € · ${CATEGORY[cat].name}${online ? '' : ' · en attente d’envoi'}`)
     onClose()
   }

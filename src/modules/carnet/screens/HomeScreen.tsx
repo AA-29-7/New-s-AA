@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'
 import { longDate } from '../../../shared/lib/dates'
 import { THEME_OPTIONS, useTheme } from '../../../shared/theme'
 import { ProgressBar, Sheet, Sticker, cx } from '../../../shared/ui'
-import { FRISE_IDS, HOME_SECTIONS, NEXT_TRIP_ID, OFFERS, TRIPS } from '../data/demo'
+import { HOME_SECTIONS, OFFERS } from '../data/demo'
 import { balanceText, eur, plannedBudget, stepSummary, stepsDone, suggestedStep } from '../logic'
 import { BASE, ScreenHead, usePrepareOffer } from '../parts/common'
 import { Gauge, OwnerTag, TripSticker, formatRange, shortMonth } from '../parts/bits'
-import { daysUntil, tripById, useCarnet } from '../store'
+import { daysUntil, useCarnet } from '../store'
 import type { HomeSectionId } from '../types'
 
 /** Le chiffre défile de 0 à n au chargement (38 ms par pas). */
@@ -35,26 +35,25 @@ export function HomeScreen() {
   const prepare = usePrepareOffer()
   const [custom, setCustom] = useState(false)
 
-  const next = tripById(NEXT_TRIP_ID)!
-  const prep = state.preps[NEXT_TRIP_ID]
-  const days = Math.max(0, daysUntil(next))
+  const next = carnet.nextTrip
+  const prep = next ? state.preps[next.id] : undefined
+  const days = next ? Math.max(0, daysUntil(next)) : 0
   const count = useCountUp(days)
   const done = prep ? stepsDone(prep.steps) : 0
   const step = prep ? (suggestedStep(prep.steps) ?? prep.steps[0]) : undefined
-  const last = tripById('rome')!
+  const last = carnet.lastTrip
   const saved = OFFERS.filter((o) => state.saved.includes(o.id) && !state.dismissed.includes(o.id))
   const themeLabel = THEME_OPTIONS.find((t) => t.value === pref)?.label
   const cycleTheme = () => setPref(pref === 'auto' ? 'light' : pref === 'light' ? 'dark' : 'auto')
-  const prepLink = `${BASE}/preparer/${NEXT_TRIP_ID}`
+  const prepLink = next ? `${BASE}/preparer/${next.id}` : `${BASE}/preparer`
 
-  const move = (i: number, d: number) =>
-    carnet.update((s) => {
-      const order = [...s.homeOrder]
-      const j = i + d
-      if (j < 0 || j >= order.length) return {}
-      ;[order[i], order[j]] = [order[j], order[i]]
-      return { homeOrder: order }
-    })
+  const move = (i: number, d: number) => {
+    const order = [...state.homeOrder]
+    const j = i + d
+    if (j < 0 || j >= order.length) return
+    ;[order[i], order[j]] = [order[j], order[i]]
+    carnet.setPrefs({ homeOrder: order })
+  }
 
   const sections: Record<HomeSectionId, () => React.ReactNode> = {
     prep: () =>
@@ -83,18 +82,20 @@ export function HomeScreen() {
           <span className="meta">Voyages communs</span>
         </div>
         <div className="frise noscroll">
-          {FRISE_IDS.map((id) => TRIPS.find((t) => t.id === id)!).map((t) => (
+          {carnet.friseTrips.map((t) => (
             <Link key={t.id} to={`${BASE}/voyages/${t.id}`} state={{ from: 'home' }} className="frise__item">
               <TripSticker trip={t} />
               <span className="frise__name">{t.name}</span>
               <span className="frise__date">{shortMonth(t.start)}</span>
             </Link>
           ))}
-          <Link to={prepLink} className="frise__item frise__item--next">
-            <Sticker emoji={next.emoji} color={next.color} size={44} />
-            <span className="frise__name">{next.name}</span>
-            <span className="frise__date">J-{days}</span>
-          </Link>
+          {next && (
+            <Link to={prepLink} className="frise__item frise__item--next">
+              <Sticker emoji={next.emoji} color={next.color} size={44} />
+              <span className="frise__name">{next.name}</span>
+              <span className="frise__date">J-{days}</span>
+            </Link>
+          )}
           <Link to={`${BASE}/discover`} className="frise__item frise__item--unknown">
             <span className="frise__q">?</span>
             <span className="frise__name">Le suivant</span>
@@ -134,7 +135,8 @@ export function HomeScreen() {
         )}
       </section>
     ),
-    souv: () => (
+    souv: () =>
+      last && (
       <Link to={`${BASE}/voyages/${last.id}?section=souv`} state={{ from: 'home' }} className="card card--click csection">
         <div className="eyebrow">Dernier souvenir · {last.name}</div>
         <div className="csection__row">
@@ -143,16 +145,17 @@ export function HomeScreen() {
         </div>
         <span className="link-btn">Ouvrir les souvenirs ›</span>
       </Link>
-    ),
-    solde: () => (
+      ),
+    solde: () =>
+      last && (
       <Link to={`${BASE}/voyages/${last.id}`} state={{ from: 'home' }} className="card card--click csection">
         <div className="eyebrow">Comptes · {last.name}</div>
-        <div className="cbig">{balanceText(last, carnet.expensesOf(last), state.settled[last.id])}</div>
+        <div className="cbig">{balanceText(last, carnet.expensesOf(last), last.settled)}</div>
         <span className="link-btn">Voir les dépenses ›</span>
       </Link>
-    ),
+      ),
     budget: () =>
-      prep && (
+      next && prep && (
         <Link to={prepLink} className="card card--click csection">
           <div className="spread">
             <span className="eyebrow">Budget · {next.name}</span>
@@ -184,7 +187,8 @@ export function HomeScreen() {
         }
       />
 
-      <Link to={prepLink} className="card card--click hero">
+      {next ? (
+        <Link to={prepLink} className="card card--click hero">
         <div className="hero__top">
           <div className="hero__text">
             <div className="eyebrow">Prochain départ</div>
@@ -208,6 +212,14 @@ export function HomeScreen() {
           <ProgressBar value={done / 9} ink />
         </div>
       </Link>
+
+      ) : (
+        <Link to={`${BASE}/discover`} className="card card--click hero">
+          <div className="eyebrow">Prochain départ</div>
+          <div className="hero__name">{carnet.loading ? '…' : 'Aucun voyage prévu'}</div>
+          <p className="muted">Découvre des idées dans Discover, puis prépare ton prochain voyage.</p>
+        </Link>
+      )}
 
       <div className="grid-auto carnet__grid">
         {state.homeOrder.filter((id) => state.homeOn[id]).map((id) => (
@@ -240,7 +252,7 @@ export function HomeScreen() {
                 <button
                   type="button"
                   className={cx('btn btn--mini', on ? 'btn--secondary' : 'btn--accent')}
-                  onClick={() => carnet.update((s) => ({ homeOn: { ...s.homeOn, [id]: !on } }))}
+                  onClick={() => carnet.setPrefs({ homeOn: { [id]: !on } })}
                 >
                   {on ? 'Retirer' : 'Ajouter'}
                 </button>

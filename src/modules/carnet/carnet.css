@@ -1213,3 +1213,8 @@
     opacity: 0;
   }
 }
+
+.tripskeleton {
+  height: 170px;
+  border-radius: var(--radius-lg);
+}

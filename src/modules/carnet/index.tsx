@@ -1,7 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { daysUntil, tripById, useCarnet } from './store'
-import { NEXT_TRIP_ID } from './data/demo'
-import { stepsDone } from './logic'
+import { CarnetProvider } from './store'
 import { ConfettiProvider } from './parts/bits'
 import { DiscoverScreen } from './screens/DiscoverScreen'
 import { HomeScreen } from './screens/HomeScreen'
@@ -12,9 +10,12 @@ import { TripScreen } from './screens/TripScreen'
 import { TripsScreen } from './screens/TripsScreen'
 import './carnet.css'
 
+export { carnetSeeder, useCarnetSummary } from './store'
+
 /** Module Carnet de voyage, monté sur /carnet/*. */
 export function CarnetModule() {
   return (
+    <CarnetProvider>
     <ConfettiProvider>
       <Routes>
         <Route index element={<HomeScreen />} />
@@ -28,19 +29,8 @@ export function CarnetModule() {
         <Route path="*" element={<Navigate to="/carnet" replace />} />
       </Routes>
     </ConfettiProvider>
+    </CarnetProvider>
   )
-}
-
-/** Texte de la carte du module sur l'accueil du QG. */
-export function useCarnetSummary() {
-  const carnet = useCarnet()
-  const trip = tripById(NEXT_TRIP_ID)!
-  const days = daysUntil(trip)
-  const prep = carnet.state.preps[NEXT_TRIP_ID]
-  return {
-    title: trip.name,
-    note: days > 1 ? `dans ${days} jours` : days === 1 ? 'demain' : days === 0 ? 'c’est aujourd’hui' : `${prep ? stepsDone(prep.steps) : 0}/9 étapes`,
-  }
 }
 
 export const CARNET_NAV = [
