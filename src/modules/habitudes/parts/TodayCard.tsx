@@ -3,11 +3,19 @@ import { isoDate } from '../../../shared/lib/dates'
 import { usePerson } from '../../../shared/person'
 import { Sticker } from '../../../shared/ui'
 import { didOn, habitsOf, scheduled } from '../logic'
-import { useHabits } from '../store'
+import { HabitsProvider, useHabits } from '../store'
 import { HabitRow } from './HabitRow'
 
 /** Carte « Aujourd'hui » de l'accueil du QG : 4 habitudes maximum. */
 export function TodayCard() {
+  return (
+    <HabitsProvider>
+      <TodayCardContent />
+    </HabitsProvider>
+  )
+}
+
+function TodayCardContent() {
   const { me } = usePerson()
   const store = useHabits()
   const mine = habitsOf(store.habits, me).filter((h) => scheduled(h, store.today))
