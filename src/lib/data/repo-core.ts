@@ -135,7 +135,7 @@ export function makeRepo(db: Firestore) {
        * même si les deux téléphones l'exécutent en même temps). Nécessite le réseau ;
        * sert au semis de démonstration.
        */
-      async createIfMissing(id: string, data: NewDoc<T>) {
+      async createIfMissing(id: string, data: DeepPartial<NewDoc<T>>) {
         const visibility: Visibility = data.visibility ?? 'household'
         const ownerId = data.ownerId === undefined ? uid : data.ownerId
         const ref = doc(col, id)
