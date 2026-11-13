@@ -3,6 +3,7 @@ import type { User } from 'firebase/auth'
 import { completeRedirectSignIn, onUserChange } from './auth'
 import { getHousehold, roleOf } from './households'
 import type { Scope } from './repo'
+import { cleanPeople } from './people'
 import type { PersonId } from './types'
 
 export const HOUSEHOLD_ID: string = import.meta.env.VITE_HOUSEHOLD_ID || 'foyer'
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const isMember = household && roleOf(household, user.uid) === 'member'
         if (cancelled) return
         if (!isMember) return setSession({ status: 'denied', user })
-        const people = household.people ?? {}
+        const people = cleanPeople(household.people)
         const person = people[user.uid]
         setSession(
           person
