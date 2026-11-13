@@ -6,6 +6,8 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getDocFromServer,
+  runTransaction,
   getDocs,
   getDocsFromServer,
   limit,
@@ -126,6 +128,26 @@ export function makeRepo(db: Firestore) {
         const visibility: Visibility = data.visibility ?? 'household'
         const ownerId = data.ownerId === undefined ? uid : data.ownerId
         await setDoc(doc(col, id), { ...data, hid, ownerId, visibility, updatedAt: serverTimestamp() }, { merge: true })
+      },
+
+      /**
+       * Crée le document seulement s'il n'existe pas (transaction : jamais d'écrasement,
+       * même si les deux téléphones l'exécutent en même temps). Nécessite le réseau ;
+       * sert au semis de démonstration.
+       */
+      async createIfMissing(id: string, data: NewDoc<T>) {
+        const visibility: Visibility = data.visibility ?? 'household'
+        const ownerId = data.ownerId === undefined ? uid : data.ownerId
+        const ref = doc(col, id)
+        await runTransaction(db, async (tx) => {
+          if ((await tx.get(ref)).exists()) return
+          tx.set(ref, { ...data, hid, ownerId, visibility, createdAt: serverTimestamp(), updatedAt: serverTimestamp() })
+        })
+      },
+
+      /** Le document existe-t-il sur le serveur (lecture directe, pas le cache) ? Lève une erreur hors connexion. */
+      async existsOnServer(id: string): Promise<boolean> {
+        return (await getDocFromServer(doc(col, id))).exists()
       },
 
       /**

@@ -52,6 +52,9 @@ service cloud.firestore {
         // Journal : toujours privé, propriétaire = auteur
         && (col != 'journalEntries'
             || (request.resource.data.visibility == 'private' && request.resource.data.ownerId == request.auth.uid))
+        // Coches : l'identifiant `<habitude>_<personne>` doit correspondre à la personne qui écrit
+        && (col != 'habitLogs'
+            || docId.matches('.*_' + get(/databases/$(database)/documents/households/$(request.resource.data.hid)).data.people[request.auth.uid]))
         // Préférences : toujours privées, propriétaire = la personne
         && (col != 'userPrefs'
             || (request.resource.data.visibility == 'private' && request.resource.data.ownerId == request.auth.uid));
