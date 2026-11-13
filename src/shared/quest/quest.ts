@@ -33,10 +33,11 @@ export interface Quest {
 
 export type QuestBook = Record<string, Quest>
 
-export type QuestOutcome = 'proposed' | 'refused' | 'running' | 'done' | 'partial' | 'missed' | 'unreviewed'
+export type QuestOutcome = 'proposed' | 'unanswered' | 'refused' | 'running' | 'done' | 'partial' | 'missed' | 'unreviewed'
 
 export const OUTCOME_LABEL: Record<QuestOutcome, string> = {
   proposed: 'Proposé',
+  unanswered: 'Sans réponse',
   refused: 'Refusé',
   running: 'En cours',
   done: 'Réalisé',
@@ -129,7 +130,8 @@ export function toggleDay(checks: number[], day: number): number[] {
 /** État d'un défi vu depuis le mois courant. */
 export function outcomeOf(q: Quest, currentMonth: string): QuestOutcome {
   if (q.status === 'refused') return 'refused'
-  if (q.status === 'proposed') return q.month >= currentMonth ? 'proposed' : 'refused'
+  // Une proposition restée sans réponse à la fin du mois n'est pas un refus.
+  if (q.status === 'proposed') return q.month >= currentMonth ? 'proposed' : 'unanswered'
   const reviews = Object.values(q.review)
   if (reviews.includes('yes')) return 'done'
   if (reviews.includes('part')) return 'partial'
@@ -142,7 +144,7 @@ export function countOutcomes(book: QuestBook, currentMonth: string) {
   return {
     done: all.filter((o) => o === 'done').length,
     running: all.filter((o) => o === 'running' || o === 'proposed').length,
-    missed: all.filter((o) => o === 'missed' || o === 'refused').length,
+    missed: all.filter((o) => o === 'missed' || o === 'refused' || o === 'unanswered').length,
   }
 }
 
