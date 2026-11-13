@@ -129,7 +129,7 @@ export function regenerate(step: Step): Step {
 export function importResponse(step: Step, text: string): Step {
   const rows = text
     .split('\n')
-    .map((r) => r.replace(/^[\s\-*•\d.)]+/, '').trim())
+    .map((r) => r.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').trim())
     .filter(Boolean)
   if (rows.length === 0) return step
   const lines = step.proposals[step.selected].map((l) => ({ ...l }))
@@ -232,6 +232,9 @@ export function matchesFilters(o: Offer, f: Record<string, string[]>): boolean {
   const trajet = first(f.trajet)
   if (trajet && trajet !== 'Peu importe' && o.hours > Number(trajet.replace(/\D/g, ''))) return false
   if (f.mode?.length && !f.mode.includes(o.transport)) return false
+  const quand = first(f.quand)
+  if (quand && quand !== 'Dates précises' && !o.when.includes(quand)) return false
+  if (first(f.visa) === 'Sans visa uniquement' && o.visa) return false
   const meteo = first(f.meteo)
   if (meteo === 'Chaud, + 20 °C' && o.temp < 20) return false
   if (meteo === 'Doux' && (o.temp < 12 || o.temp >= 20)) return false

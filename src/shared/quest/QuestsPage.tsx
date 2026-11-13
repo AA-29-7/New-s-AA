@@ -18,6 +18,7 @@ function detail(q: Quest, outcome: QuestOutcome, day: number): string {
   const length = monthLength(q.month)
   if (outcome === 'refused') return `${nameOf(otherOf(q.chooser))} a répondu « Pas ce mois-ci »`
   if (outcome === 'proposed') return `En attente de la réponse de ${nameOf(otherOf(q.chooser))}`
+  if (outcome === 'unanswered') return `Proposé à ${nameOf(otherOf(q.chooser))}, resté sans réponse`
   const total = outcome === 'running' ? day : length
   const scores = PERSONS.map((p) => `${nameOf(p)} ${q.checks[p].length} / ${total}`).join(' · ')
   return outcome === 'running' ? `Jour ${day} sur ${length} · ${scores}` : scores
@@ -32,7 +33,7 @@ export function QuestsPage() {
     .sort((a, b) => b.month.localeCompare(a.month))
     .map((q) => ({ q, outcome: outcomeOf(q, month) }))
     .filter(({ outcome }) =>
-      filter === 'all' ? true : filter === 'done' ? outcome === 'done' : outcome === 'missed' || outcome === 'refused',
+      filter === 'all' ? true : filter === 'done' ? outcome === 'done' : outcome === 'missed' || outcome === 'refused' || outcome === 'unanswered',
     )
 
   return (

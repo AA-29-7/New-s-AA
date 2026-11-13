@@ -371,7 +371,7 @@
 /* ---------- Nos voyages ---------- */
 .stackbar {
   display: flex;
-  gap: 2px;
+  gap: var(--space-0);
   height: 12px;
   border-radius: var(--radius-pill);
   overflow: hidden;
@@ -543,7 +543,7 @@
 .mappin {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-1);
   transform: translate(-8px, -50%);
   pointer-events: none;
   font-family: var(--font-sans);
@@ -567,13 +567,13 @@
   font-weight: 700;
   color: var(--color-ink);
   background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-  padding: 1px 7px;
+  padding: var(--space-0) var(--space-1h);
   border-radius: var(--radius-pill);
   white-space: nowrap;
 }
 .mappin--price {
   height: 30px;
-  padding: 0 11px;
+  padding: 0 var(--space-3);
   transform: translate(-50%, -50%);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
@@ -674,8 +674,8 @@
 }
 .nb__remove {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: var(--space-1);
+  right: var(--space-1);
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -1197,7 +1197,7 @@
   left: var(--x);
   width: var(--w);
   height: calc(var(--w) * 1.6);
-  border-radius: 2px;
+  border-radius: var(--radius-tick);
   animation: qg-confetti var(--dur) ease-in var(--delay) forwards;
 }
 .confetti [data-tone='0'] { background: var(--alex-base); }

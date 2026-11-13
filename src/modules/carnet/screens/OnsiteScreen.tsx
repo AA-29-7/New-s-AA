@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Sheet, Sticker, cx, useOnline, useToast } from '../../../shared/ui'
 import { DOCUMENTS, NEXT_TRIP_ID, TODAY_PROGRAM } from '../data/demo'
-import { balanceText, eur, totalOf } from '../logic'
+import { balanceText, eur, totalOf, tripDays } from '../logic'
 import { CatDot } from '../parts/bits'
 import { BASE, ScreenHead } from '../parts/common'
 import { ExpenseSheet } from '../parts/ExpenseSheet'
@@ -32,7 +32,7 @@ export function OnsiteScreen() {
   }
   const saveNote = () => {
     carnet.setNotebook(trip.id, (n) => {
-      const pages = n.mode ? [...n.pages] : Array.from({ length: 5 }, () => ({ title: '', text: '', photos: [] as string[] }))
+      const pages = n.mode ? [...n.pages] : Array.from({ length: tripDays(trip) }, () => ({ title: '', text: '', photos: [] as string[] }))
       while (pages.length <= pageIndex) pages.push({ title: '', text: '', photos: [] })
       pages[pageIndex] = { ...pages[pageIndex], text: note }
       return { ...n, mode: n.mode ?? 'daily', pages, current: pageIndex }

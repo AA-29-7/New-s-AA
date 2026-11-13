@@ -37,6 +37,9 @@ export function demoPhotos(trip: Trip): Photo[] {
 /** Jours avant le départ (négatif une fois parti). */
 export const daysUntil = (trip: Trip, today = new Date()) => daysBetween(today, parseIso(trip.start))
 
+/** Voyage terminé (le retour est passé). */
+export const isPast = (trip: Trip, today = new Date()) => daysBetween(parseIso(trip.end), today) > 0
+
 /** Jour du voyage en cours (1 = jour du départ), ou null hors du voyage. */
 export function tripDay(trip: Trip, today = new Date()): number | null {
   const n = daysBetween(parseIso(trip.start), today) + 1

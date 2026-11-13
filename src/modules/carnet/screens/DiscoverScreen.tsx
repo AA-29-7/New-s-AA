@@ -12,6 +12,15 @@ import type { Offer } from '../types'
 type View = 'feed' | 'list' | 'map'
 const price = (o: Offer) => (o.price == null ? '—' : eur(o.price))
 
+/** Bouton ♥ ; la clé relance le rebond seulement quand l'état change. */
+function Heart({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return (
+    <button type="button" key={on ? 'on' : 'off'} className={cx('heart', on && 'is-on')} aria-pressed={on} aria-label={on ? 'Retirer des enregistrées' : 'Enregistrer'} onClick={onToggle}>
+      ♥
+    </button>
+  )
+}
+
 /** Discover : offres du moment, raccourcis, filtres, feed / liste / carte. */
 export function DiscoverScreen() {
   const carnet = useCarnet()
@@ -61,15 +70,6 @@ export function DiscoverScreen() {
       const next = multi ? (cur.includes(opt) ? cur.filter((x) => x !== opt) : [...cur, opt]) : cur[0] === opt && gid !== 'per' ? [] : [opt]
       return { filters: { ...s.filters, [gid]: next } }
     })
-
-  const Heart = ({ o }: { o: Offer }) => {
-    const on = state.saved.includes(o.id)
-    return (
-      <button type="button" key={on ? 'on' : 'off'} className={cx('heart', on && 'is-on')} aria-pressed={on} aria-label={on ? 'Retirer des enregistrées' : 'Enregistrer'} onClick={() => save(o)}>
-        ♥
-      </button>
-    )
-  }
 
   return (
     <div className="page carnet">
@@ -153,7 +153,7 @@ export function DiscoverScreen() {
               <Cover color={o.color} emoji={o.emoji} rotate={o.id % 2 ? -5 : 4} sticker={56} className="offer__cover">
                 <span className="offer__type">{o.type}</span>
               </Cover>
-              <Heart o={o} />
+              <Heart on={state.saved.includes(o.id)} onToggle={() => save(o)} />
               <div className="spread offer__head">
                 <div className="row__body">
                   <div className="ctitle">{o.destination}</div>
@@ -196,7 +196,7 @@ export function DiscoverScreen() {
                 </span>
               </button>
               <strong>{price(o)}</strong>
-              <Heart o={o} />
+              <Heart on={state.saved.includes(o.id)} onToggle={() => save(o)} />
               <button type="button" className="arrow" aria-label="Écarter" onClick={() => dismiss(o)}>
                 ✕
               </button>
@@ -228,7 +228,7 @@ export function DiscoverScreen() {
                   <div className="ctitle">{sel.destination}</div>
                   <div className="meta">{sel.dates}</div>
                 </div>
-                <Heart o={sel} />
+                <Heart on={state.saved.includes(sel.id)} onToggle={() => save(sel)} />
               </div>
               <p className="meta">
                 {sel.trip} · {sel.weather}

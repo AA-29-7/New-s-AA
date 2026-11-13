@@ -97,3 +97,18 @@ describe('statistiques et Discover', () => {
     expect(activeFilters({ per: ['Pour deux'], zone: ['France'] })).toBe(1)
   })
 })
+
+describe('corrections de revue', () => {
+  it('garde les chiffres en tête d’une valeur importée', () => {
+    const step = lisbonPrep().steps.find((s) => s.id === 'logement')!
+    const next = importResponse(step, '1. Graça\n2. Studio\n238 € pour deux')
+    expect(next.proposals[0].map((l) => l.v).slice(0, 3)).toEqual(['Graça', 'Studio', '238 € pour deux'])
+  })
+  it('applique les filtres Quand et Visa', () => {
+    const tokyo = OFFERS.find((o) => o.id === 7)!
+    const etretat = OFFERS.find((o) => o.id === 5)!
+    expect(matchesFilters(tokyo, { quand: ['Ce week-end'] })).toBe(false)
+    expect(matchesFilters(etretat, { quand: ['Ce week-end'] })).toBe(true)
+    expect(matchesFilters(tokyo, { quand: ["N'importe quand en mars"], visa: ['Sans visa uniquement'] })).toBe(true)
+  })
+})

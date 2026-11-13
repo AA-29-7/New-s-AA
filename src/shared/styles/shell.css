@@ -404,7 +404,7 @@
 .quest__day {
   flex: 1;
   height: 8px;
-  border-radius: 2px;
+  border-radius: var(--radius-tick);
   background: var(--color-track);
 }
 .quest__day[data-state='done'] {

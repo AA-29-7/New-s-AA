@@ -96,10 +96,14 @@
   --space-10: 40px;
 
   /* Rayons */
+  --radius-tick: 2px; /* segment de frise, cadenas */
+  --radius-lock: 4px;
+  --radius-bar: 8px; /* barre de graphique */
   --radius-xs: 6px;
   --radius-sm: 12px;
   --radius-field: 16px;
   --radius-seg: 18px;
+  --radius-seg-sm: 15px;
   --radius-md: 20px;
   --radius-card: 22px;
   --radius-lg: 24px;

@@ -152,6 +152,10 @@ export interface Offer {
   temp: number
   nights: number
   themes: string[]
+  /** Périodes du filtre « Quand » couvertes par l'offre. */
+  when: string[]
+  /** Visa nécessaire depuis la France. */
+  visa: boolean
   /** [longitude, latitude] ; absent si hors de la carte d'Europe. */
   coord?: [number, number]
 }
