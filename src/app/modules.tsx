@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { CARNET_NAV, CarnetModule, useCarnetSummary } from '../modules/carnet'
+import { HabitsModule, HabitsTodayCard, useHabitsSummary } from '../modules/habitudes'
 import { ComingSoon, type StickerColor } from '../shared/ui'
 
 /** Entrée de navigation interne à un module (barre basse mobile, barre latérale bureau). */
@@ -57,8 +58,10 @@ export const modules: AppModule[] = [
     emoji: '💪',
     color: 'sage',
     rotate: -6,
-    component: soon('💪', 'sage', 'Habitudes'),
-    summary: { title: 'Bientôt', note: 'En préparation' },
+    component: HabitsModule,
+    summary: { title: 'Habitudes' },
+    useSummary: useHabitsSummary,
+    TodayCard: HabitsTodayCard,
   },
   {
     id: 'carnet',
