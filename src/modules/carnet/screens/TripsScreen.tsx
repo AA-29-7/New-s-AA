@@ -6,7 +6,7 @@ import { CATEGORIES, TRIPS } from '../data/demo'
 import { eur, totalOf, tripStats } from '../logic'
 import { Cover, OwnerTag, formatRange, shortMonth } from '../parts/bits'
 import { BASE, ScreenHead } from '../parts/common'
-import { daysUntil, useCarnet } from '../store'
+import { isPast, useCarnet } from '../store'
 
 type PersoFilter = 'tous' | Person
 
@@ -19,8 +19,8 @@ export function TripsScreen() {
   const [stat, setStat] = useState<'cat' | 'pays'>('cat')
   const [view, setView] = useState<'list' | 'grid'>('list')
 
-  // Les voyages à venir ne comptent pas dans les statistiques ni dans la liste.
-  const trips = TRIPS.filter((t) => daysUntil(t) < 0)
+  // Les voyages en cours ou à venir ne comptent pas dans les statistiques ni dans la liste.
+  const trips = TRIPS.filter((t) => isPast(t))
     .filter((t) => (tab === 'commun' ? t.owner === 'both' : t.owner !== 'both'))
     .filter((t) => tab === 'commun' || perso === 'tous' || t.owner === perso)
     .sort((a, b) => b.start.localeCompare(a.start))
