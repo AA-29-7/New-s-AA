@@ -10,6 +10,27 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/households/$(hid)).data.members[request.auth.uid] == 'member';
     }
 
+    // Collections de modules (doit rester aligné avec COLLECTIONS dans src/lib/data/types.ts).
+    function isModuleCol(col) {
+      return col in [
+        'habits', 'habitLogs', 'habitCategories', 'habitGoals', 'quests',
+        'journalEntries',
+        'trips', 'tripPhotos', 'tripExpenses', 'tripNotes', 'tripPreps',
+        'films', 'filmRatings',
+        'userPrefs'
+      ];
+    }
+
+    // Qui peut modifier ou supprimer un document existant :
+    //  - un document à propriétaire : uniquement ce propriétaire ;
+    //  - un document commun (ownerId null) : les deux membres, s'il est partagé.
+    function canWrite(res) {
+      return isMember(res.data.hid)
+        && (res.data.ownerId == null
+            ? res.data.visibility == 'household'
+            : res.data.ownerId == request.auth.uid);
+    }
+
     // Le rôle 'viewer' est prévu au schéma mais pas encore activé : aucun accès.
     match /households/{hid} {
       allow read: if isMember(hid);
@@ -18,30 +39,34 @@ service cloud.firestore {
 
     match /{col}/{docId} {
       // resource == null : lecture d'un document inexistant (ex. supprimé par l'autre), renvoie "introuvable".
-      allow read: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
+      allow read: if isModuleCol(col)
         && signedIn()
         && (resource == null
             || (isMember(resource.data.hid)
                 && (resource.data.visibility == 'household' || resource.data.ownerId == request.auth.uid)));
 
-      allow create: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
+      allow create: if isModuleCol(col)
         && isMember(request.resource.data.hid)
         && request.resource.data.visibility in ['private','household']
         && (request.resource.data.ownerId == request.auth.uid || request.resource.data.ownerId == null)
         // Journal : toujours privé, propriétaire = auteur
         && (col != 'journalEntries'
+            || (request.resource.data.visibility == 'private' && request.resource.data.ownerId == request.auth.uid))
+        // Coches : l'identifiant `<habitude>_<personne>` doit correspondre à la personne qui écrit
+        && (col != 'habitLogs'
+            || docId.matches('.*_' + get(/databases/$(database)/documents/households/$(request.resource.data.hid)).data.people[request.auth.uid]))
+        // Préférences : toujours privées, propriétaire = la personne
+        && (col != 'userPrefs'
             || (request.resource.data.visibility == 'private' && request.resource.data.ownerId == request.auth.uid));
 
-      allow update: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
-        && isMember(resource.data.hid)
-        && (resource.data.visibility == 'household' || resource.data.ownerId == request.auth.uid)
+      allow update: if isModuleCol(col)
+        && canWrite(resource)
         && request.resource.data.hid == resource.data.hid
         && request.resource.data.ownerId == resource.data.ownerId
         && request.resource.data.visibility == resource.data.visibility;
 
-      allow delete: if col in ['habits','habitLogs','journalEntries','trips','tripPhotos','films','filmRatings']
-        && isMember(resource.data.hid)
-        && (resource.data.visibility == 'household' || resource.data.ownerId == request.auth.uid);
+      allow delete: if isModuleCol(col)
+        && canWrite(resource);
     }
   }
 }

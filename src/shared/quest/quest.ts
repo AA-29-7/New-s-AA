@@ -1,5 +1,5 @@
 import { daysInMonth } from '../lib/dates'
-import { otherOf, type Person } from '../person'
+import { otherOf, type Person } from '../people'
 import type { StickerColor } from '../ui/basics'
 
 /**
