@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { createContext, createElement, useCallback, useContext, useMemo, type ReactNode } from 'react'
 import { repo, useCollection, usePeople, useRepo, type BaseDoc } from '../../lib/data'
 import { useStored } from '../../shared/lib/localStore'
 import { useToday } from '../../shared/lib/useToday'
@@ -31,7 +31,7 @@ function parseLogId(id: string): { habitId: string; person: Person } {
 }
 
 /** Habitudes, catégories, objectifs et coches, synchronisés en temps réel entre les deux personnes. */
-export function useHabits() {
+export function useHabitsData() {
   const { me } = usePerson()
   const { uidOf } = usePeople()
   const today = useToday()
@@ -109,12 +109,27 @@ export function useHabits() {
   }, [habits, categories, goals, history, mode, today, me, pending, habitDocs.loading, categoryDocs.loading, goalDocs.loading, logDocs.loading, habitsRepo, categoriesRepo, logsRepo, ownerUid, setMode])
 }
 
-export type HabitsStore = ReturnType<typeof useHabits>
+export type HabitsStore = ReturnType<typeof useHabitsData>
+
+const HabitsContext = createContext<HabitsStore | null>(null)
+
+/** Un seul jeu d'abonnements pour tout l'écran (lignes, onglets et feuilles le partagent). */
+export function HabitsProvider({ children }: { children: ReactNode }) {
+  return createElement(HabitsContext.Provider, { value: useHabitsData() }, children)
+}
+
+export function useHabits(): HabitsStore {
+  const ctx = useContext(HabitsContext)
+  if (!ctx) throw new Error('useHabits : à utiliser sous <HabitsProvider>')
+  return ctx
+}
 
 /**
  * Démo (VITE_SEED_DEMO seulement). Chacun ne peut écrire que ses propres documents :
  * chaque personne sème ses habitudes, ses objectifs et ses coches ; la première à
- * arriver sème aussi les catégories et les éléments communs (identifiants fixes).
+ * arriver sème aussi les catégories et les éléments communs. Sans écrasement
+ * (createIfMissing) ; le dernier document écrit sert de repère, donc un semis
+ * interrompu est repris au lancement suivant.
  */
 export const habitsSeeder: DemoSeeder = {
   name: 'habitudes',
@@ -125,33 +140,38 @@ export const habitsSeeder: DemoSeeder = {
     const logs = repo<LogDoc>('habitLogs', scope)
     const goals = repo<GoalDoc>('habitGoals', scope)
     const categories = repo<CategoryDoc>('habitCategories', scope)
-    const today = new Date()
-    const history = seedHistory(today)
+    const history = seedHistory(new Date())
     const ownerUid = (o: Owner) => (o === 'both' ? null : uidOf(o))
 
-    if (await categories.isEmptyOnServer()) {
+    // Éléments communs : la première catégorie est écrite en dernier.
+    const [markerCategory, ...otherCategories] = DEMO_CATEGORIES
+    if (!(await categories.existsOnServer(markerCategory.id))) {
       await Promise.all([
-        ...DEMO_CATEGORIES.map(({ id, ...c }) => categories.upsert(id, { ...c, ownerId: null })),
-        ...DEMO_HABITS.filter((h) => h.owner === 'both').map(({ id, ...h }) => habits.upsert(id, { ...h, ownerId: null })),
-        ...DEMO_GOALS.filter((g) => g.owner === 'both').map(({ id, ...g }) => goals.upsert(id, { ...g, ownerId: null })),
+        ...otherCategories.map(({ id, ...c }) => categories.createIfMissing(id, { ...c, ownerId: null })),
+        ...DEMO_HABITS.filter((h) => h.owner === 'both').map(({ id, ...h }) => habits.createIfMissing(id, { ...h, ownerId: null })),
+        ...DEMO_GOALS.filter((g) => g.owner === 'both').map(({ id, ...g }) => goals.createIfMissing(id, { ...g, ownerId: null })),
       ])
+      const { id, ...c } = markerCategory
+      await categories.createIfMissing(id, { ...c, ownerId: null })
     }
-    if (await habits.isEmptyOnServer('mine')) {
+
+    // Mes habitudes, mes objectifs et mes coches : mon premier document de coches est écrit en dernier.
+    const mine = DEMO_HABITS.filter((h) => doers(h).includes(me))
+    const logOf = (h: Habit) => {
+      const days = Object.entries(history[h.id] ?? {})
+        .filter(([, people]) => people.includes(me))
+        .map(([iso]) => iso)
+        .sort()
+      return { id: `${h.id}_${me}`, days }
+    }
+    const [markerHabit, ...otherHabits] = mine
+    if (markerHabit && !(await logs.existsOnServer(`${markerHabit.id}_${me}`))) {
       await Promise.all([
-        ...DEMO_HABITS.filter((h) => h.owner === me).map(({ id, ...h }) => habits.upsert(id, { ...h, ownerId: ownerUid(h.owner) })),
-        ...DEMO_GOALS.filter((g) => g.owner === me).map(({ id, ...g }) => goals.upsert(id, { ...g, ownerId: ownerUid(g.owner) })),
+        ...DEMO_HABITS.filter((h) => h.owner === me).map(({ id, ...h }) => habits.createIfMissing(id, { ...h, ownerId: ownerUid(h.owner) })),
+        ...DEMO_GOALS.filter((g) => g.owner === me).map(({ id, ...g }) => goals.createIfMissing(id, { ...g, ownerId: ownerUid(g.owner) })),
+        ...otherHabits.map((h) => logs.createIfMissing(logOf(h).id, { checks: logOf(h).days })),
       ])
-    }
-    if (await logs.isEmptyOnServer('mine')) {
-      await Promise.all(
-        DEMO_HABITS.filter((h) => doers(h).includes(me)).map((h) => {
-          const days = Object.entries(history[h.id] ?? {})
-            .filter(([, people]) => people.includes(me))
-            .map(([iso]) => iso)
-            .sort()
-          return logs.upsert(`${h.id}_${me}`, { checks: days })
-        }),
-      )
+      await logs.createIfMissing(logOf(markerHabit).id, { checks: logOf(markerHabit).days })
     }
   },
 }
