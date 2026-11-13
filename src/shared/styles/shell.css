@@ -600,3 +600,7 @@
   font-size: 18px;
   font-weight: 800;
 }
+
+.shell__banner {
+  margin-bottom: var(--space-4);
+}

@@ -38,6 +38,7 @@ async function reset() {
   const admin = clientAs('admin')
   await setDoc(doc(admin, 'households', HID), {
     members: { [ALICE]: 'member', [BOB]: 'member', [VIEWER]: 'viewer' },
+    people: { [ALICE]: 'alex', [BOB]: 'antoine' },
   })
   await setDoc(doc(admin, 'households', 'autre'), { members: { [STRANGER]: 'member' } })
 }
@@ -242,5 +243,27 @@ describe('collections du Carnet et préférences', () => {
   it('userPrefs : partagé ou commun refusé', async () => {
     await expect(col(ALICE, 'userPrefs').create({ label: 'x', visibility: 'household' })).rejects.toMatchObject({ code: 'permission-denied' })
     await expect(col(ALICE, 'userPrefs').create({ label: 'x', visibility: 'private', ownerId: null })).rejects.toMatchObject({ code: 'permission-denied' })
+  })
+})
+
+describe('coches et semis', () => {
+  it('l\'identifiant d\'un document de coches doit se terminer par la personne qui écrit', async () => {
+    await expect(col(ALICE, 'habitLogs').arrayToggle('h1_antoine', 'checks', '2026-11-13', true)).rejects.toMatchObject({ code: 'permission-denied' })
+    await expect(col(ALICE, 'habitLogs').arrayToggle('h1_alex', 'checks', '2026-11-13', true)).resolves.toBeUndefined()
+  })
+
+  it('createIfMissing ne remplace jamais un document existant', async () => {
+    const r = col(ALICE, 'habitCategories')
+    await r.createIfMissing('bien', { label: 'Démo', ownerId: null })
+    await col(BOB, 'habitCategories').update('bien', { label: 'Modifié' })
+    await col(ALICE, 'habitCategories').createIfMissing('bien', { label: 'Démo', ownerId: null })
+    expect((await r.get('bien'))?.label).toBe('Modifié')
+  })
+
+  it('existsOnServer reflète la présence du document', async () => {
+    const r = col(ALICE, 'quests')
+    expect(await r.existsOnServer('2026-11')).toBe(false)
+    await r.createIfMissing('2026-11', { ownerId: null })
+    expect(await r.existsOnServer('2026-11')).toBe(true)
   })
 })
