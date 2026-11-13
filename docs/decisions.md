@@ -190,3 +190,15 @@
 - Démo : `VITE_SEED_DEMO=true` (préprod seulement) ; chaque personne sème ses propres
   documents, la première arrivée sème aussi les communs ; un semis ne se fait que si
   le serveur est vide (lecture serveur, jamais le cache).
+
+## 2026-11-13 — Déploiement automatique de la préprod (GitHub Actions)
+- Décision : `.github/workflows/deploy-preprod.yml` construit et déploie le site et
+  les règles Firestore sur le projet de préprod à chaque fusion dans `preprod`
+  (ou à la main depuis l'onglet Actions). Aucun terminal ni installation locale.
+- Décision : la clé du compte de service est un secret GitHub
+  (`FIREBASE_SERVICE_ACCOUNT`), la configuration Firebase du site des variables
+  GitHub ; rien n'est commité. Le build de préprod active `VITE_SEED_DEMO`.
+- Écarté : déployer la production de la même façon (reste manuel, depuis `main`,
+  une personne à la fois) ; jeton `firebase login:ci` (déprécié).
+- Conséquences : une fusion dans `preprod` met à jour la préprod en ligne ; les
+  règles Firestore sont déployées avec le site.

@@ -1,0 +1,64 @@
+# Déploie la préprod (site + règles Firestore) à chaque fusion dans la branche `preprod`.
+# Peut aussi se lancer à la main : onglet « Actions » du dépôt → « Déployer la préprod » → « Run workflow ».
+#
+# À configurer une fois dans GitHub (Settings → Secrets and variables → Actions) :
+#   Secret    FIREBASE_SERVICE_ACCOUNT : clé JSON d'un compte de service du projet Firebase de préprod
+#   Variables VITE_FIREBASE_API_KEY, VITE_FIREBASE_AUTH_DOMAIN, VITE_FIREBASE_PROJECT_ID,
+#             VITE_FIREBASE_APP_ID, VITE_FIREBASE_MESSAGING_SENDER_ID
+# Rien de secret n'est écrit dans ce dépôt. Ne jamais pointer ce workflow vers la production.
+name: Déployer la préprod
+
+on:
+  push:
+    branches: [preprod]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-preprod
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Tests unitaires
+        run: npm run test:unit
+
+      - name: Construire le site (préprod, avec les données de démonstration)
+        run: npm run build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ vars.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ vars.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ vars.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_APP_ID: ${{ vars.VITE_FIREBASE_APP_ID }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_HOUSEHOLD_ID: foyer
+          VITE_USE_EMULATORS: 'false'
+          VITE_SEED_DEMO: 'true'
+
+      - name: Identifiants Firebase
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-key.json" >> "$GITHUB_ENV"
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Déployer les règles et le site sur la préprod
+        run: npx firebase deploy --only firestore:rules,hosting --project new-aa-s-preprod --non-interactive
+
+      - name: Supprimer la clé
+        if: always()
+        run: rm -f "$RUNNER_TEMP/firebase-key.json"
