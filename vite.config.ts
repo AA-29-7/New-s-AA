@@ -8,14 +8,17 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg'],
+      // Polices locales incluses dans le cache hors ligne.
+      workbox: { globPatterns: ['**/*.{js,css,html,svg,woff2}'] },
       manifest: {
-        name: "New AA's",
-        short_name: "New AA's",
+        name: 'Le QG',
+        short_name: 'Le QG',
         description: 'Interface privée de couple : habitudes, carnet, journal, bobine.',
         lang: 'fr',
-        theme_color: '#2f6f6a',
-        background_color: '#faf8f5',
+        theme_color: '#ecdfd1',
+        background_color: '#ecdfd1',
         display: 'standalone',
+        orientation: 'portrait',
         start_url: '/',
         icons: [
           { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' },

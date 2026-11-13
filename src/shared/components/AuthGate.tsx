@@ -30,16 +30,17 @@ function LoginPage({ initialError }: { initialError?: string }) {
 
   return (
     <main className="auth">
-      <h1 className="auth__title">New AA's</h1>
-      <button className="auth__btn auth__btn--primary" disabled={busy} onClick={() => run(signInWithGoogle)}>
+      <span className="auth__logo emoji" aria-hidden="true">🏡</span>
+      <h1 className="auth__title">Le QG</h1>
+      <button className="btn btn--primary btn--block" disabled={busy} onClick={() => run(signInWithGoogle)}>
         Continuer avec Google
       </button>
       <form className="auth__form" onSubmit={(e) => { e.preventDefault(); void run(() => signIn(email, password)) }}>
-        <input type="email" placeholder="E-mail" autoComplete="username" value={email}
+        <input className="field" type="email" placeholder="E-mail" autoComplete="username" value={email}
           onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Mot de passe" autoComplete="current-password" value={password}
+        <input className="field" type="password" placeholder="Mot de passe" autoComplete="current-password" value={password}
           onChange={(e) => setPassword(e.target.value)} required />
-        <button className="auth__btn" disabled={busy} type="submit">Se connecter</button>
+        <button className="btn btn--secondary btn--block" disabled={busy} type="submit">Se connecter</button>
       </form>
       {error && <p className="auth__error" role="alert">{error}</p>}
     </main>
@@ -58,7 +59,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
         <h1 className="auth__title">Accès refusé</h1>
         <p className="muted">Ce compte n'est pas membre du foyer. Donne cet identifiant pour être ajouté :</p>
         <code className="auth__uid">{session.user.uid}</code>
-        <button className="auth__btn" onClick={() => void logOut()}>Changer de compte</button>
+        <button className="btn btn--secondary btn--block" onClick={() => void logOut()}>Changer de compte</button>
       </main>
     )
   }
