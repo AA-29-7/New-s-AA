@@ -96,6 +96,9 @@
   --space-10: 40px;
 
   /* Rayons */
+  --radius-tick: 2px; /* segment de frise, cadenas */
+  --radius-lock: 4px;
+  --radius-bar: 8px; /* barre de graphique */
   --radius-xs: 6px;
   --radius-sm: 12px;
   --radius-field: 16px;

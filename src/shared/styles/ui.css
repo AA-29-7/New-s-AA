@@ -407,14 +407,14 @@
   height: 4px;
   border: 1.5px solid var(--color-ink);
   border-bottom: none;
-  border-radius: 4px 4px 0 0;
+  border-radius: var(--radius-lock) var(--radius-lock) 0 0;
 }
 .lock::after {
   content: '';
   width: 10px;
   height: 7px;
   background: var(--color-ink);
-  border-radius: 2px;
+  border-radius: var(--radius-tick);
 }
 
 .avatar {

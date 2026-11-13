@@ -69,3 +69,10 @@ describe('quête du QG', () => {
     expect(countOutcomes(book, '2026-11')).toEqual({ done: 3, running: 1, missed: 2 })
   })
 })
+
+describe('proposition sans réponse', () => {
+  it('n’est pas présentée comme un refus', () => {
+    const q = seedQuests(new Date(2026, 10, 13))['2026-11']
+    expect(outcomeOf({ ...q, status: 'proposed' }, '2026-12')).toBe('unanswered')
+  })
+})
