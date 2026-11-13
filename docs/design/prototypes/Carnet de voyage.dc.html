@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e2dbd1;font-family:Manrope,system-ui,sans-serif;color:#3a2c24}
+a{color:#8f2f3a;text-decoration:none}a:hover{color:#3a2c24}
+[data-qg]{--color-bg-top:#ecdfd1;--color-bg-bottom:#e7dacb;--color-surface:#f9f2ea;--color-surface-sunken:#efe3d4;--color-surface-muted:rgba(249,242,234,.55);--color-sidebar:#e3d4c3;--color-input:#fffaf3;--color-border:#ecdfd2;--color-border-strong:#d3c1ad;--color-track:#e6d6c4;--color-chip:#e0d0bf;--color-ink:#3a2c24;--color-ink-soft:#6f5a4a;--color-ink-faint:#a8907a;--color-ink-inverse:#f9f2ea;--alex-base:#b8434f;--alex-tint:#f6e0e1;--alex-ink:#8f2f3a;--antoine-base:#8a5a8c;--antoine-tint:#efe2ef;--antoine-ink:#6a4270;--alex-text:#8f2f3a;--antoine-text:#6a4270;--color-streak-bg:#f6dfc6;--color-streak-ink:#8a4a12;--color-quest-soft:#f0d9a8;--color-quest-stripe:#e8c36a;--color-success:#5e7d33;--color-gain:#3f7a4f;--color-loss:#a33a3a;--color-scrim:rgba(40,28,22,.45);--radius-sm:12px;--radius-md:20px;--radius-lg:24px;--radius-xl:30px;--shadow-card:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);--shadow-nav:0 8px 22px rgba(60,40,30,.12);--shadow-sheet:0 20px 50px rgba(40,28,22,.35);--shadow-sticker:0 2px 0 rgba(60,40,30,.14);--stripe:rgba(255,255,255,.35);font-family:Manrope,system-ui,sans-serif;color:var(--color-ink)}
+[data-qg][data-theme="dark"]{--color-bg-top:#2b221d;--color-bg-bottom:#231b17;--color-surface:#382c25;--color-surface-sunken:#2e241e;--color-surface-muted:rgba(56,44,37,.55);--color-sidebar:#1f1814;--color-input:#2e241e;--color-border:#463830;--color-border-strong:#6b5647;--color-track:#4a3b32;--color-chip:#4a3c33;--color-ink:#f4e9dd;--color-ink-soft:#cbb6a3;--color-ink-faint:#8c7766;--color-ink-inverse:#2b221d;--alex-tint:#5a2b31;--antoine-tint:#47324b;--alex-text:#f0a3ab;--antoine-text:#d9b3db;--color-streak-bg:#5a3d22;--color-streak-ink:#f6dfc6;--color-success:#6f9440;--color-scrim:rgba(10,6,4,.6);--shadow-card:0 1px 0 rgba(0,0,0,.2),0 10px 24px rgba(0,0,0,.28);--shadow-nav:0 8px 22px rgba(0,0,0,.4);--stripe:rgba(255,255,255,.22)}
+[data-qg][data-user="alex"]{--user-base:var(--alex-base);--user-tint:var(--alex-tint);--user-text:var(--alex-text);--other-base:var(--antoine-base)}
+[data-qg][data-user="antoine"]{--user-base:var(--antoine-base);--user-tint:var(--antoine-tint);--user-text:var(--antoine-text);--other-base:var(--alex-base)}
+[data-qg] input,[data-qg] textarea{font-family:inherit;color:inherit}
+[data-qg] input::placeholder,[data-qg] textarea::placeholder{color:var(--color-ink-faint)}
+.leaflet-container{font-family:Manrope,system-ui,sans-serif}.noscroll{scrollbar-width:none}.noscroll::-webkit-scrollbar{display:none;width:0;height:0}
+@keyframes qgPopA{0%{transform:translate(-50%,18px) scale(.9);opacity:0}60%{transform:translate(-50%,-4px) scale(1.04);opacity:1}100%{transform:translate(-50%,0) scale(1);opacity:1}}
+@keyframes qgPopB{0%{transform:translate(-50%,18px) scale(.9);opacity:0}60%{transform:translate(-50%,-4px) scale(1.04);opacity:1}100%{transform:translate(-50%,0) scale(1);opacity:1}}
+@keyframes qgFloat{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-6px) rotate(6deg)}}
+@keyframes qgPulse{0%{box-shadow:0 0 0 0 var(--user-base)}100%{box-shadow:0 0 0 14px rgba(0,0,0,0)}}
+@keyframes qgShimmer{0%{opacity:1}35%{opacity:.2;filter:blur(3px)}100%{opacity:1;filter:none}}
+@keyframes qgStamp{0%{transform:scale(1.9) rotate(-16deg);opacity:0}70%{transform:scale(.92) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@keyframes qgBounce{0%{transform:scale(1)}40%{transform:scale(1.28)}100%{transform:scale(1)}}
+@keyframes qgConf{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(560px) rotate(540deg);opacity:0}}
+@keyframes qgUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes qgFlipNA{from{transform:rotateY(-60deg);opacity:.2}to{transform:none;opacity:1}}
+@keyframes qgFlipNB{from{transform:rotateY(-60deg);opacity:.2}to{transform:none;opacity:1}}
+@keyframes qgFlipPA{from{transform:rotateY(60deg);opacity:.2}to{transform:none;opacity:1}}
+@keyframes qgFlipPB{from{transform:rotateY(60deg);opacity:.2}to{transform:none;opacity:1}}
+@keyframes qgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){[data-qg] *{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;box-sizing:border-box;padding:24px 20px 40px;display:flex;flex-direction:column;align-items:center;gap:18px">
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center">
+    <div onClick="{{ toggleTools }}" style="height:34px;padding:0 14px;border-radius:17px;background:#d6ccbf;display:flex;align-items:center;font-size:13px;font-weight:800;cursor:pointer;color:#3a2c24">⚙ Maquette {{ toolsArrow }}</div>
+    <div style="display:{{ toolsDisp }};gap:4px;padding:4px;background:#d6ccbf;border-radius:22px">
+      <sc-for list="{{ devSeg }}" as="o" hint-placeholder-count="2"><div onClick="{{ o.go }}" style="height:38px;padding:0 16px;border-radius:19px;background:{{ o.bg }};display:flex;align-items:center;font-size:14px;font-weight:800;cursor:pointer;color:#3a2c24">{{ o.l }}</div></sc-for>
+    </div>
+    <div style="display:{{ toolsDisp }};gap:4px;padding:4px;background:#d6ccbf;border-radius:22px">
+      <sc-for list="{{ userSeg }}" as="o" hint-placeholder-count="2"><div onClick="{{ o.go }}" style="height:38px;padding:0 16px;border-radius:19px;background:{{ o.bg }};display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;cursor:pointer;color:#3a2c24"><span style="width:9px;height:9px;border-radius:50%;background:{{ o.dot }}"></span>{{ o.l }}</div></sc-for>
+    </div>
+    <div style="display:{{ toolsDisp }};gap:4px;padding:4px;background:#d6ccbf;border-radius:22px">
+      <sc-for list="{{ themeSeg }}" as="o" hint-placeholder-count="3"><div onClick="{{ o.go }}" style="height:38px;padding:0 16px;border-radius:19px;background:{{ o.bg }};display:flex;align-items:center;font-size:14px;font-weight:800;cursor:pointer;color:#3a2c24">{{ o.l }}</div></sc-for>
+    </div>
+  </div>
+
+  <div data-qg="" data-theme="{{ theme }}" data-user="{{ user }}" style="width:{{ fw }};max-width:100%;height:{{ fh }};border-radius:{{ fr }};box-shadow:0 30px 70px rgba(60,40,30,.28);overflow:hidden;position:relative;display:flex;background:linear-gradient(180deg,var(--color-bg-top),var(--color-bg-bottom));flex:none;transition:background .4s">
+
+    <div style="display:{{ sbDisp }};width:248px;flex:none;background:var(--color-sidebar);padding:28px 14px;box-sizing:border-box;flex-direction:column;gap:2px">
+      <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;padding:0 10px 20px">Le QG</div>
+      <sc-for list="{{ sideNav }}" as="n" hint-placeholder-count="10">
+        <div onClick="{{ n.go }}" style="display:flex;align-items:center;gap:12px;min-height:{{ n.h }};padding:0 10px 0 {{ n.pl }};border-radius:16px;background:{{ n.bg }};color:{{ n.color }};font-size:{{ n.fs }};font-weight:{{ n.fw }};cursor:pointer">
+          <span style="width:{{ n.gs }};height:{{ n.gs }};border-radius:50%;background:{{ n.gbg }};display:flex;align-items:center;justify-content:center;font-size:{{ n.ef }};box-shadow:var(--shadow-sticker);transform:rotate({{ n.rot }}deg);flex:none">{{ n.e }}</span>{{ n.l }}
+        </div>
+      </sc-for>
+      <div style="flex:1"></div>
+      <div onClick="{{ cycleTheme }}" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 10px;font-size:13px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">◐ Thème : {{ themeLabel }}</div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 10px 0;border-top:1px solid var(--color-border-strong)">
+        <div style="width:38px;height:38px;border-radius:50%;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">{{ initial }}</div>
+        <div><div style="font-size:14px;font-weight:700">{{ me }}</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-ink-soft)"><span style="width:7px;height:7px;border-radius:50%;background:{{ syncDot }};border:1.5px solid var(--color-success);box-sizing:border-box"></span>{{ syncLabel }}</div></div>
+      </div>
+    </div>
+
+    <div style="flex:1;min-width:0;position:relative">
+      <div style="display:{{ barDisp }};justify-content:space-between;padding:20px 28px 0;font-size:14px;font-weight:700"><span>9:41</span><span style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;font-weight:800;color:var(--color-ink-soft)">{{ netLabel }}</span><span style="width:22px;height:10px;border:1.5px solid var(--color-ink);border-radius:3px;box-sizing:border-box;padding:1px"><span style="display:block;width:70%;height:100%;background:var(--color-ink);border-radius:1px"></span></span></span></div>
+      <div ref="{{ scRef }}" class="noscroll" style="position:absolute;top:{{ scTop }};left:0;right:0;bottom:0;overflow-y:auto;padding:{{ scPad }};box-sizing:border-box">
+        <div style="max-width:1000px;margin:0 auto">
+
+        <!-- ACCUEIL -->
+        <div style="display:{{ dHome }};flex-direction:column;gap:16px;animation:qgIn .3s ease">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <div onClick="{{ backQG }}" style="display:{{ mobFlex }};align-items:center;height:44px;font-size:14px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">‹ Le QG</div>
+            <div style="flex:1"></div>
+            <div onClick="{{ cycleTheme }}" style="display:{{ mobFlex }};height:36px;padding:0 14px;border-radius:999px;background:var(--color-chip);align-items:center;font-size:13px;font-weight:800;cursor:pointer">◐ {{ themeLabel }}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;padding:0 4px">
+            <span style="width:54px;height:54px;border-radius:50%;background:#f0d9a8;display:flex;align-items:center;justify-content:center;font-size:25px;box-shadow:var(--shadow-sticker);transform:rotate(4deg);flex:none">🌍</span>
+            <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Mardi 3 novembre</div><div style="font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Accueil</div></div>
+            <div onClick="{{ openCustom }}" style="height:40px;padding:0 14px;border-radius:999px;background:var(--color-surface);box-shadow:var(--shadow-card);display:flex;align-items:center;font-size:13px;font-weight:800;cursor:pointer;flex:none">✎ Personnaliser</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px;align-items:start">
+            <div onClick="{{ goPrep }}" style="grid-column:1/-1;order:0;cursor:pointer;background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;overflow:hidden;transition:transform .2s" style-active="transform:scale(.98)">
+              <div style="height:5px;background:linear-gradient(90deg,var(--alex-base) 50%,var(--antoine-base) 50%)"></div>
+              <div style="padding:16px 18px 18px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+                  <div style="min-width:0">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Prochain départ</div>
+                    <div style="font-size:32px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-top:6px">Lisbonne</div>
+                    <div style="font-size:13px;color:var(--color-ink-soft);margin-top:4px">Jeudi 26 – lundi 30 novembre</div>
+                    <span style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;background:var(--color-surface-sunken);font-size:12px;font-weight:700;margin-top:10px"><span style="display:flex"><span style="width:9px;height:9px;border-radius:50%;background:var(--alex-base)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span>Commun</span>
+                  </div>
+                  <div style="text-align:right;flex:none;position:relative;padding-top:6px">
+                    <span style="position:absolute;left:-30px;top:-4px;width:34px;height:34px;border-radius:50%;background:#d5dde8;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:var(--shadow-sticker);animation:{{ floatAnim }}">✈️</span>
+                    <div style="font-size:66px;font-weight:800;letter-spacing:-.05em;line-height:.9;font-variant-numeric:tabular-nums">{{ count }}</div>
+                    <div style="font-size:13px;font-weight:700;color:var(--color-ink-soft);margin-top:4px">jours avant le départ</div>
+                  </div>
+                </div>
+                <div><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--color-ink-soft)"><span>Préparation</span><span>{{ lisDone }}/9 étapes validées</span></div><div style="height:8px;border-radius:999px;background:var(--color-track);margin-top:6px;overflow:hidden"><div style="height:100%;width:{{ lisPct }};background:var(--color-ink);border-radius:999px;transition:width .6s"></div></div></div>
+              </div>
+            </div>
+            <div style="order:{{ hs.prep.o }};display:{{ hs.prep.d }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px;flex-direction:column;gap:12px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">À préparer ensuite</div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="width:44px;height:44px;border-radius:50%;background:{{ nx.bg }};display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:var(--shadow-sticker);transform:rotate(-4deg);flex:none">{{ nx.e }}</span><div style="flex:1;min-width:0"><div style="font-size:18px;font-weight:700">{{ nx.t }}</div><div style="font-size:13px;color:var(--color-ink-soft);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ nx.sum }}</div></div></div>
+              <div onClick="{{ nx.open }}" style="height:50px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;cursor:pointer;transition:transform .15s" style-active="transform:scale(.97)">Ouvrir l'étape</div>
+              <div onClick="{{ goPrep }}" style="height:36px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">Voir les 9 étapes ›</div>
+            </div>
+            <div style="order:{{ hs.frise.o }};display:{{ hs.frise.d }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px;flex-direction:column;gap:12px;padding:16px 0 12px;gap:0">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:0 18px"><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Notre frise</span><span style="font-size:12px;font-weight:500;color:var(--color-ink-soft)">Voyages communs</span></div>
+              <div class="noscroll" style="overflow-x:auto;margin-top:12px"><div style="display:flex;padding:6px 14px;position:relative;width:max-content"><div style="position:absolute;left:56px;right:56px;top:28px;border-top:2px dashed var(--color-border-strong)"></div>
+                <sc-for list="{{ frise }}" as="f" hint-placeholder-count="6"><div onClick="{{ f.go }}" style="width:84px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;position:relative"><span style="width:44px;height:44px;border-radius:50%;background:{{ f.bg }};border:{{ f.bd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:var(--shadow-sticker);transform:rotate({{ f.rot }}deg);animation:{{ f.anim }};color:var(--color-ink-soft);font-weight:800">{{ f.e }}</span><span style="font-size:13px;font-weight:700;text-align:center">{{ f.name }}</span><span style="font-size:11px;font-weight:700;color:{{ f.dc }}">{{ f.date }}</span></div></sc-for>
+              </div></div>
+            </div>
+            <div style="order:{{ hs.saved.o }};display:{{ hs.saved.d }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px;flex-direction:column;gap:12px;padding-bottom:8px;gap:4px">
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Destinations enregistrées</span><span onClick="{{ goSavedAll }}" style="font-size:13px;font-weight:700;color:var(--color-ink-soft);cursor:pointer;padding:6px 0">Voir tout ›</span></div>
+              <sc-for list="{{ savedRows }}" as="o" hint-placeholder-count="0"><div onClick="{{ o.go }}" style="display:flex;align-items:center;gap:10px;min-height:52px;border-top:1px solid var(--color-border);cursor:pointer"><span style="width:14px;height:14px;border-radius:50%;background:{{ o.bg }};border:1.5px solid rgba(60,40,30,.18);box-sizing:border-box;flex:none"></span><span style="flex:1;min-width:0;font-size:15px;font-weight:600">{{ o.dest }}</span><span style="font-size:14px;font-weight:800">{{ o.price }}</span><span style="font-size:13px;font-weight:700;color:var(--user-text)">Préparer ›</span></div></sc-for>
+              <div style="display:{{ savedEmptyDisp }};flex-direction:column;gap:6px;padding:8px 0 10px;font-size:14px;color:var(--color-ink-soft);line-height:1.45">Touche ♥ sur une offre de Discover pour la retrouver ici.<span onClick="{{ goDiscover }}" style="font-weight:800;color:var(--user-text);cursor:pointer;padding:6px 0">Aller dans Discover ›</span></div>
+            </div>
+            <div onClick="{{ openLastSouv }}" style="order:{{ hs.souv.o }};display:{{ hs.souv.d }};cursor:pointer;background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px;flex-direction:column;gap:12px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Dernier souvenir · {{ lastTrip.name }}</div>
+              <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:50%;background:{{ lastTrip.bg }};display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:var(--shadow-sticker);transform:rotate(-4deg);flex:none">{{ lastTrip.e }}</span><div style="font-size:15px;font-weight:600;line-height:1.4;text-wrap:pretty">« {{ lastTrip.memory }} »</div></div>
+              <div style="font-size:13px;font-weight:700;color:var(--color-ink-soft)">Ouvrir les souvenirs ›</div>
+            </div>
+            <div onClick="{{ openLastDep }}" style="order:{{ hs.solde.o }};display:{{ hs.solde.d }};cursor:pointer;background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px;flex-direction:column;gap:12px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Comptes · {{ lastTrip.name }}</div>
+              <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;text-wrap:balance">{{ lastBal }}</div>
+              <div style="font-size:13px;font-weight:700;color:var(--color-ink-soft)">Voir les dépenses ›</div>
+            </div>
+            <div onClick="{{ goPrep }}" style="order:{{ hs.budget.o }};display:{{ hs.budget.d }};cursor:pointer;background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Budget · Lisbonne</span><span style="font-size:22px;font-weight:800;letter-spacing:-.02em">{{ hb.total }}</span></div>
+              <div style="position:relative;height:8px;border-radius:999px;background:var(--color-track)"><div style="height:100%;width:{{ hb.fill }};background:{{ hb.fillBg }};border-radius:999px;transition:width .5s"></div><div style="position:absolute;top:-3px;left:{{ hb.idealPos }};height:14px;border-left:2px solid var(--color-ink-soft)"></div><div style="position:absolute;top:-3px;left:{{ hb.limitPos }};height:14px;border-left:2px dashed var(--color-loss)"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--color-ink-soft)"><span>Idéal {{ hb.ideal }}</span><span>Limite {{ hb.limit }}</span></div>
+            </div>
+            <div onClick="{{ openCustom }}" style="grid-column:1/-1;order:99;height:52px;border-radius:20px;border:1.5px dashed var(--color-border-strong);box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">+ Ajouter une section</div>
+          </div>
+        </div>
+
+        <!-- NOS VOYAGES -->
+        <div style="display:{{ dTrips }};flex-direction:column;gap:14px;animation:qgIn .3s ease">
+          <div style="padding:6px 4px 0"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Carnet de voyage</div><div style="font-size:30px;font-weight:800;letter-spacing:-.02em">Nos voyages</div></div>
+          <div style="display:flex;gap:4px;padding:4px;background:var(--color-chip);border-radius:22px;max-width:420px">
+            <sc-for list="{{ tripTabs }}" as="o" hint-placeholder-count="2"><div onClick="{{ o.go }}" style="flex:1;height:40px;border-radius:18px;background:{{ o.bg }};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer;transition:background .2s">{{ o.l }}</div></sc-for>
+          </div>
+          <div style="display:{{ persoDisp }};gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ persoChips }}" as="c" hint-placeholder-count="3"><div onClick="{{ c.go }}" style="height:38px;padding:0 14px;border-radius:999px;background:{{ c.bg }};color:{{ c.color }};display:flex;align-items:center;gap:7px;font-size:14px;font-weight:700;cursor:pointer"><span style="display:{{ c.dotDisp }};width:9px;height:9px;border-radius:50%;background:{{ c.dot }}"></span>{{ c.l }}</div></sc-for>
+          </div>
+          <div style="background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+              <div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">En tout</div><div style="font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-top:4px">{{ statTotal }}</div><div style="font-size:12px;font-weight:500;color:var(--color-ink-soft);margin-top:2px">{{ statMeta }}</div></div>
+              <div style="display:flex;gap:4px;padding:4px;background:var(--color-chip);border-radius:22px">
+                <sc-for list="{{ statSeg }}" as="o" hint-placeholder-count="2"><div onClick="{{ o.go }}" style="height:34px;padding:0 12px;border-radius:17px;background:{{ o.bg }};display:flex;align-items:center;font-size:13px;font-weight:800;cursor:pointer">{{ o.l }}</div></sc-for>
+              </div>
+            </div>
+            <div style="display:{{ statCatDisp }};flex-direction:column;gap:12px">
+              <div style="display:flex;height:12px;border-radius:999px;overflow:hidden;gap:2px">
+                <sc-for list="{{ statCats }}" as="c" hint-placeholder-count="7"><span style="width:{{ c.w }};background:{{ c.bg }};transition:width .5s"></span></sc-for>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px 14px">
+                <sc-for list="{{ statCats }}" as="c" hint-placeholder-count="7"><div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="width:14px;height:14px;border-radius:50%;background:{{ c.bg }};border:1.5px solid rgba(60,40,30,.18);box-sizing:border-box;flex:none"></span><span style="flex:1;min-width:0;font-weight:600">{{ c.n }}</span><span style="font-weight:800">{{ c.pct }}</span></div></sc-for>
+              </div>
+            </div>
+            <div style="display:{{ statGeoDisp }};flex-direction:column">
+              <sc-for list="{{ statGeo }}" as="g" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:10px;min-height:48px;border-top:1px solid var(--color-border)"><span style="flex:1;min-width:0"><span style="font-size:15px;font-weight:600">{{ g.n }}</span><span style="font-size:12px;color:var(--color-ink-soft);margin-left:8px">{{ g.sub }}</span></span><span style="font-size:14px;font-weight:800">{{ g.amt }}</span></div></sc-for>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 4px 0">
+            <span style="font-size:15px;font-weight:800">{{ tripCount }}</span>
+            <div style="display:flex;gap:4px;padding:4px;background:var(--color-chip);border-radius:22px">
+              <sc-for list="{{ viewSeg }}" as="o" hint-placeholder-count="2"><div onClick="{{ o.go }}" style="height:34px;padding:0 12px;border-radius:17px;background:{{ o.bg }};display:flex;align-items:center;font-size:13px;font-weight:800;cursor:pointer">{{ o.l }}</div></sc-for>
+            </div>
+          </div>
+          <div style="display:{{ listDisp }};grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px">
+            <sc-for list="{{ tripList }}" as="t" hint-placeholder-count="4">
+              <div onClick="{{ t.open }}" style="cursor:pointer;background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:12px;display:flex;gap:14px;align-items:stretch;transition:transform .2s" style-hover="transform:translateY(-2px)" style-active="transform:scale(.98)">
+                <div style="width:92px;min-height:104px;border-radius:16px;background:{{ t.cover }};display:flex;align-items:center;justify-content:center;flex:none"><span style="width:44px;height:44px;border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:var(--shadow-sticker);transform:rotate({{ t.rot }}deg)">{{ t.e }}</span></div>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:2px 0">
+                  <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><span style="font-size:18px;font-weight:700">{{ t.name }}</span><span style="font-size:13px;font-weight:800;white-space:nowrap">{{ t.total }}</span></div>
+                  <div style="font-size:12px;font-weight:500;color:var(--color-ink-soft)">{{ t.dates }}</div>
+                  <div style="font-size:13px;line-height:1.4;color:var(--color-ink-soft);text-wrap:pretty;margin-top:2px">« {{ t.memory }} »</div>
+                  <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;margin-top:auto;padding-top:4px"><span style="display:flex"><span style="width:9px;height:9px;border-radius:50%;background:{{ t.dot1 }}"></span><span style="display:{{ t.dot2 }};width:9px;height:9px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span>{{ t.own }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:{{ gridDisp }};grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+            <sc-for list="{{ tripList }}" as="t" hint-placeholder-count="4">
+              <div onClick="{{ t.open }}" style="cursor:pointer;background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:22px;overflow:hidden;transition:transform .2s" style-hover="transform:translateY(-2px)" style-active="transform:scale(.97)">
+                <div style="height:110px;background:{{ t.cover }};display:flex;align-items:center;justify-content:center"><span style="width:46px;height:46px;border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:var(--shadow-sticker);transform:rotate({{ t.rot }}deg)">{{ t.e }}</span></div>
+                <div style="padding:10px 12px 12px"><div style="display:flex;align-items:center;gap:6px"><span style="display:flex"><span style="width:8px;height:8px;border-radius:50%;background:{{ t.dot1 }}"></span><span style="display:{{ t.dot2 }};width:8px;height:8px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span><span style="font-size:16px;font-weight:700">{{ t.name }}</span></div><div style="font-size:12px;font-weight:500;color:var(--color-ink-soft);margin-top:2px">{{ t.short }} · {{ t.total }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- DETAIL VOYAGE -->
+        <div style="display:{{ dTrip }};flex-direction:column;gap:14px;animation:qgIn .3s ease">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <div onClick="{{ goBack }}" style="display:flex;align-items:center;height:44px;font-size:14px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">‹ {{ backLabel }}</div>
+            <div onClick="{{ soon }}" style="display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:999px;background:var(--color-chip);font-size:13px;font-weight:800;cursor:pointer">Partager en lecture<span style="font-size:10px;font-weight:700;color:var(--color-ink-soft)">Available soon…</span></div>
+          </div>
+          <div style="height:170px;border-radius:24px;background:{{ dt.cover }};position:relative;display:flex;align-items:center;justify-content:center">
+            <span style="width:64px;height:64px;border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:var(--shadow-sticker);transform:rotate({{ dt.rot }}deg)">{{ dt.e }}</span>
+            <span style="position:absolute;left:14px;bottom:12px;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#3a2c24;background:rgba(249,242,234,.8);padding:3px 8px;border-radius:8px">photo de couverture</span>
+          </div>
+          <div style="padding:0 4px">
+            <div style="font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1">{{ dt.name }}</div>
+            <div style="font-size:13px;color:var(--color-ink-soft);margin-top:4px">{{ dt.country }} · {{ dt.dates }} · {{ dt.days }} j</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;margin-top:8px"><span style="display:flex"><span style="width:9px;height:9px;border-radius:50%;background:{{ dt.dot1 }}"></span><span style="display:{{ dt.dot2 }};width:9px;height:9px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span>{{ dt.own }}</div>
+          </div>
+          <div style="background:var(--color-surface-sunken);border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center">
+            <span style="width:34px;height:34px;border-radius:50%;background:#f0d9a8;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:var(--shadow-sticker);transform:rotate(-4deg);flex:none">💛</span>
+            <div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Souvenir préféré</div><div style="font-size:14px;font-weight:600;margin-top:2px;text-wrap:pretty">{{ dt.memory }}</div></div>
+          </div>
+          <div class="noscroll" style="display:{{ secChipsDisp }};gap:8px;overflow-x:auto;margin:0 -18px;padding:2px 18px">
+            <sc-for list="{{ secChips }}" as="c" hint-placeholder-count="6"><div onClick="{{ c.go }}" style="height:38px;padding:0 14px;border-radius:999px;background:{{ c.bg }};color:{{ c.color }};display:flex;align-items:center;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none;transition:background .2s">{{ c.l }}</div></sc-for>
+          </div>
+          <div ref="{{ gridRef }}" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:14px;align-items:start">
+            <div style="display:{{ secDep }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px 6px;animation:qgIn .25s ease">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Dépenses</div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;font-weight:800;letter-spacing:-.03em">{{ dExp.total }}</span><span style="font-size:12px;font-weight:700;color:{{ dExp.stColor }}">{{ dExp.status }}</span></div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:12px;background:var(--color-surface-sunken);border-radius:14px;padding:10px 12px"><span style="display:flex;flex:none"><span style="width:9px;height:9px;border-radius:50%;background:var(--alex-base)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span><span style="flex:1;min-width:0;font-size:14px;font-weight:800;text-wrap:balance">{{ split.text }}</span></div>
+              <div style="position:relative;margin:12px 0 26px">
+                <div style="height:10px;border-radius:999px;background:var(--color-track);overflow:hidden"><div style="height:100%;width:{{ dExp.fill }};background:{{ dExp.fillBg }};border-radius:999px;transition:width .6s"></div></div>
+                <div style="position:absolute;top:-4px;left:{{ dExp.idealPos }};height:18px;border-left:2px solid var(--color-ink-soft)"></div>
+                <div style="position:absolute;top:18px;left:{{ dExp.idealPos }};transform:translateX(-50%);font-size:11px;font-weight:700;color:var(--color-ink-soft);white-space:nowrap">Idéal {{ dExp.ideal }}</div>
+                <div style="position:absolute;top:-4px;left:{{ dExp.limitPos }};height:18px;border-left:2px dashed var(--color-loss)"></div>
+                <div style="position:absolute;top:18px;left:{{ dExp.limitPos }};transform:translateX(-70%);font-size:11px;font-weight:700;color:var(--color-loss);white-space:nowrap">Limite {{ dExp.limit }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;padding-bottom:10px">
+                <sc-for list="{{ dExp.cats }}" as="c" hint-placeholder-count="7"><div style="display:flex;align-items:center;gap:10px;font-size:13px"><span style="width:14px;height:14px;border-radius:50%;background:{{ c.bg }};border:1.5px solid rgba(60,40,30,.18);box-sizing:border-box;flex:none"></span><span style="width:120px;font-weight:600;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.n }}</span><span style="flex:1;height:8px;border-radius:999px;background:var(--color-track);overflow:hidden"><span style="display:block;height:100%;width:{{ c.w }};background:var(--color-ink-soft);border-radius:999px"></span></span><span style="width:62px;text-align:right;font-weight:800">{{ c.amt }}</span></div></sc-for>
+              </div>
+              <sc-for list="{{ dExp.rows }}" as="e" hint-placeholder-count="7">
+                <div style="display:flex;align-items:center;gap:12px;min-height:60px;border-top:1px solid var(--color-border);animation:{{ e.anim }}">
+                  <span style="width:14px;height:14px;border-radius:50%;background:{{ e.bg }};border:1.5px solid rgba(60,40,30,.18);box-sizing:border-box;flex:none"></span>
+                  <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.label }}</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--color-ink-soft);margin-top:2px"><span style="display:flex"><span style="width:8px;height:8px;border-radius:50%;background:{{ e.dot1 }}"></span><span style="display:{{ e.dot2 }};width:8px;height:8px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span>{{ e.meta }}</div></div>
+                  <span style="font-size:15px;font-weight:800;white-space:nowrap">{{ e.amt }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:{{ secSplit }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px 18px;flex-direction:column;gap:14px;animation:qgIn .25s ease">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Qui a payé quoi</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div style="background:var(--alex-tint);border-radius:16px;padding:12px 14px"><div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--alex-text)"><span style="width:9px;height:9px;border-radius:50%;background:var(--alex-base)"></span>Alex a payé</div><div style="font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:4px">{{ split.a }}</div></div>
+                <div style="background:var(--antoine-tint);border-radius:16px;padding:12px 14px"><div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--antoine-text)"><span style="width:9px;height:9px;border-radius:50%;background:var(--antoine-base)"></span>Antoine a payé</div><div style="font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:4px">{{ split.b }}</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--color-ink-soft)"><span style="display:flex;flex:none"><span style="width:9px;height:9px;border-radius:50%;background:var(--alex-base)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span><span style="flex:1">Épargne commune : <b style="color:var(--color-ink)">{{ split.c }}</b>. N'entre pas dans les remboursements.</span></div>
+              <div style="background:var(--color-surface-sunken);border-radius:16px;padding:14px;text-align:center">
+                <div style="font-size:12px;font-weight:700;color:var(--color-ink-soft)">{{ split.head }}</div>
+                <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:4px;text-wrap:balance">{{ split.text }}</div>
+              </div>
+              <div onClick="{{ settle }}" style="display:{{ split.btn }};height:52px;border-radius:999px;background:var(--user-base);color:#fff;align-items:center;justify-content:center;font-size:15px;font-weight:800;cursor:pointer;transition:transform .15s" style-active="transform:scale(.97)">Marquer comme réglé</div>
+            </div>
+            <div style="display:{{ secItin }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px 6px;animation:qgIn .25s ease">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft);margin-bottom:6px">Itinéraire jour par jour</div>
+              <sc-for list="{{ dItin }}" as="d" hint-placeholder-count="5"><div style="display:flex;gap:14px;min-height:58px;align-items:center;border-top:1px solid var(--color-border)"><span style="width:52px;flex:none;font-size:12px;font-weight:800;color:var(--user-text)">{{ d.k }}</span><span style="font-size:14px;font-weight:500;line-height:1.4;text-wrap:pretty">{{ d.v }}</span></div></sc-for>
+            </div>
+            <div onDragOver="{{ prevent }}" onDrop="{{ onDrop }}" style="display:{{ secPhotos }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px 18px;flex-direction:column;gap:12px;animation:qgIn .25s ease">
+  <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Photos</span><span style="font-size:12px;font-weight:800;color:var(--color-ink-soft)">{{ photoCount }} / 20</span></div>
+  <div style="height:6px;border-radius:999px;background:var(--color-track);overflow:hidden"><div style="height:100%;width:{{ photoPct }};background:var(--color-ink-soft);border-radius:999px;transition:width .4s"></div></div>
+  <div style="display:{{ photoEmptyDisp }};flex-direction:column;align-items:center;gap:10px;text-align:center;border:2px dashed var(--color-border-strong);border-radius:20px;padding:26px 16px">
+    <span style="width:56px;height:56px;border-radius:50%;background:#ecb8b0;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:var(--shadow-sticker);transform:rotate(-5deg)">📷</span>
+    <div style="font-size:16px;font-weight:700">Ajoutez vos premières photos</div>
+    <div style="font-size:14px;color:var(--color-ink-soft);max-width:280px;text-wrap:pretty">Moins de 20 par voyage. Glisse-les ici ou choisis-les dans ta galerie.</div>
+    <label style="height:52px;padding:0 24px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800;cursor:pointer"><input type="file" accept="image/*" multiple onChange="{{ onFiles }}" style="display:none">Choisir des photos</label>
+  </div>
+  <div style="display:{{ galleryDisp }};grid-template-columns:repeat(3,1fr);gap:6px">
+    <sc-for list="{{ pics }}" as="p" hint-placeholder-count="9"><div onClick="{{ p.open }}" style="aspect-ratio:1;border-radius:12px;background:{{ p.bgc }};cursor:pointer;animation:{{ p.anim }}"></div></sc-for>
+    <label style="aspect-ratio:1;border-radius:12px;border:2px dashed var(--color-border-strong);display:{{ addTileDisp }};align-items:center;justify-content:center;font-size:26px;font-weight:700;color:var(--color-ink-soft);cursor:pointer"><input type="file" accept="image/*" multiple onChange="{{ onFiles }}" style="display:none">+</label>
+  </div>
+</div>
+<div style="display:{{ secNotes }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px 18px;flex-direction:column;gap:12px;animation:qgIn .25s ease">
+  <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Carnet</span><span onClick="{{ resetMode }}" style="display:{{ nbMainDisp }};font-size:13px;font-weight:700;color:var(--color-ink-soft);cursor:pointer;padding:8px 0">Changer de format</span></div>
+  <div style="display:{{ nbChooseDisp }};flex-direction:column;gap:10px">
+    <div style="font-size:15px;font-weight:700">Comment veux-tu raconter ce voyage ?</div>
+    <div onClick="{{ chooseFree }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;background:var(--color-surface-sunken);border-radius:20px;padding:14px;transition:transform .2s" style-active="transform:scale(.98)"><span style="width:44px;height:44px;border-radius:50%;background:#e3d9e9;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:var(--shadow-sticker);transform:rotate(-4deg);flex:none">✎</span><div><div style="font-size:16px;font-weight:700">Carnet libre</div><div style="font-size:13px;color:var(--color-ink-soft);margin-top:2px">Des pages à ta façon, sans date.</div></div></div>
+    <div onClick="{{ chooseDaily }}" style="cursor:pointer;display:flex;align-items:center;gap:14px;background:var(--color-surface-sunken);border-radius:20px;padding:14px;transition:transform .2s" style-active="transform:scale(.98)"><span style="width:44px;height:44px;border-radius:50%;background:#f6dfc6;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:var(--shadow-sticker);transform:rotate(4deg);flex:none">📅</span><div><div style="font-size:16px;font-weight:700">Un carnet par jour</div><div style="font-size:13px;color:var(--color-ink-soft);margin-top:2px">Une page pour chacun des {{ dt.days }} jours.</div></div></div>
+  </div>
+  <div style="display:{{ nbMainDisp }};flex-direction:column;gap:12px">
+    <div style="display:flex;gap:4px;padding:4px;background:var(--color-chip);border-radius:22px"><sc-for list="{{ nbViewSeg }}" as="o" hint-placeholder-count="2"><div onClick="{{ o.go }}" style="flex:1;height:40px;border-radius:18px;background:{{ o.bg }};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer;transition:background .2s">{{ o.l }}</div></sc-for></div>
+    <div class="noscroll" style="display:flex;gap:6px;overflow-x:auto;margin:0 -18px;padding:2px 18px"><sc-for list="{{ pageChips }}" as="c" hint-placeholder-count="5"><div onClick="{{ c.go }}" style="height:36px;padding:0 13px;border-radius:999px;background:{{ c.bg }};color:{{ c.color }};display:flex;align-items:center;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none">{{ c.l }}</div></sc-for><div onClick="{{ addPage }}" style="display:{{ addPageDisp }};height:36px;padding:0 13px;border-radius:999px;border:1.5px dashed var(--color-border-strong);box-sizing:border-box;align-items:center;font-size:13px;font-weight:700;color:var(--color-ink-soft);cursor:pointer;white-space:nowrap;flex:none">+ Page</div></div>
+    <div style="display:{{ writeDisp }};flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--color-ink-soft)"><span style="width:8px;height:8px;border-radius:50%;background:var(--user-base)"></span>{{ pageLabel }}</div>
+      <input value="{{ pTitle }}" onChange="{{ onTitle }}" placeholder="Titre de la page (facultatif)" style="height:52px;border-radius:16px;background:var(--color-input);border:1.5px solid var(--color-border-strong);padding:0 14px;font-size:17px;font-weight:700;outline:none;box-sizing:border-box;width:100%">
+      <textarea value="{{ pText }}" onChange="{{ onText }}" placeholder="Raconte ta journée…" style="width:100%;height:200px;border-radius:16px;background:var(--color-input);border:1.5px solid var(--color-border-strong);padding:12px 14px;font-size:15px;line-height:1.55;outline:none;box-sizing:border-box;resize:vertical"></textarea>
+      <div style="display:{{ pPicsDisp }};grid-template-columns:repeat(3,1fr);gap:6px"><sc-for list="{{ pPics }}" as="p" hint-placeholder-count="2"><div style="position:relative;aspect-ratio:1;border-radius:12px;background:{{ p.bgc }}"><span onClick="{{ p.remove }}" style="position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;cursor:pointer">✕</span></div></sc-for></div>
+      <div onClick="{{ openPick }}" style="height:48px;border-radius:999px;border:1.5px solid var(--color-ink);box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer">📷 Insérer une photo</div>
+    </div>
+    <div style="display:{{ bookDisp }};flex-direction:column;gap:14px">
+      <div style="perspective:1200px;padding:0 10px 10px 0">
+        <div style="position:relative;min-height:320px;background:var(--color-input);border-radius:6px 18px 18px 6px;box-shadow:4px 4px 0 var(--color-chip),8px 8px 0 var(--color-track);padding:22px 20px 26px 28px;box-sizing:border-box;transform-origin:{{ flipOrigin }};animation:{{ flipAnim }}">
+          <div style="position:absolute;left:0;top:0;bottom:0;width:10px;background:var(--color-border);border-radius:6px 0 0 6px"></div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">{{ bookMeta }}</div>
+          <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:6px;line-height:1.2">{{ bookTitle }}</div>
+          <div style="font-size:15px;line-height:1.65;margin-top:10px;white-space:pre-wrap;text-wrap:pretty;color:{{ bookColor }}">{{ bookText }}</div>
+          <div style="display:{{ pPicsDisp }};grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px"><sc-for list="{{ pPicsBook }}" as="p" hint-placeholder-count="2"><div style="aspect-ratio:4/3;border-radius:10px;background:{{ p.bgc }}"></div></sc-for></div>
+          <div style="position:absolute;right:16px;bottom:8px;font-size:12px;font-weight:700;color:var(--color-ink-faint)">{{ bookNum }}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div onClick="{{ prevPage }}" style="height:48px;padding:0 18px;border-radius:999px;background:var(--color-chip);display:flex;align-items:center;font-size:14px;font-weight:800;cursor:pointer;opacity:{{ prevOp }}">‹ Précédente</div>
+        <span style="font-size:13px;font-weight:800;color:var(--color-ink-soft)">{{ bookNum }}</span>
+        <div onClick="{{ nextPage }}" style="height:48px;padding:0 18px;border-radius:999px;background:var(--color-ink);color:var(--color-ink-inverse);display:flex;align-items:center;font-size:14px;font-weight:800;cursor:pointer;opacity:{{ nextOp }}">Suivante ›</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="display:{{ secMap }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px 18px;flex-direction:column;gap:12px;animation:qgIn .25s ease">
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Carte</span><span style="font-size:10px;font-weight:700;color:var(--color-ink-soft);background:var(--color-chip);padding:4px 8px;border-radius:999px">Carte embarquée</span></div>
+              <div ref="{{ tripMapRef }}" style="width:100%;height:240px;border-radius:16px;overflow:hidden;background:var(--color-track);position:relative;z-index:0"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PREPARER -->
+        <div style="display:{{ dPrep }};flex-direction:column;gap:14px;animation:qgIn .3s ease">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;padding:6px 4px 0;flex-wrap:wrap">
+            <div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Carnet de voyage</div><div style="font-size:30px;font-weight:800;letter-spacing:-.02em">Préparer</div></div>
+            <div onClick="{{ soon }}" style="display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border-radius:999px;background:var(--color-chip);font-size:13px;font-weight:800;cursor:pointer">Partager<span style="font-size:10px;font-weight:700;color:var(--color-ink-soft)">Available soon…</span></div>
+          </div>
+          <div class="noscroll" style="display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:2px 18px">
+            <sc-for list="{{ prepTripChips }}" as="c" hint-placeholder-count="2"><div onClick="{{ c.go }}" style="height:40px;padding:0 14px;border-radius:999px;background:{{ c.bg }};color:{{ c.color }};display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none">{{ c.l }}<span style="font-size:11px;font-weight:700;opacity:.75">{{ c.sub }}</span></div></sc-for>
+            <div onClick="{{ newDraft }}" style="height:40px;padding:0 14px;border-radius:999px;border:1.5px dashed var(--color-border-strong);box-sizing:border-box;display:flex;align-items:center;font-size:14px;font-weight:700;color:var(--color-ink-soft);cursor:pointer;white-space:nowrap;flex:none">+ Nouveau voyage</div>
+          </div>
+          <div style="position:sticky;top:-8px;z-index:3;background:var(--color-ink);color:var(--color-ink-inverse);border-radius:22px;padding:14px 16px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow-nav)">
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:12px;font-weight:700;opacity:.8">Budget prévu</span><span style="font-size:20px;font-weight:800;letter-spacing:-.02em">{{ rb.total }}</span></div>
+              <div style="position:relative;height:8px;border-radius:999px;background:rgba(127,110,98,.45);margin-top:8px">
+                <div style="height:100%;width:{{ rb.fill }};background:{{ rb.fillBg }};border-radius:999px;transition:width .5s"></div>
+                <div style="position:absolute;top:-3px;left:{{ rb.idealPos }};height:14px;border-left:2px solid currentColor"></div>
+                <div style="position:absolute;top:-3px;left:{{ rb.limitPos }};height:14px;border-left:2px dashed #e98b8b"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;opacity:.8;margin-top:6px"><span>Idéal {{ rb.ideal }}</span><span>Limite {{ rb.limit }}</span></div>
+            </div>
+            <div style="width:54px;height:54px;border-radius:50%;background:{{ rb.ring }};display:flex;align-items:center;justify-content:center;flex:none"><span style="width:42px;height:42px;border-radius:50%;background:var(--color-ink);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800">{{ rb.done }}/9</span></div>
+          </div>
+          <div style="font-size:13px;color:var(--color-ink-soft);padding:0 4px">Toutes les étapes sont là. Commence par celle que tu veux, en manuel ou avec l'IA.</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:10px">
+            <sc-for list="{{ stepCards }}" as="c" hint-placeholder-count="9">
+              <div onClick="{{ c.open }}" style="cursor:pointer;background:var(--color-surface);box-shadow:{{ c.shadow }};border-radius:22px;padding:14px;min-height:150px;box-sizing:border-box;display:flex;flex-direction:column;gap:8px;transition:transform .2s" style-hover="transform:translateY(-2px)" style-active="transform:scale(.97)">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+                  <span style="font-size:24px;line-height:1;flex:none">{{ c.e }}</span>
+                  <span style="height:24px;padding:0 9px;border-radius:999px;background:{{ c.stBg }};color:{{ c.stColor }};border:{{ c.stBd }};box-sizing:border-box;display:flex;align-items:center;font-size:11px;font-weight:800;white-space:nowrap;animation:{{ c.anim }}">{{ c.st }}</span>
+                </div>
+                <div style="margin-top:auto"><div style="font-size:11px;font-weight:800;color:var(--user-text);height:14px">{{ c.rec }}</div><div style="font-size:15px;font-weight:700">{{ c.t }}</div></div>
+                <div style="font-size:12px;font-weight:500;color:var(--color-ink-soft);line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ c.sum }}</div>
+                <div style="font-size:11px;font-weight:800;color:var(--color-ink-soft)">{{ c.mode }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- ETAPE -->
+        <div style="display:{{ dStep }};flex-direction:column;gap:14px;animation:qgIn .3s ease">
+          <div onClick="{{ goPrep }}" style="display:flex;align-items:center;height:44px;font-size:14px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">‹ Préparer · {{ prepName }}</div>
+          <div style="display:flex;align-items:center;gap:14px;padding:0 4px">
+            <span style="width:56px;height:56px;border-radius:50%;background:{{ sv.bg }};display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:var(--shadow-sticker);transform:rotate({{ sv.rot }}deg);flex:none;animation:{{ sv.anim }}">{{ sv.e }}</span>
+            <div style="flex:1;min-width:0"><div style="font-size:24px;font-weight:800;letter-spacing:-.02em">{{ sv.t }}</div><span style="display:inline-flex;height:24px;padding:0 9px;border-radius:999px;background:{{ sv.stBg }};color:{{ sv.stColor }};border:{{ sv.stBd }};box-sizing:border-box;align-items:center;font-size:11px;font-weight:800;margin-top:4px">{{ sv.st }}</span></div>
+          </div>
+          <div style="display:flex;gap:4px;padding:4px;background:var(--color-chip);border-radius:22px;max-width:420px">
+            <sc-for list="{{ modeSeg }}" as="o" hint-placeholder-count="2"><div onClick="{{ o.go }}" style="flex:1;height:42px;border-radius:18px;background:{{ o.bg }};display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;cursor:pointer;transition:background .2s">{{ o.l }}</div></sc-for>
+          </div>
+
+          <div style="display:{{ aiDisp }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;overflow:hidden">
+            <div style="height:5px;background:repeating-linear-gradient(90deg,var(--color-quest-soft) 0 14px,var(--color-quest-stripe) 14px 28px)"></div>
+            <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px">
+              <span style="font-size:14px;font-weight:800">✦ Proposition de l'IA</span>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <div onClick="{{ regen }}" style="height:44px;padding:0 16px;border-radius:999px;background:var(--color-chip);display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;cursor:pointer;transition:transform .15s" style-active="transform:scale(.96)"><span style="display:inline-block;transform:rotate({{ regenRot }}deg);transition:transform .7s ease">↻</span>{{ regenLabel }}</div>
+                <div onClick="{{ toggleOpt }}" style="height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--color-border-strong);box-sizing:border-box;display:flex;align-items:center;font-size:14px;font-weight:800;cursor:pointer;color:var(--color-ink-soft)">{{ optLabel }}</div>
+              </div>
+              <div style="display:{{ optDisp }};flex-direction:column;gap:12px;animation:qgIn .2s ease">
+                <div style="display:{{ countDisp }};align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--color-ink-soft)">Propositions</span><div style="display:flex;gap:3px;padding:3px;background:var(--color-chip);border-radius:18px"><sc-for list="{{ countSeg }}" as="o" hint-placeholder-count="3"><div onClick="{{ o.go }}" style="width:34px;height:30px;border-radius:15px;background:{{ o.bg }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;cursor:pointer">{{ o.l }}</div></sc-for></div></div>
+                <div onClick="{{ openImport }}" style="align-self:flex-start;height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--color-ink);box-sizing:border-box;display:flex;align-items:center;font-size:14px;font-weight:800;cursor:pointer">Importer depuis Claude</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ adjChips }}" as="a" hint-placeholder-count="4"><div onClick="{{ a.go }}" style="height:32px;padding:0 12px;border-radius:999px;background:var(--color-surface-sunken);display:flex;align-items:center;font-size:13px;font-weight:700;cursor:pointer">{{ a.l }}</div></sc-for></div>
+                <div style="display:flex;gap:8px"><input value="{{ adjust }}" onChange="{{ onAdjust }}" placeholder="Demande un ajustement…" style="flex:1;min-width:0;height:48px;border-radius:16px;background:var(--color-input);border:1.5px solid var(--color-border-strong);padding:0 14px;font-size:15px;font-weight:600;outline:none;box-sizing:border-box"><div onClick="{{ sendAdjust }}" style="height:48px;padding:0 16px;border-radius:999px;background:var(--color-ink);color:var(--color-ink-inverse);display:flex;align-items:center;font-size:14px;font-weight:800;cursor:pointer">Envoyer</div></div>
+                <div style="font-size:12px;color:var(--color-ink-soft);line-height:1.45">Verrouille les lignes à garder : seules les autres changent. Génération via l'API Claude dans l'app · <b>Available soon…</b></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:{{ propTabsDisp }};gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ propTabs }}" as="o" hint-placeholder-count="3"><div onClick="{{ o.go }}" style="height:40px;padding:0 14px;border-radius:999px;background:{{ o.bg }};color:{{ o.color }};display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;cursor:pointer">{{ o.l }}</div></sc-for>
+          </div>
+
+          <div style="display:{{ emptyDisp }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:26px 18px;flex-direction:column;align-items:center;gap:12px;text-align:center">
+            <span style="width:56px;height:56px;border-radius:50%;background:{{ sv.bg }};display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:var(--shadow-sticker);transform:rotate(-5deg)">{{ sv.e }}</span>
+            <div style="font-size:16px;font-weight:700">Pas encore de proposition</div>
+            <div style="font-size:14px;color:var(--color-ink-soft);max-width:300px;text-wrap:pretty">L'IA part de la destination, des dates et du budget déjà remplis.</div>
+            <div onClick="{{ regen }}" style="height:52px;padding:0 24px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;font-size:15px;font-weight:800;cursor:pointer;transition:transform .15s" style-active="transform:scale(.97)">Générer une proposition</div>
+          </div>
+
+          <div style="display:{{ linesDisp }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:6px 16px 8px;flex-direction:column">
+            <sc-for list="{{ stepLines }}" as="l" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:10px;min-height:62px;border-top:{{ l.bt }};animation:{{ l.anim }}">
+                <div style="flex:1;min-width:0;padding:8px 0">
+                  <div style="font-size:12px;font-weight:600;color:var(--color-ink-soft)">{{ l.k }}</div>
+                  <input value="{{ l.v }}" onChange="{{ l.edit }}" placeholder="À remplir" style="width:100%;border:none;background:transparent;font-size:15px;font-weight:600;padding:2px 0;outline:none;box-sizing:border-box">
+                </div>
+                <div onClick="{{ l.lock }}" style="display:{{ l.lockDisp }};height:34px;padding:0 12px;border-radius:999px;background:{{ l.lockBg }};color:{{ l.lockColor }};align-items:center;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;flex:none;transition:background .2s">{{ l.lockLabel }}</div>
+              </div>
+            </sc-for>
+            <div onClick="{{ addLine }}" style="display:{{ addLineDisp }};height:48px;align-items:center;font-size:14px;font-weight:700;color:var(--user-text);cursor:pointer;border-top:1px solid var(--color-border)">+ Ajouter une ligne</div>
+            <a onClick="{{ bookStep }}" style="display:{{ bookStepDisp }};height:50px;margin:8px 0 6px;border-radius:999px;border:1.5px solid var(--color-ink);color:var(--color-ink);align-items:center;justify-content:center;font-size:15px;font-weight:800;cursor:pointer">Réserver sur le site officiel ↗</a>
+          </div>
+
+          <div style="display:{{ budgetDisp }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 16px 10px;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding-bottom:10px"><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Total commun</span><span style="font-size:28px;font-weight:800;letter-spacing:-.03em">{{ rb.total }}</span></div>
+            <sc-for list="{{ budgetRows }}" as="b" hint-placeholder-count="7">
+              <div style="display:flex;align-items:center;gap:12px;min-height:58px;border-top:1px solid var(--color-border);animation:{{ b.anim }}">
+                <span style="width:14px;height:14px;border-radius:50%;background:{{ b.bg }};border:1.5px solid rgba(60,40,30,.18);box-sizing:border-box;flex:none"></span>
+                <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600">{{ b.n }}</div><div style="height:6px;border-radius:999px;background:var(--color-track);margin-top:6px;overflow:hidden"><div style="height:100%;width:{{ b.w }};background:var(--color-ink-soft);border-radius:999px;transition:width .4s"></div></div></div>
+                <div style="display:flex;align-items:center;gap:4px;height:44px;padding:0 12px;border-radius:14px;background:var(--color-input);border:1.5px solid var(--color-border-strong);box-sizing:border-box"><input value="{{ b.v }}" onChange="{{ b.edit }}" inputmode="numeric" style="width:52px;border:none;background:transparent;font-size:15px;font-weight:800;text-align:right;outline:none"><span style="font-size:14px;font-weight:700;color:var(--color-ink-soft)">€</span></div>
+              </div>
+            </sc-for>
+            <div style="display:flex;align-items:center;gap:10px;min-height:58px;border-top:1px solid var(--color-border);font-size:13px;color:var(--color-ink-soft)"><span style="flex:1;line-height:1.4">Devise sur place : euro. Pas de conversion pour ce voyage.</span><span style="font-size:10px;font-weight:700;background:var(--color-chip);padding:4px 8px;border-radius:999px;white-space:nowrap">Convertisseur · Available soon…</span></div>
+          </div>
+
+          <div style="display:{{ packDisp }};flex-direction:column;gap:12px">
+            <div style="background:var(--color-surface-sunken);border-radius:16px;padding:12px 14px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Pris en compte</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><sc-for list="{{ packParams }}" as="p" hint-placeholder-count="5"><span style="height:30px;padding:0 10px;border-radius:999px;background:var(--color-surface);display:flex;align-items:center;font-size:12px;font-weight:700">{{ p }}</span></sc-for></div>
+            </div>
+            <div style="display:flex;gap:4px;padding:4px;background:var(--color-chip);border-radius:22px">
+              <sc-for list="{{ packSeg }}" as="o" hint-placeholder-count="3"><div onClick="{{ o.go }}" style="flex:1;height:40px;border-radius:18px;background:{{ o.bg }};display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;cursor:pointer"><span style="display:flex"><span style="width:8px;height:8px;border-radius:50%;background:{{ o.d1 }}"></span><span style="display:{{ o.d2 }};width:8px;height:8px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span>{{ o.l }}</div></sc-for>
+            </div>
+            <div style="background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:14px 16px 6px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8px"><span style="font-size:14px;font-weight:800">{{ packTitle }}</span><span style="height:24px;padding:0 9px;border-radius:999px;background:var(--color-streak-bg);color:var(--color-streak-ink);display:flex;align-items:center;font-size:12px;font-weight:800">{{ packProg }}</span></div>
+              <div style="height:8px;border-radius:999px;background:var(--color-track);overflow:hidden;margin-bottom:6px"><div style="height:100%;width:{{ packPct }};background:var(--user-base);border-radius:999px;transition:width .4s"></div></div>
+              <sc-for list="{{ packItems }}" as="i" hint-placeholder-count="6">
+                <div onClick="{{ i.toggle }}" style="display:flex;align-items:center;gap:12px;min-height:54px;border-top:1px solid var(--color-border);cursor:pointer">
+                  <span style="width:28px;height:28px;border-radius:50%;background:{{ i.boxBg }};border:2px solid {{ i.boxBd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex:none;animation:{{ i.anim }}">{{ i.mark }}</span>
+                  <span style="font-size:15px;font-weight:600;color:{{ i.tc }};text-decoration:{{ i.td }};flex:1">{{ i.t }}</span>
+                  <span style="font-size:11px;font-weight:700;color:var(--color-ink-faint)">{{ i.tag }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <span style="font-size:13px;font-weight:700;color:var(--color-ink-soft)">Modèles :</span>
+              <sc-for list="{{ packTpl }}" as="t" hint-placeholder-count="3"><div onClick="{{ t.go }}" style="height:36px;padding:0 12px;border-radius:999px;background:var(--color-surface);display:flex;align-items:center;font-size:13px;font-weight:700;cursor:pointer">+ {{ t.l }}</div></sc-for>
+              <div onClick="{{ saveTpl }}" style="height:36px;padding:0 12px;border-radius:999px;border:1.5px dashed var(--color-border-strong);box-sizing:border-box;display:flex;align-items:center;font-size:13px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">Enregistrer comme modèle</div>
+            </div>
+          </div>
+
+          <div style="display:{{ actsMapDisp }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:12px;flex-direction:column;gap:8px"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft);padding:4px 6px 0">Carte des activités</div><div ref="{{ actsMapRef }}" style="width:100%;height:220px;border-radius:16px;overflow:hidden;background:var(--color-track);position:relative;z-index:0"></div></div>
+          <div style="display:{{ actsDisp }};grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px">
+            <sc-for list="{{ acts }}" as="a" hint-placeholder-count="4">
+              <div style="background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;overflow:hidden;animation:{{ a.anim }}">
+                <div style="height:110px;background:{{ a.cover }};position:relative;display:flex;align-items:flex-end;padding:10px;box-sizing:border-box"><span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#3a2c24;background:rgba(249,242,234,.8);padding:3px 8px;border-radius:8px">photo de l'activité</span><span style="position:absolute;top:10px;right:10px;height:26px;padding:0 10px;border-radius:999px;background:var(--color-surface);display:flex;align-items:center;font-size:12px;font-weight:800">★ {{ a.rating }}</span></div>
+                <div style="padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px">
+                  <div style="font-size:16px;font-weight:700;line-height:1.25">{{ a.n }}</div>
+                  <div style="font-size:12px;font-weight:600;color:var(--color-ink-soft)">{{ a.price }} · {{ a.dur }} · {{ a.place }}</div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap">
+                    <div onClick="{{ a.cycle }}" style="height:34px;padding:0 12px;border-radius:999px;background:{{ a.stBg }};color:{{ a.stColor }};display:flex;align-items:center;font-size:12px;font-weight:800;cursor:pointer;transition:background .2s">{{ a.st }} ↻</div>
+                    <div onClick="{{ a.cycleDay }}" style="height:34px;padding:0 12px;border-radius:999px;background:var(--color-chip);display:flex;align-items:center;font-size:12px;font-weight:800;cursor:pointer">📅 {{ a.day }}</div>
+                  </div>
+                  <a onClick="{{ a.book }}" style="height:44px;border-radius:999px;border:1.5px solid var(--color-ink);color:var(--color-ink);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;cursor:pointer">Réserver sur le site officiel ↗</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div onClick="{{ validate }}" style="height:54px;border-radius:999px;background:{{ valBg }};color:{{ valColor }};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer;transition:transform .15s,background .3s;margin-top:4px" style-active="transform:scale(.97)">{{ valLabel }}</div>
+        </div>
+
+        <!-- DISCOVER -->
+        <div style="display:{{ dDisc }};flex-direction:column;gap:14px;animation:qgIn .3s ease">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;padding:6px 4px 0;flex-wrap:wrap">
+            <div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Offres du moment</div><div style="font-size:30px;font-weight:800;letter-spacing:-.02em">Discover</div></div>
+            <div onClick="{{ refresh }}" style="display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:999px;background:var(--color-surface);box-shadow:var(--shadow-card);font-size:13px;font-weight:800;cursor:pointer"><span style="display:inline-block;transform:rotate({{ refreshRot }}deg);transition:transform .9s ease">↻</span>Actualiser</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;font-weight:600;color:var(--color-ink-soft);padding:0 4px">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-success)"></span>{{ updatedLabel }}</span>
+            <span>·</span>
+            <span onClick="{{ cycleOrigin }}" style="font-weight:800;color:var(--color-ink);cursor:pointer;padding:6px 0">Départ : {{ origin }} ▾</span>
+          </div>
+          <div class="noscroll" style="display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:2px 18px">
+            <sc-for list="{{ pfChips }}" as="c" hint-placeholder-count="8"><div onClick="{{ c.go }}" style="height:40px;padding:0 14px;border-radius:999px;background:{{ c.bg }};color:{{ c.color }};display:flex;align-items:center;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;flex:none;transition:background .2s">{{ c.l }}</div></sc-for>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div onClick="{{ openFilters }}" style="height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--color-ink);box-sizing:border-box;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;cursor:pointer">Filtres{{ filterCount }}</div>
+            <div style="display:flex;gap:4px;padding:4px;background:var(--color-chip);border-radius:22px">
+              <sc-for list="{{ feedSeg }}" as="o" hint-placeholder-count="2"><div onClick="{{ o.go }}" style="height:32px;padding:0 12px;border-radius:16px;background:{{ o.bg }};display:flex;align-items:center;font-size:13px;font-weight:800;cursor:pointer">{{ o.l }}</div></sc-for>
+            </div>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:var(--color-ink-soft);padding:0 4px">{{ learnLabel }}</div>
+          <div style="display:{{ cardsDisp }};grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px;align-items:start">
+            <sc-for list="{{ offers }}" as="o" hint-placeholder-count="4">
+              <div style="background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;overflow:hidden;transform:{{ o.tx }};opacity:{{ o.op }};transition:transform .4s cubic-bezier(.5,0,.7,.4),opacity .4s;animation:{{ o.anim }}">
+                <div style="height:150px;background:{{ o.cover }};position:relative;display:flex;align-items:center;justify-content:center">
+                  <span style="width:56px;height:56px;border-radius:50%;background:var(--color-surface);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:var(--shadow-sticker);transform:rotate({{ o.rot }}deg)">{{ o.e }}</span>
+                  <span style="position:absolute;top:12px;left:12px;height:26px;padding:0 10px;border-radius:999px;background:var(--color-surface);display:flex;align-items:center;font-size:12px;font-weight:800">{{ o.type }}</span>
+                  <div onClick="{{ o.save }}" style="position:absolute;top:8px;right:8px;width:44px;height:44px;border-radius:50%;background:{{ o.saveBg }};color:{{ o.saveColor }};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;cursor:pointer;animation:{{ o.saveAnim }};transition:background .2s">♥</div>
+                  <span style="position:absolute;left:12px;bottom:10px;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#3a2c24;background:rgba(249,242,234,.8);padding:3px 8px;border-radius:8px">photo</span>
+                </div>
+                <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="min-width:0"><div style="font-size:18px;font-weight:700">{{ o.dest }}</div><div style="font-size:13px;color:var(--color-ink-soft);margin-top:2px">{{ o.dates }}</div></div><div style="font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1;white-space:nowrap">{{ o.price }}</div></div>
+                  <div style="background:var(--color-surface-sunken);border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.45;text-wrap:pretty"><b>Pourquoi c'est intéressant :</b> {{ o.why }}</div>
+                  <div style="font-size:12px;font-weight:500;color:var(--color-ink-soft)">{{ o.per }} · {{ o.trip }} · {{ o.meteo }}{{ o.relTxt }}</div>
+                  <div onClick="{{ o.prep }}" style="height:52px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;cursor:pointer;transition:transform .15s" style-active="transform:scale(.97)">Préparer ce voyage</div>
+                  <div onClick="{{ o.dismiss }}" style="height:44px;display:flex;align-items:center;font-size:14px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">✕ Écarter</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:{{ rowsDisp }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:4px 14px;flex-direction:column">
+            <sc-for list="{{ offers }}" as="o" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:12px;min-height:74px;border-top:{{ o.bt }};transform:{{ o.tx }};opacity:{{ o.op }};transition:transform .4s,opacity .4s">
+                <span style="width:14px;height:14px;border-radius:50%;background:{{ o.bg }};border:1.5px solid rgba(60,40,30,.18);box-sizing:border-box;flex:none"></span>
+                <div onClick="{{ o.prep }}" style="flex:1;min-width:0;cursor:pointer"><div style="font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ o.dest }}</div><div style="font-size:12px;color:var(--color-ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ o.type }} · {{ o.trip }} · {{ o.meteo }}</div></div>
+                <div style="text-align:right;flex:none"><div style="font-size:15px;font-weight:800">{{ o.price }}</div><div style="font-size:11px;color:var(--color-ink-soft)">{{ o.relShort }}</div></div>
+                <div onClick="{{ o.save }}" style="width:36px;height:36px;border-radius:50%;background:{{ o.saveBg }};color:{{ o.saveColor }};display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;flex:none;animation:{{ o.saveAnim }}">♥</div>
+                <div onClick="{{ o.dismiss }}" style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--color-ink-soft);cursor:pointer;flex:none">✕</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:{{ mapDisp }};flex-direction:column;gap:10px">
+            <div style="position:relative;border-radius:24px;overflow:hidden;box-shadow:var(--shadow-card);aspect-ratio:1/1.05;background:var(--color-track)">
+              <div ref="{{ discMapRef }}" style="width:100%;height:100%;position:relative;z-index:0"></div>
+            </div>
+            <div style="display:{{ selDisp }};background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:14px;flex-direction:column;gap:12px;animation:qgIn .25s ease">
+              <div style="display:flex;align-items:center;gap:12px"><span style="width:48px;height:48px;border-radius:50%;background:{{ sel.bg }};display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:var(--shadow-sticker);flex:none">{{ sel.e }}</span><div style="flex:1;min-width:0"><div style="font-size:17px;font-weight:700">{{ sel.dest }}</div><div style="font-size:12px;color:var(--color-ink-soft);margin-top:2px">{{ sel.dates }}</div><div style="font-size:12px;color:var(--color-ink-soft)">{{ sel.trip }} · {{ sel.meteo }}</div></div><div style="text-align:right;flex:none"><div style="font-size:20px;font-weight:800;letter-spacing:-.02em">{{ sel.price }}</div><div style="font-size:11px;color:var(--color-ink-soft)">{{ sel.rel }}</div></div></div>
+              <div style="display:flex;gap:8px;align-items:center"><div onClick="{{ sel.prep }}" style="flex:1;height:50px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;cursor:pointer">Préparer ce voyage</div><div onClick="{{ sel.save }}" style="width:50px;height:50px;border-radius:50%;background:{{ sel.saveBg }};color:{{ sel.saveColor }};display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex:none">♥</div><div onClick="{{ sel.dismiss }}" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--color-ink-soft);cursor:pointer;flex:none">✕</div></div>
+            </div>
+            <div style="display:{{ offMapDisp }};font-size:12px;font-weight:600;color:var(--color-ink-soft);padding:0 4px">Hors de la carte : {{ offMap }}</div>
+          </div>
+          <div style="display:{{ emptyFeed }};background:var(--color-surface);border-radius:24px;padding:24px;flex-direction:column;align-items:center;gap:8px;text-align:center"><span style="width:48px;height:48px;border-radius:50%;background:#d5dde8;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:var(--shadow-sticker)">🧭</span><div style="font-size:15px;font-weight:700">Rien pour ce raccourci</div><div style="font-size:13px;color:var(--color-ink-soft)">{{ emptyMsg }}</div></div>
+          <div onClick="{{ more }}" style="display:{{ moreDisp }};height:50px;border-radius:999px;background:var(--color-chip);align-items:center;justify-content:center;font-size:15px;font-weight:800;cursor:pointer">Voir plus</div>
+        </div>
+
+        <!-- SUR PLACE -->
+        <div style="display:{{ dOnsite }};flex-direction:column;gap:14px;animation:qgIn .3s ease">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;padding:6px 4px 0;flex-wrap:wrap">
+            <div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Lisbonne · Jour 1</div><div style="font-size:30px;font-weight:800;letter-spacing:-.02em">Sur place</div></div>
+            <div onClick="{{ toggleNet }}" style="display:flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:999px;background:{{ netBg }};color:{{ netColor }};font-size:12px;font-weight:800;cursor:pointer"><span style="width:8px;height:8px;border-radius:50%;background:{{ netDot }};border:1.5px solid var(--color-success);box-sizing:border-box"></span>{{ netLabel }}</div>
+          </div>
+          <div style="background:var(--color-surface-sunken);border-radius:16px;padding:10px 14px;font-size:13px;color:var(--color-ink-soft);line-height:1.45">Aperçu : ce mode s'active tout seul le jeudi 26 novembre.</div>
+          <div style="display:{{ offBanner }};background:var(--color-ink);color:var(--color-ink-inverse);border-radius:16px;padding:12px 14px;font-size:13px;line-height:1.45">Tout reste consultable. Tes dépenses et notes partiront au retour du réseau.</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+            <sc-for list="{{ quick }}" as="q" hint-placeholder-count="4"><div onClick="{{ q.go }}" style="background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:20px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:transform .15s" style-active="transform:scale(.95)"><span style="width:40px;height:40px;border-radius:50%;background:{{ q.bg }};display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:var(--shadow-sticker);transform:rotate({{ q.rot }}deg)">{{ q.e }}</span><span style="font-size:12px;font-weight:700;text-align:center">{{ q.l }}</span></div></sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:14px;align-items:start">
+            <div style="background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px 6px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft);margin-bottom:6px">Jeudi 26 novembre</div>
+              <sc-for list="{{ today }}" as="d" hint-placeholder-count="4"><div style="display:flex;gap:12px;min-height:58px;align-items:center;border-top:1px solid var(--color-border)"><span style="width:44px;flex:none;font-size:13px;font-weight:800;color:{{ d.tc }}">{{ d.h }}</span><span style="width:10px;height:10px;border-radius:50%;background:{{ d.dot }};border:2px solid {{ d.dbd }};box-sizing:border-box;flex:none;animation:{{ d.anim }}"></span><span style="flex:1;font-size:14px;font-weight:{{ d.fw }};line-height:1.4">{{ d.t }}</span></div></sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:12px"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft);padding:4px 6px 8px">Carte · Lisbonne</div><div ref="{{ onsiteMapRef }}" style="width:100%;height:220px;border-radius:16px;overflow:hidden;background:var(--color-track);position:relative;z-index:0"></div></div>
+              <div style="background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px 6px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft);margin-bottom:6px">Réservations et documents</div>
+                <sc-for list="{{ docs }}" as="d" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:12px;min-height:56px;border-top:1px solid var(--color-border)"><span style="width:14px;height:14px;border-radius:50%;background:{{ d.bg }};border:1.5px solid rgba(60,40,30,.18);box-sizing:border-box;flex:none"></span><span style="flex:1;font-size:15px;font-weight:600">{{ d.t }}</span><span style="font-size:11px;font-weight:700;color:var(--color-success)">Hors ligne ✓</span></div></sc-for>
+              </div>
+              <div style="background:var(--color-surface);box-shadow:var(--shadow-card);border-radius:24px;padding:16px 18px 6px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--color-ink-soft)">Dépenses du voyage</span><span style="font-size:18px;font-weight:800">{{ lisTotal }}</span></div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;background:var(--color-surface-sunken);border-radius:14px;padding:10px 12px"><span style="display:flex;flex:none"><span style="width:9px;height:9px;border-radius:50%;background:var(--alex-base)"></span><span style="width:9px;height:9px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span><span style="flex:1;min-width:0;font-size:14px;font-weight:800;text-wrap:balance">{{ lisSplit }}</span></div>
+                <div style="display:{{ lisEmpty }};font-size:13px;color:var(--color-ink-soft);padding:12px 0">Rien pour l'instant. Le bouton + ajoute une dépense en deux gestes.</div>
+                <sc-for list="{{ lisRows }}" as="e" hint-placeholder-count="0"><div style="display:flex;align-items:center;gap:12px;min-height:56px;border-top:1px solid var(--color-border);animation:{{ e.anim }}"><span style="width:14px;height:14px;border-radius:50%;background:{{ e.bg }};border:1.5px solid rgba(60,40,30,.18);box-sizing:border-box;flex:none"></span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600">{{ e.label }}</div><div style="font-size:12px;color:var(--color-ink-soft)">{{ e.meta }}</div></div><span style="font-size:15px;font-weight:800">{{ e.amt }}</span></div></sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div>
+      </div>
+
+      <div onClick="{{ openExp }}" style="display:{{ fabDisp }};position:absolute;right:{{ fabRight }};bottom:{{ fabBottom }};width:56px;height:56px;border-radius:50%;background:var(--user-base);color:#fff;align-items:center;justify-content:center;font-size:28px;font-weight:600;box-shadow:var(--shadow-nav);cursor:pointer;z-index:5;transition:transform .15s" style-active="transform:scale(.92)">+</div>
+
+      <div style="display:{{ bnDisp }};position:absolute;left:0;right:0;bottom:0;height:116px;background:linear-gradient(180deg,rgba(0,0,0,0),var(--color-bg-bottom) 45%);pointer-events:none;z-index:4"></div>
+      <div style="display:{{ bnDisp }};position:absolute;left:12px;right:12px;bottom:16px;height:72px;background:var(--color-surface);border-radius:26px;box-shadow:var(--shadow-nav);padding:4px;box-sizing:border-box;z-index:5">
+        <sc-for list="{{ navL }}" as="n" hint-placeholder-count="2">
+          <div onClick="{{ n.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border-radius:22px;background:{{ n.tab }}">
+            <span style="width:30px;height:30px;border-radius:50%;background:{{ n.bg }};display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:{{ n.ring }};transform:rotate({{ n.rot }}deg)">{{ n.e }}</span>
+            <span style="font-size:10.5px;font-weight:{{ n.fw }};color:{{ n.color }}">{{ n.l }}</span>
+          </div>
+        </sc-for>
+        <div onClick="{{ goDiscover }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;padding-bottom:9px;cursor:pointer;position:relative">
+          <span style="position:absolute;top:-22px;width:60px;height:60px;border-radius:50%;background:#d5dde8;border:4px solid {{ compBd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:27px;box-shadow:var(--shadow-nav);transform:rotate({{ compRot }}deg);transition:transform .8s cubic-bezier(.3,1.5,.5,1),border-color .2s">🧭</span>
+          <span style="font-size:10.5px;font-weight:{{ compFw }};color:{{ compColor }}">Discover</span>
+        </div>
+        <sc-for list="{{ navR }}" as="n" hint-placeholder-count="2">
+          <div onClick="{{ n.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border-radius:22px;background:{{ n.tab }}">
+            <span style="width:30px;height:30px;border-radius:50%;background:{{ n.bg }};display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:{{ n.ring }};transform:rotate({{ n.rot }}deg)">{{ n.e }}</span>
+            <span style="font-size:10.5px;font-weight:{{ n.fw }};color:{{ n.color }}">{{ n.l }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:{{ toastDisp }};position:absolute;left:50%;bottom:{{ toastBottom }};transform:translate(-50%,0);z-index:30;background:var(--color-ink);color:var(--color-ink-inverse);border-radius:999px;padding:0 18px;height:46px;align-items:center;gap:10px;font-size:14px;font-weight:700;white-space:nowrap;box-shadow:var(--shadow-nav);animation:{{ toastAnim }}">{{ toast }}</div>
+
+      <div style="display:{{ confDisp }};position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:40">
+        <sc-for list="{{ confetti }}" as="c" hint-placeholder-count="0"><span style="position:absolute;top:-16px;left:{{ c.x }};width:{{ c.w }};height:12px;border-radius:3px;background:{{ c.bg }};animation:{{ c.anim }}"></span></sc-for>
+      </div>
+    </div>
+
+    <div onClick="{{ closeSheet }}" style="display:{{ sheetDisp }};position:absolute;inset:0;background:var(--color-scrim);z-index:20;align-items:{{ shAlign }};justify-content:center">
+      <div onClick="{{ stop }}" style="width:{{ shW }};max-height:90%;overflow-y:auto;background:var(--color-surface);border-radius:{{ shRad }};box-shadow:var(--shadow-sheet);padding:10px 20px 26px;box-sizing:border-box;animation:{{ shAnim }}" class="noscroll">
+        <div style="display:{{ handleDisp }};width:40px;height:5px;border-radius:3px;background:var(--color-border-strong);margin:0 auto 8px"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:48px">
+          <span style="font-size:24px;font-weight:800;letter-spacing:-.02em">{{ sheetTitle }}</span>
+          <span onClick="{{ closeSheet }}" style="height:44px;display:flex;align-items:center;font-size:14px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">Fermer</span>
+        </div>
+
+        <div style="display:{{ shExp }};flex-direction:column;gap:16px;margin-top:6px">
+          <div style="font-size:13px;font-weight:600;color:var(--color-ink-soft)">Voyage : {{ expTargetName }}</div>
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:6px;background:var(--color-input);border:1.5px solid var(--user-base);border-radius:20px;height:84px;align-items:center"><input value="{{ expAmt }}" onChange="{{ onExpAmt }}" inputmode="decimal" placeholder="0" style="width:160px;border:none;background:transparent;font-size:44px;font-weight:800;letter-spacing:-.03em;text-align:right;outline:none"><span style="font-size:30px;font-weight:800;color:var(--color-ink-soft)">€</span></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px 6px">
+            <sc-for list="{{ expCats }}" as="c" hint-placeholder-count="7"><div onClick="{{ c.go }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer"><span style="width:46px;height:46px;border-radius:50%;background:{{ c.bg }};display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:{{ c.ring }};transform:scale({{ c.sc }});transition:transform .2s,box-shadow .2s">{{ c.e }}</span><span style="font-size:11px;font-weight:{{ c.fw }};text-align:center;line-height:1.2">{{ c.n }}</span></div></sc-for>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px">Qui a payé ?</div>
+            <div style="display:flex;gap:4px;padding:4px;background:var(--color-chip);border-radius:22px">
+              <sc-for list="{{ whoSeg }}" as="o" hint-placeholder-count="3"><div onClick="{{ o.go }}" style="flex:1;height:42px;border-radius:18px;background:{{ o.bg }};display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;cursor:pointer"><span style="display:flex"><span style="width:8px;height:8px;border-radius:50%;background:{{ o.d1 }}"></span><span style="display:{{ o.d2 }};width:8px;height:8px;border-radius:50%;background:var(--antoine-base);margin-left:-3px"></span></span>{{ o.l }}</div></sc-for>
+            </div>
+            <div style="font-size:12px;color:var(--color-ink-soft);margin-top:8px;line-height:1.45">{{ whoHelp }}</div>
+          </div>
+          <input value="{{ expLabel }}" onChange="{{ onExpLabel }}" placeholder="Libellé (facultatif)" style="height:56px;border-radius:16px;background:var(--color-input);border:1.5px solid var(--color-border-strong);padding:0 16px;font-size:17px;font-weight:600;outline:none;box-sizing:border-box;width:100%">
+          <div onClick="{{ addExp }}" style="height:54px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer;opacity:{{ expOp }};transition:transform .15s" style-active="transform:scale(.97)">{{ expBtn }}</div>
+        </div>
+
+        <div style="display:{{ shFilters }};flex-direction:column;gap:16px;margin-top:6px">
+          <sc-for list="{{ fGroups }}" as="g" hint-placeholder-count="5">
+            <div><div style="font-size:13px;font-weight:800;margin-bottom:8px">{{ g.t }}</div><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ g.opts }}" as="o" hint-placeholder-count="4"><div onClick="{{ o.go }}" style="height:38px;padding:0 14px;border-radius:999px;background:{{ o.bg }};color:{{ o.color }};display:flex;align-items:center;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s">{{ o.l }}</div></sc-for></div></div>
+          </sc-for>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:4px">
+            <div onClick="{{ resetFilters }}" style="height:52px;padding:0 16px;display:flex;align-items:center;font-size:14px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">Réinitialiser</div>
+            <div onClick="{{ applyFilters }}" style="flex:1;height:54px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer">Voir les offres</div>
+          </div>
+        </div>
+
+        <div style="display:{{ shPick }};flex-direction:column;gap:12px;margin-top:6px">
+          <div style="font-size:13px;color:var(--color-ink-soft)">Choisis dans la galerie du voyage ou ajoute une nouvelle photo.</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"><sc-for list="{{ pickPics }}" as="p" hint-placeholder-count="8"><div onClick="{{ p.pick }}" style="aspect-ratio:1;border-radius:10px;background:{{ p.bgc }};cursor:pointer"></div></sc-for></div>
+          <label style="height:52px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;cursor:pointer"><input type="file" accept="image/*" multiple onChange="{{ onPickFiles }}" style="display:none">+ Nouvelle photo</label>
+        </div>
+        <div style="display:{{ shPhoto }};flex-direction:column;gap:12px;margin-top:6px">
+          <div style="width:100%;aspect-ratio:1;border-radius:20px;background:{{ lbBg }}"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700;color:var(--color-ink-soft)">{{ lbNum }}</span><span onClick="{{ lbDelete }}" style="height:44px;display:flex;align-items:center;font-size:14px;font-weight:700;color:var(--alex-text);cursor:pointer">Supprimer la photo</span></div>
+        </div>
+        <div style="display:{{ shCustom }};flex-direction:column;gap:4px;margin-top:6px">
+          <div style="font-size:13px;color:var(--color-ink-soft);line-height:1.45;padding-bottom:6px">Ajoute ou retire des sections et change leur ordre. Le départ de Lisbonne reste toujours en haut.</div>
+          <sc-for list="{{ homeCfg }}" as="h" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:6px;min-height:66px;border-top:1px solid var(--color-border)"><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700">{{ h.l }}</div><div style="font-size:12px;color:var(--color-ink-soft);margin-top:2px">{{ h.dsc }}</div></div><span onClick="{{ h.up }}" style="width:40px;height:44px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer;opacity:{{ h.upOp }}">↑</span><span onClick="{{ h.down }}" style="width:40px;height:44px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer;opacity:{{ h.downOp }}">↓</span><div onClick="{{ h.toggle }}" style="min-width:84px;height:38px;border-radius:999px;background:{{ h.bg }};color:{{ h.color }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;cursor:pointer">{{ h.btn }}</div></div></sc-for>
+          <div onClick="{{ closeSheet }}" style="height:54px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer;margin-top:10px">Terminer</div>
+        </div>
+        <div style="display:{{ shQNote }};flex-direction:column;gap:10px;margin-top:6px">
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--color-ink-soft)"><span style="width:8px;height:8px;border-radius:50%;background:var(--user-base)"></span>{{ qLabel }}</div>
+          <textarea value="{{ qText }}" onChange="{{ onQText }}" placeholder="Une phrase, un souvenir…" style="width:100%;height:150px;border-radius:16px;background:var(--color-input);border:1.5px solid var(--color-border-strong);padding:12px 14px;font-size:16px;line-height:1.5;outline:none;box-sizing:border-box;resize:none"></textarea>
+          <div onClick="{{ closeSheet }}" style="height:54px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer">Enregistrer</div>
+          
+        </div>
+        <div style="display:{{ shQPhoto }};flex-direction:column;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--color-border)">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700;color:var(--color-ink-soft)">Lisbonne</span><span style="font-size:12px;font-weight:800;color:var(--color-ink-soft)">{{ qCount }} / 20</span></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"><sc-for list="{{ qPics }}" as="p" hint-placeholder-count="0"><div style="aspect-ratio:1;border-radius:10px;background:{{ p.bgc }}"></div></sc-for></div>
+          <label style="height:54px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer"><input type="file" accept="image/*" multiple onChange="{{ onQFiles }}" style="display:none">📷 Ajouter des photos</label>
+          <div onClick="{{ goTripSouv }}" style="display:flex;align-items:center;justify-content:center;height:44px;font-size:13px;font-weight:700;color:var(--color-ink-soft);cursor:pointer">Ouvrir dans Voyages ›</div>
+        </div>
+        <div style="display:{{ shImport }};flex-direction:column;gap:14px;margin-top:6px">
+          <div style="display:flex;gap:12px;align-items:flex-start"><span style="width:28px;height:28px;border-radius:50%;background:var(--color-chip);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex:none">1</span><div style="flex:1"><div style="font-size:15px;font-weight:700">Copie la demande</div><div style="font-size:13px;color:var(--color-ink-soft);margin-top:2px">Elle contient le voyage, les dates, le budget et les lignes verrouillées.</div><div onClick="{{ copyPrompt }}" style="display:inline-flex;height:40px;padding:0 14px;border-radius:999px;background:var(--color-chip);align-items:center;font-size:13px;font-weight:800;cursor:pointer;margin-top:8px">{{ copyLabel }}</div></div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start"><span style="width:28px;height:28px;border-radius:50%;background:var(--color-chip);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex:none">2</span><div style="flex:1"><div style="font-size:15px;font-weight:700">Colle la réponse de Claude</div><textarea placeholder="Colle ici la réponse…" style="width:100%;height:110px;margin-top:8px;border-radius:16px;background:var(--color-input);border:1.5px solid var(--color-border-strong);padding:12px 14px;font-size:14px;outline:none;box-sizing:border-box;resize:none"></textarea></div></div>
+          <div onClick="{{ doImport }}" style="height:54px;border-radius:999px;background:var(--user-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer">Importer en un clic</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;animations&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;user&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;alex&quot;,&quot;antoine&quot;],&quot;default&quot;:&quot;alex&quot;,&quot;tsType&quot;:&quot;'alex'|'antoine'&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+const CATS=[
+ {id:'transport',e:'✈️',bg:'#d5dde8',n:'Transport'},
+ {id:'logement',e:'🛏️',bg:'#e3d9e9',n:'Hébergement'},
+ {id:'resto',e:'🍝',bg:'#ecb8b0',n:'Restauration'},
+ {id:'activites',e:'🎟️',bg:'#f0d9a8',n:'Activités'},
+ {id:'courses',e:'🧺',bg:'#d3dcc3',n:'Courses'},
+ {id:'shopping',e:'🛍️',bg:'#e8c9d4',n:'Shopping'},
+ {id:'local',e:'🚇',bg:'#cfe0d8',n:'Transports sur place'}];
+const CAT={};CATS.forEach(c=>CAT[c.id]=c);
+const eur=n=>Math.round(n).toLocaleString('fr-FR')+'\u00a0€';
+const stripes=bg=>'repeating-linear-gradient(135deg,'+bg+' 0 14px,var(--stripe) 14px 16px),'+bg;
+const TRIPS=[
+ {id:'rome',name:'Rome',country:'Italie',cont:'Europe',dates:'Jeudi 9 – lundi 13 avril 2026',short:'avr. 2026',days:5,who:'commun',e:'🍝',bg:'#ecb8b0',rot:-4,memory:'La carbonara de Trastevere, à minuit, sous la pluie.',total:1072,ideal:1000,limit:1300,photos:14},
+ {id:'cph',name:'Copenhague',country:'Danemark',cont:'Europe',dates:'Samedi 16 – jeudi 21 août 2025',short:'août 2025',days:6,who:'commun',e:'🚲',bg:'#cfe0d8',rot:5,memory:'Le tour du port à vélo, les cheveux au vent.',total:1890,photos:18},
+ {id:'mrk',name:'Marrakech',country:'Maroc',cont:'Afrique',dates:'Vendredi 14 – mardi 18 février 2025',short:'févr. 2025',days:5,who:'commun',e:'🕌',bg:'#f6dfc6',rot:-3,memory:'Le thé à la menthe sur la terrasse du riad.',total:980,photos:11},
+ {id:'crozon',name:'Crozon',country:'France',cont:'Europe',dates:'Samedi 6 – samedi 13 juillet 2024',short:'juil. 2024',days:8,who:'commun',e:'🌊',bg:'#d5dde8',rot:4,memory:"Le bain glacé à l'Île Vierge.",total:1240,photos:16},
+ {id:'londres',name:'Londres',country:'Royaume-Uni',cont:'Europe',dates:'Samedi 15 – dimanche 16 mars 2026',short:'mars 2026',days:2,who:'alex',e:'☕',bg:'#e8c9d4',rot:-5,memory:'Le scone de Borough Market.',total:290,photos:9},
+ {id:'cham',name:'Chamonix',country:'France',cont:'Europe',dates:'Samedi 13 – mardi 16 septembre 2025',short:'sept. 2025',days:4,who:'antoine',e:'🏔️',bg:'#d3dcc3',rot:3,memory:'Le lever de soleil au lac Blanc.',total:520,photos:12},
+ {id:'berlin',name:'Berlin',country:'Allemagne',cont:'Europe',dates:'Vendredi 6 – dimanche 8 juin 2025',short:'juin 2025',days:3,who:'alex',e:'🎧',bg:'#e3d9e9',rot:6,memory:'Le marché aux puces de Mauerpark avec Léa.',total:410,photos:7}];
+TRIPS.unshift({id:'lisbonne',current:true,name:'Lisbonne',country:'Portugal',cont:'Europe',dates:'Jeudi 26 – lundi 30 novembre 2026',short:'nov. 2026',days:5,who:'commun',e:'✈️',bg:'#f0d9a8',rot:4,memory:'Pas encore de souvenir : le voyage commence jeudi.',total:0,ideal:1000,limit:1400,photos:0});
+TRIPS.splice(2,0,{id:'seville',name:'Séville',country:'Espagne',cont:'Europe',dates:'Jeudi 4 – samedi 6 décembre 2025',short:'déc. 2025',days:3,who:'commun',e:'🎄',bg:'#f6dfc6',rot:-4,memory:'Le marché de Noël de Séville, un chocolat chaud à la main devant la cathédrale.',total:1150,photos:12});
+const ROME_EXP=[
+ {cat:'transport',label:'Vols Paris – Rome A/R',amt:286,who:'alex',day:'Jeu. 9 avril'},
+ {cat:'logement',label:'Appart à Trastevere · 4 nuits',amt:520,who:'commun',day:'Jeu. 9 avril'},
+ {cat:'resto',label:'Trattoria da Enzo',amt:64,who:'antoine',day:'Jeu. 9 avril'},
+ {cat:'activites',label:'Musées du Vatican',amt:58,who:'alex',day:'Ven. 10 avril'},
+ {cat:'local',label:'Pass métro 72 h',amt:36,who:'antoine',day:'Ven. 10 avril'},
+ {cat:'courses',label:'Supérette via della Scala',amt:23,who:'antoine',day:'Sam. 11 avril'},
+ {cat:'shopping',label:'Sandales en cuir',amt:85,who:'alex',day:'Dim. 12 avril'}];
+function genExp(t){const w=[['transport',.28,'Trajet aller-retour','alex'],['logement',.4,'Logement','commun'],['resto',.14,'Restaurants','antoine'],['activites',.08,'Visites','alex'],['courses',.04,'Courses','antoine'],['shopping',.03,'Souvenirs','alex'],['local',.03,'Transports sur place','antoine']];let acc=0;return w.map((x,i)=>{const a=i===w.length-1?t.total-acc:Math.round(t.total*x[1]);acc+=a;return {cat:x[0],label:x[2],amt:a,who:t.who==='commun'?x[3]:t.who,day:t.short};});}
+const WHO={alex:'Alex',antoine:'Antoine',commun:'Commun'};
+const L=(k,v,alts)=>({k,v,alts:alts||[],locked:false});
+function baseSteps(){return [
+ {id:'dest',e:'📍',bg:'#f0d9a8',rot:-4,t:'Destination',kind:'lines',mode:'auto',status:'ok',count:3,sel:0,gen:true,props:[
+  [L('Ville','Lisbonne, Portugal'),L('Trajet','2 h 35 de vol direct depuis Paris'),L('Météo fin novembre','17 °C, quelques averses'),L('Pourquoi','Vous aimez marcher et manger dehors : collines, miradouros gratuits, pastéis.')],
+  [L('Ville','Séville, Espagne'),L('Trajet','2 h 15 de vol direct depuis Paris'),L('Météo fin novembre','20 °C, ensoleillé'),L('Pourquoi','Il fait encore doux, tout se fait à pied, tapas le soir.')],
+  [L('Ville','Naples, Italie'),L('Trajet','2 h 20 de vol direct depuis Paris'),L('Météo fin novembre','16 °C, variable'),L('Pourquoi','Après Rome, une Italie plus brute et la meilleure pizza.')]]},
+ {id:'dates',e:'📅',bg:'#d5dde8',rot:3,t:'Dates',kind:'lines',mode:'manual',status:'ok',count:1,sel:0,gen:true,props:[[L('Aller','Jeudi 26 novembre',['Vendredi 27 novembre']),L('Retour','Lundi 30 novembre',['Mardi 1er décembre']),L('Durée','5 j · 4 nuits'),L('Congés posés','Alex 2 j · Antoine 2 j')]]},
+ {id:'budget',e:'💶',bg:'#d3dcc3',rot:-6,t:'Budget',kind:'budget',mode:'manual',status:'wip',count:1,sel:0,gen:true,props:[[]],budget:{transport:240,logement:420,resto:280,activites:140,courses:40,shopping:40,local:20}},
+ {id:'vols',e:'✈️',bg:'#d5dde8',rot:5,t:'Vols et transport',kind:'lines',mode:'auto',status:'ia',count:1,sel:0,gen:true,book:true,props:[[L('Aller','Orly → Lisbonne · jeu. 26 · 9 h 40 → 11 h 15',['CDG → Lisbonne · jeu. 26 · 7 h 05 → 8 h 40','Orly → Lisbonne · jeu. 26 · 13 h 20 → 14 h 55']),L('Retour','Lisbonne → Orly · lun. 30 · 19 h 05 → 22 h 35',['Lisbonne → CDG · lun. 30 · 16 h 10 → 19 h 40','Lisbonne → Orly · lun. 30 · 21 h 30 → 0 h 55']),L('Bagages','Cabine 10 kg chacun',['Cabine + une soute 23 kg partagée']),L('Prix','Env. 238 € pour deux · relevé le 2 nov.',['Env. 196 € pour deux · relevé le 2 nov.','Env. 274 € pour deux · relevé le 2 nov.'])]]},
+ {id:'logement',e:'🛏️',bg:'#e3d9e9',rot:-3,t:'Hébergement',kind:'lines',mode:'auto',status:'todo',count:1,sel:0,gen:false,book:true,props:[[L('Quartier','',['Alfama','Príncipe Real','Graça']),L('Logement','',['Appartement avec terrasse, 2 pers.','Chambre d’hôtes avec patio','Studio sous les toits']),L('Prix','',['Env. 410 € les 4 nuits','Env. 360 € les 4 nuits','Env. 470 € les 4 nuits']),L('Note','',['4,8 / 5 · 230 avis','4,7 / 5 · 410 avis','4,9 / 5 · 96 avis'])]]},
+ {id:'pack',e:'🧳',bg:'#f6dfc6',rot:4,t:"Liste d'affaires",kind:'pack',mode:'auto',status:'wip',count:1,sel:0,gen:true,props:[[]]},
+ {id:'acts',e:'🎟️',bg:'#f0d9a8',rot:-5,t:'Activités',kind:'acts',mode:'auto',status:'ia',count:1,sel:0,gen:true,props:[[]]},
+ {id:'itin',e:'🗺️',bg:'#cfe0d8',rot:6,t:'Itinéraire',kind:'lines',mode:'auto',status:'todo',count:1,sel:0,gen:false,props:[[L('Jour 1 · jeu. 26','',['Arrivée, Alfama à pied, dîner à Graça','Arrivée, Baixa et Chiado, dîner au Bairro Alto']),L('Jour 2 · ven. 27','',['Belém : tour, monastère, pastéis','LX Factory et bords du Tage à vélo']),L('Jour 3 · sam. 28','',['Sintra en train (40 min), palais de Pena','Cascais et plage de Guincho']),L('Jour 4 · dim. 29','',['Marché de Campo de Ourique, coucher de soleil au miradouro','Musée des azulejos, soirée fado']),L('Jour 5 · lun. 30','',['Dernier café à Príncipe Real, vol à 19 h 05','Feira da Ladra (si ouverte), vol à 19 h 05'])]]},
+ {id:'docs',e:'📄',bg:'#e8c9d4',rot:-2,t:'Documents',kind:'lines',mode:'manual',status:'todo',count:1,sel:0,gen:true,props:[[L("Pièce d'identité",'CNI valide · pas de visa (UE)'),L('Assurance','Carte bancaire · à vérifier'),L('Billets','À ajouter'),L('Réservation logement','À ajouter')]]}];}
+const PACK={
+ alex:[{t:'Imperméable léger',done:true,tag:'météo'},{t:'Baskets confort',done:true,tag:'marche'},{t:'Maillot (au cas où)',done:false,tag:''},{t:'Chargeur + câble',done:false,tag:''},{t:'Trousse de toilette < 1 L',done:false,tag:'cabine'}],
+ antoine:[{t:'Pull chaud',done:true,tag:'soirées'},{t:'Chaussures de rando légères',done:false,tag:'Sintra'},{t:'Liseuse',done:false,tag:''},{t:'Trousse de toilette < 1 L',done:false,tag:'cabine'}],
+ commun:[{t:'Adaptateur ? Pas besoin (prises UE)',done:true,tag:''},{t:'Parapluie pliant',done:false,tag:'météo'},{t:'Gourde',done:false,tag:''},{t:'Petite pharmacie',done:false,tag:''},{t:'Sac à dos du jour',done:false,tag:''}]};
+const ACTS=[
+ {n:"Tram 28 jusqu'à Graça",price:'3 € / pers.',dur:'40 min',rating:'4,3',place:'Martim Moniz',st:0,day:1,bg:'#d5dde8'},
+ {n:'Palais de Pena, Sintra',price:'20 € / pers.',dur:'3 h',rating:'4,7',place:'Sintra',st:1,day:3,bg:'#d3dcc3'},
+ {n:'Atelier pastéis de nata',price:'45 € / pers.',dur:'2 h',rating:'4,9',place:'Chiado',st:0,day:2,bg:'#f6dfc6'},
+ {n:'Coucher de soleil au miradouro da Senhora do Monte',price:'Gratuit',dur:'1 h',rating:'4,8',place:'Graça',st:0,day:4,bg:'#ecb8b0'}];
+const ST=[{l:'Envie',bg:'var(--color-chip)',c:'var(--color-ink)'},{l:'Réservé',bg:'var(--color-quest-soft)',c:'#6b4a0e'},{l:'Fait ✓',bg:'var(--color-success)',c:'#fff'}];
+const OFFERS=[
+ {id:1,type:'Séjour',e:'🍷',bg:'#ecb8b0',dest:'Porto, Portugal',dates:'Ven. 11 – lun. 14 décembre · 3 nuits',price:'389 €',per:'pour deux, vol + hôtel',rel:'Relevé le 2 nov. à 6 h',trip:'1 h 55 en avion',meteo:'14 °C, nuageux',why:'32 % sous le prix habituel de décembre pour ce vol + hôtel.',pf:['wkvisite','city']},
+ {id:2,type:'Train',e:'🍫',bg:'#f6dfc6',dest:'Bruxelles, Belgique',dates:'Sam. 21 – dim. 22 novembre',price:'98 €',per:'A/R pour deux',rel:'Relevé le 2 nov. à 6 h',trip:'1 h 22 en train',meteo:'8 °C, pluie possible',why:'Tarif le plus bas vu depuis septembre sur ce trajet.',pf:['wkparis','wkvisite','city','lastmin']},
+ {id:3,type:'Idée',e:'🦭',bg:'#d5dde8',dest:'Baie de Somme',dates:"N'importe quel week-end de novembre",price:'—',per:'Idée sans prix',rel:'',trip:'2 h 30 en voiture',meteo:'10 °C, vent',why:'Saison des phoques et des grandes marées.',pf:['wkparis','wkchill','nature']},
+ {id:4,type:'Vol',e:'🌋',bg:'#f0d9a8',dest:'Tenerife, Espagne',dates:'Sam. 6 – sam. 13 février · 7 nuits',price:'268 €',per:'A/R pour deux',rel:'Relevé le 2 nov. à 6 h',trip:'4 h 20 en avion',meteo:'22 °C, soleil',why:'Vol direct à moins de 135 € par personne en plein hiver.',pf:['semaine','soleil']},
+ {id:5,type:'Hôtel',e:'🌊',bg:'#cfe0d8',dest:'Étretat, Normandie',dates:'Sam. 14 novembre · 1 nuit',price:'118 €',per:'la nuit, vue mer',rel:'Relevé le 2 nov. à 6 h',trip:'2 h 45 en voiture',meteo:'11 °C, éclaircies',why:"Chambre vue mer 40 % moins chère qu'en été.",pf:['wkparis','wkchill','nature']},
+ {id:6,type:'Activité',e:'🎻',bg:'#e3d9e9',dest:'Vienne, Autriche',dates:'Concert du jeudi 31 décembre',price:'140 €',per:'pour deux',rel:'Relevé le 2 nov. à 6 h',trip:'2 h 05 en avion',meteo:'1 °C, sec',why:'Places encore disponibles pour un concert classique du 31.',pf:['city','wkvisite']},
+ {id:7,type:'Vol',e:'🌸',bg:'#e8c9d4',dest:'Tokyo, Japon',dates:'Mars 2027 · dates flexibles',price:'1 190 €',per:'A/R pour deux',rel:'Relevé le 2 nov. à 6 h',trip:'14 h 30 avec escale',meteo:'14 °C, cerisiers fin mars',why:"Le plus bas relevé pour mars depuis le début de l'année.",pf:['long']},
+ {id:8,type:'Séjour',e:'🍕',bg:'#ecb8b0',dest:'Naples, Italie',dates:'Jeu. 12 – dim. 15 novembre',price:'312 €',per:'pour deux, vol + B&B',rel:'Relevé le 2 nov. à 6 h',trip:'2 h 20 en avion',meteo:'18 °C, soleil',why:'Départ dans 9 jours, places restantes bradées.',pf:['lastmin','city','wkvisite']},
+ {id:9,type:'Train',e:'🏞️',bg:'#d3dcc3',dest:'Annecy',dates:'Sam. 5 – dim. 6 décembre',price:'124 €',per:'A/R pour deux',rel:'Relevé le 2 nov. à 6 h',trip:'3 h 40 en train',meteo:'3 °C, neige possible',why:"Prix d'avant les vacances scolaires.",pf:['nature','wkchill']}];
+const PF=[{id:'all',l:'Tout'},{id:'saved',l:'Enregistrées'},{id:'wkparis',l:'Escapade autour de Paris'},{id:'wkvisite',l:'Week-end visite'},{id:'wkchill',l:'Week-end chill'},{id:'semaine',l:'Semaine de vacances'},{id:'city',l:'City trip en Europe'},{id:'soleil',l:'Soleil / plage'},{id:'nature',l:'Nature et rando'},{id:'long',l:'Long-courrier'},{id:'lastmin',l:'Dernière minute'}];
+const FG=[{id:'budget',t:'Budget max',opts:['200 €','500 €','1 000 €','Sans limite']},{id:'per',t:'Budget compté',opts:['Par personne','Pour deux']},{id:'zone',t:'Zone',opts:['France','Europe','Méditerranée','Monde'],multi:true},{id:'quand',t:'Quand',opts:['Ce week-end','Ce mois-ci',"N'importe quand en mars",'Dates précises']},{id:'duree',t:'Durée',opts:['Week-end','3-4 j','Une semaine','10 j et plus']},{id:'theme',t:'Thème',opts:['Culture','Nature','Fête','Repos'],multi:true},{id:'trajet',t:'Temps de trajet max',opts:['2 h','4 h','8 h','Peu importe']},{id:'mode',t:'Transport',opts:['Avion','Train','Voiture'],multi:true},{id:'meteo',t:'Météo',opts:['Chaud, + 20 °C','Doux','Peu importe']},{id:'visa',t:'Visa',opts:['Sans visa uniquement','Peu importe']}];
+const PH=['#ecb8b0','#d5dde8','#f0d9a8','#cfe0d8','#e3d9e9','#d3dcc3','#e8c9d4','#f6dfc6'];
+const PINS={rome:[['Colisée',12.4922,41.8902],['Vatican',12.4534,41.9022],['Trastevere',12.4695,41.8892],['Borghese',12.4923,41.9142]],lisbonne:[['Alfama',-9.1300,38.7110],['Chiado',-9.1393,38.7105],['Graça',-9.1305,38.7185],['Belém',-9.2060,38.6975]],seville:[['Real Alcázar',-5.9904,37.3832],['Cathédrale',-5.9930,37.3858],['Triana',-6.0030,37.3830],['Metropol Parasol',-5.9915,37.3931]],cph:[['Nyhavn',12.5911,55.6797],['Tivoli',12.5681,55.6736],['Christiania',12.6082,55.6736],['Islands Brygge',12.5766,55.6637]],mrk:[['Jemaa el-Fna',-7.9890,31.6258],['Jardin Majorelle',-8.0033,31.6417],['Palais Bahia',-7.9831,31.6213],['Souks',-7.9870,31.6300]],crozon:[['Pen-Hir',-4.6294,48.2362],['Camaret',-4.5951,48.2780],['Morgat',-4.5030,48.2257],['Crozon',-4.4890,48.2480]],londres:[['Borough Market',-0.0910,51.5055],['Tower Bridge',-0.0754,51.5055],['Soho',-0.1337,51.5136],['Camden',-0.1426,51.5390]],cham:[['Chamonix',6.8694,45.9237],['Mer de Glace',6.9239,45.9327],['Lac Blanc',6.8950,45.9791],['Les Houches',6.7980,45.8920]],berlin:[['Mauerpark',13.4025,52.5440],['East Side Gallery',13.4396,52.5050],['Porte de Brandebourg',13.3777,52.5163],['Kreuzberg',13.4030,52.4990]]};
+const pinHtml=(n,l)=>'<div style="display:inline-flex;align-items:center;gap:5px;transform:translate(-8px,-50%);pointer-events:none"><span style="width:16px;height:16px;border-radius:50%;background:var(--user-base,#b8434f);border:2px solid #fff;box-sizing:border-box;color:#fff;font:800 9px/12px Manrope,sans-serif;text-align:center;box-shadow:0 2px 0 rgba(60,40,30,.2)">'+n+'</span><span style="font:700 11px Manrope,sans-serif;color:#3a2c24;background:rgba(249,242,234,.92);padding:1px 7px;border-radius:999px;white-space:nowrap">'+l+'</span></div>';
+const discHtml=(l,on)=>'<div style="transform:translate(-50%,-50%);height:30px;padding:0 11px;display:inline-flex;align-items:center;border-radius:999px;background:'+(on?'#3a2c24':'#f9f2ea')+';color:'+(on?'#f9f2ea':'#3a2c24')+';font:800 13px Manrope,sans-serif;white-space:nowrap;box-shadow:0 2px 8px rgba(60,40,30,.3);border:1px solid rgba(0,0,0,.08);cursor:pointer">'+l+'</div>';
+const MAPS={rome:[12.45,41.87,12.52,41.92],cph:[12.54,55.66,12.62,55.70],mrk:[-8.03,31.61,-7.96,31.65],crozon:[-4.58,48.22,-4.46,48.28],londres:[-0.15,51.49,-0.05,51.54],cham:[6.82,45.90,6.92,45.94],berlin:[13.36,52.50,13.46,52.54],lisbonne:[-9.22,38.68,-9.10,38.74]};
+const osm=b=>'https://www.openstreetmap.org/export/embed.html?bbox='+b.join('%2C')+'&layer=mapnik';
+const pinsOf=k=>(PINS[k]||PINS.rome).map((p,i)=>({n:i+1,l:p[0],lon:p[1],lat:p[2],html:pinHtml(i+1,p[0])}));
+const bgc=p=>p.u?'url("'+p.u+'") center/cover':p.bg;
+const place=id=>{const t=TRIPS.find(x=>x.id===id);return Array.from({length:t?t.photos:0},(_,i)=>({bg:stripes(PH[i%8])}));};
+const NB0={rome:{mode:'daily',cur:2,view:'write',pages:[['Arrivée à Trastevere',''],['Vatican',''],['Les 24 km','On a marché 24 km. Antoine dit que ça compte comme du sport.'],['Villa Borghese','Les vélos de la Villa Borghese avaient des freins… optionnels. Personne n’est tombé.'],['Dernier jour','']].map(p=>({title:p[0],text:p[1],pics:[]}))}};
+const COORD={1:[-8.61,41.15],2:[4.35,50.85],3:[1.55,50.2],4:[-16.25,28.47],5:[0.2,49.7],6:[16.37,48.21],8:[14.27,40.85],9:[6.13,45.9]};
+const EB=[-18,27,20,56];const ym=l=>Math.log(Math.tan(Math.PI/4+l*Math.PI/360));
+const HS={prep:{l:'À préparer ensuite',dsc:'L’étape suggérée du prochain voyage'},frise:{l:'Notre frise',dsc:'Les voyages communs en un coup d’œil'},saved:{l:'Destinations enregistrées',dsc:'Tes coups de cœur de Discover'},souv:{l:'Dernier souvenir',dsc:'Le souvenir préféré du dernier voyage'},solde:{l:'Comptes du dernier voyage',dsc:'Qui doit quoi'},budget:{l:'Budget du prochain voyage',dsc:'Prévu, idéal et limite'}};
+const ORIGINS=['Paris','Lyon','Bordeaux','Lille'];
+const CONF_COLORS=['#b8434f','#8a5a8c','#f0d9a8','#cfe0d8','#e8c36a','#d5dde8','#ecb8b0'];
+
+class Component extends DCLogic {
+  state={device:'mobile',user:'alex',themePref:'auto',sysDark:false,tab:'home',sub:null,tripId:'rome',
+    pics:{},mapSel:null,nb:NB0,homeOrder:['prep','frise','saved','souv','solde','budget'],homeOn:{prep:true,frise:true,saved:true},backTo:'trips',tools:false,optOpen:false,pfMore:false,lightbox:null,flip:{n:0,dir:'next'},newPic:null,tripsTab:'commun',persoF:'tous',tripsView:'list',statMode:'cat',sec:'dep',exp:{lisbonne:[],rome:ROME_EXP.map(e=>({...e}))},settled:{},photos:{},
+    prepTrip:'lisbonne',drafts:[],steps:{lisbonne:baseSteps()},stepId:'dest',stamp:null,regen:false,regenRot:0,adjust:'',
+    pack:JSON.parse(JSON.stringify(PACK)),packWho:'commun',packFlash:null,acts:ACTS.map(a=>({...a})),
+    pf:'all',feed:'cards',saved:{},gone:{},leaving:{},popped:null,shown:6,origin:0,updated:'Mis à jour hier à 6 h',refreshRot:0,refreshing:false,fsel:{per:['Pour deux']},
+    sheet:null,expAmt:'',expCat:'resto',expWho:'alex',expLabel:'',expTarget:'rome',newExp:null,copied:false,
+    toast:null,toastN:0,conf:false,count:0,turns:0,offline:false};
+  scRef=React.createRef();gridRef=React.createRef();
+  componentDidMount(){
+    try{this.mq=window.matchMedia('(prefers-color-scheme: dark)');this.onMq=()=>this.setState({sysDark:this.mq.matches});this.onMq();this.mq.addEventListener('change',this.onMq);}catch(e){}
+    this.setState({user:this.props.user||'alex'});
+    this.runCount();
+    this.loadSaved();
+    this.mi=setInterval(()=>this.tick(),600);
+  }
+  componentWillUnmount(){try{this.mq.removeEventListener('change',this.onMq);}catch(e){}clearInterval(this.ci);clearInterval(this.mi);}
+  anim(){return this.props.animations!==false;}
+  runCount(){clearInterval(this.ci);if(!this.anim()){this.setState({count:23});return;}let n=0;this.setState({count:0});this.ci=setInterval(()=>{n++;this.setState({count:n});if(n>=23)clearInterval(this.ci);},38);}
+  top(){if(this.scRef.current)this.scRef.current.scrollTop=0;}
+  go(tab){this.setState(s=>({tab,sub:null,turns:tab==='discover'?s.turns+1:s.turns}));this.top();if(tab==='home')this.runCount();}
+  toast(msg){this.setState(s=>({toast:msg,toastN:s.toastN+1}));clearTimeout(this.tt);this.tt=setTimeout(()=>this.setState({toast:null}),2400);}
+  confetti(){if(!this.anim())return;this.setState({conf:true});clearTimeout(this.ct);this.ct=setTimeout(()=>this.setState({conf:false}),1500);}
+  getExp(s,id){if(s.exp[id])return s.exp[id];const t=TRIPS.find(x=>x.id===id);return t?genExp(t):[];}
+  curSteps(s){return s.steps[s.prepTrip];}
+  upd(fn){this.setState(s=>{const list=s.steps[s.prepTrip].map(x=>x.id===s.stepId?fn(JSON.parse(JSON.stringify(x))):x);return {steps:{...s.steps,[s.prepTrip]:list}};});}
+  doRegen(msg){
+    this.setState(s=>({regen:true,regenRot:s.regenRot+360}));
+    setTimeout(()=>{
+      this.upd(st=>{st.props[st.sel].forEach(l=>{if(!l.locked&&l.alts.length){if(l.v)l.alts.push(l.v);l.v=l.alts.shift();}});if(st.status==='todo'||st.status==='wip')st.status='ia';st.gen=true;return st;});
+    },250);
+    setTimeout(()=>this.setState({regen:false}),750);
+    this.toast(msg||'Nouvelle proposition prête');
+  }
+  budgetTotal(st){return st?Object.values(st.budget).reduce((a,b)=>a+b,0):0;}
+  summary(st){
+    if(st.kind==='budget')return eur(this.budgetTotal(st))+' au total';
+    if(st.kind==='pack'){const all=[...this.state.pack.alex,...this.state.pack.antoine,...this.state.pack.commun];return all.filter(i=>i.done).length+'/'+all.length+' affaires prêtes';}
+    if(st.kind==='acts'){const a=this.state.acts;return a.length+' activités · '+a.filter(x=>x.st>0).length+' réservée(s)';}
+    const l=st.props[st.sel];if(!st.gen||!l[0]||!l[0].v)return 'À remplir';return l[0].v;
+  }
+  stStyle(status){return {ok:{st:'Validé ✓',stBg:'var(--color-success)',stColor:'#fff',stBd:'none'},ia:{st:"Proposé par l'IA",stBg:'var(--color-quest-soft)',stColor:'#6b4a0e',stBd:'none'},wip:{st:'En cours',stBg:'var(--color-chip)',stColor:'var(--color-ink)',stBd:'none'},todo:{st:'À faire',stBg:'transparent',stColor:'var(--color-ink-soft)',stBd:'1.5px dashed var(--color-border-strong)'}}[status];}
+
+  renderVals(){
+    const s=this.state,A=this.anim(),an=x=>A?x:'none';
+    const desk=s.device==='desktop';
+    const theme=s.themePref==='auto'?(s.sysDark?'dark':'light'):s.themePref;
+    const seg=(on)=>on?'var(--color-surface)':'transparent';
+    const chipBg=(on)=>on?'var(--color-ink)':'var(--color-surface)';
+    const chipC=(on)=>on?'var(--color-ink-inverse)':'var(--color-ink)';
+    const disp=(c,d)=>c?(d||'flex'):'none';
+    const scr=s.sub||s.tab;
+    const steps=this.curSteps(s);
+    const prepDone=steps.filter(x=>x.status==='ok').length;const recId=(steps.find(x=>x.status!=='ok')||{}).id;
+    const budgetStep=steps.find(x=>x.id==='budget');
+    const bTot=this.budgetTotal(budgetStep);
+    const bIdeal=1000,bLimit=1400,bMax=bLimit*1.15;
+    const pct=v=>Math.min(100,v/bMax*100).toFixed(1)+'%';
+
+    // nav
+    const navItem=(id,e,bg,l,rot)=>{const on=s.tab===id;return {e,bg,l,rot,go:()=>this.go(id),ring:on?'0 0 0 2px var(--color-surface),0 0 0 4px var(--user-base)':'var(--shadow-sticker)',fw:on?800:600,color:on?'var(--user-text)':'var(--color-ink-soft)',tab:on&&id==='home'?'var(--user-tint)':'transparent'};};
+    const sideItem=(id,e,gbg,l,rot,sub)=>{const on=sub?s.tab===id:false;return {e,gbg,l,rot,go:()=>sub?this.go(id):this.toast('Retour au QG : module '+l),h:sub?'42px':'50px',pl:sub?'30px':'10px',gs:sub?'26px':'30px',ef:sub?'13px':'15px',fs:sub?'13px':'14px',fw:on?800:(sub?600:700),bg:on?'var(--user-tint)':'transparent',color:on?'var(--user-text)':'var(--color-ink)'};};
+    const carnetHead={e:'🌍',gbg:'#f0d9a8',l:'Carnet de voyage',rot:4,go:()=>this.go('home'),h:'50px',pl:'10px',gs:'30px',ef:'15px',fs:'14px',fw:800,bg:'transparent',color:'var(--color-ink)'};
+
+    // frise
+    const fr=['crozon','mrk','cph','seville','rome'].map(id=>{const t=TRIPS.find(x=>x.id===id);return {e:t.e,bg:t.bg,bd:'none',rot:t.rot,anim:'none',name:t.name,date:t.short,dc:'var(--color-ink-soft)',go:()=>this.openTrip(id,null,'home')};});
+    fr.push({e:'✈️',bg:'#f0d9a8',bd:'2.5px solid var(--user-base)',rot:0,anim:an('qgPulse 1.8s ease-out infinite'),name:'Lisbonne',date:'J-'+23,dc:'var(--user-text)',go:()=>this.go('prep')});
+    fr.push({e:'?',bg:'transparent',bd:'2px dashed var(--color-border-strong)',rot:0,anim:'none',name:'Le suivant',date:'Discover',dc:'var(--color-ink-soft)',go:()=>this.go('discover')});
+
+    // trips
+    const own=t=>t.who==='commun'?{dot1:'var(--alex-base)',dot2:'block',own:'Commun'}:{dot1:t.who==='alex'?'var(--alex-base)':'var(--antoine-base)',dot2:'none',own:WHO[t.who]};
+    let tl=TRIPS.filter(t=>!t.current).filter(t=>s.tripsTab==='commun'?t.who==='commun':t.who!=='commun');
+    if(s.tripsTab==='perso'&&s.persoF!=='tous')tl=tl.filter(t=>t.who===s.persoF);
+    const tripList=tl.map(t=>({...own(t),e:t.e,rot:t.rot,name:t.name,dates:t.dates,short:t.short,memory:t.memory,total:eur(t.total),cover:stripes(t.bg),open:()=>this.openTrip(t.id)}));
+    const tlS=tl.filter(t=>!t.current);
+    const allExp=tlS.flatMap(t=>this.getExp(s,t.id));
+    const tot=allExp.reduce((a,e)=>a+e.amt,0)||1;
+    const statCats=CATS.map(c=>{const v=allExp.filter(e=>e.cat===c.id).reduce((a,e)=>a+e.amt,0);return {e:c.e,bg:c.bg,n:c.n,w:(v/tot*100).toFixed(1)+'%',pct:Math.round(v/tot*100)+'\u00a0%'};});
+    const countries={};tlS.forEach(t=>{const k=t.country;countries[k]=countries[k]||{n:k,cont:t.cont,c:0,amt:0};countries[k].c++;countries[k].amt+=this.getExp(s,t.id).reduce((a,e)=>a+e.amt,0);});
+    const statGeo=Object.values(countries).sort((a,b)=>b.amt-a.amt).map(g=>({n:g.n,sub:g.cont+' · '+g.c+' voyage'+(g.c>1?'s':''),amt:eur(g.amt)}));
+    const nPays=Object.keys(countries).length,nCont=new Set(tlS.map(t=>t.cont)).size,nDays=tlS.reduce((a,t)=>a+t.days,0);
+
+    // trip detail
+    const t=TRIPS.find(x=>x.id===s.tripId)||TRIPS[0];
+    const ex=this.getExp(s,t.id);
+    const exTot=ex.reduce((a,e)=>a+e.amt,0);
+    const ideal=t.ideal||Math.round(t.total*0.95/50)*50,limit=t.limit||Math.round(t.total*1.2/50)*50,gMax=limit*1.15;
+    const gp=v=>Math.min(100,v/gMax*100).toFixed(1)+'%';
+    const over=exTot>limit,overI=exTot>ideal;
+    const dExp={total:eur(exTot),status:over?'Au-dessus de la limite':overI?eur(exTot-ideal)+' au-dessus de l’idéal':'Sous l’idéal',stColor:over?'var(--color-loss)':overI?'var(--color-streak-ink)':'var(--color-gain)',fill:gp(exTot),fillBg:over?'var(--color-loss)':'var(--color-ink)',idealPos:gp(ideal),limitPos:gp(limit),ideal:eur(ideal),limit:eur(limit),
+      cats:CATS.map(c=>{const v=ex.filter(e=>e.cat===c.id).reduce((a,e)=>a+e.amt,0);return {e:c.e,bg:c.bg,n:c.n,amt:eur(v),w:(v/(exTot||1)*100).toFixed(1)+'%'};}).filter(c=>c.amt!=='0\u00a0€'),
+      rows:ex.slice().reverse().map((e,i)=>({e:CAT[e.cat].e,bg:CAT[e.cat].bg,label:e.label,amt:eur(e.amt),dot1:e.who==='antoine'?'var(--antoine-base)':'var(--alex-base)',dot2:e.who==='commun'?'block':'none',meta:(e.who==='commun'?'Épargne commune':'Payé par '+WHO[e.who])+' · '+e.day,anim:i===0&&s.newExp===t.id?an('qgIn .5s ease'):'none'}))};
+    const sh=ex.filter(e=>e.who!=='commun'),shT=sh.reduce((a,e)=>a+e.amt,0);
+    const pa=sh.filter(e=>e.who==='alex').reduce((a,e)=>a+e.amt,0),pb=shT-pa,diff=pa-shT/2;
+    const pc=ex.filter(e=>e.who==='commun').reduce((a,e)=>a+e.amt,0);
+    let split;
+    if(t.who!=='commun')split={a:t.who==='alex'?eur(pa):'—',b:t.who==='antoine'?eur(pb):'—',c:eur(pc),head:'Voyage perso',text:'Rien à partager',btn:'none'};
+    else if(s.settled[t.id]||Math.abs(diff)<1)split={a:eur(pa),b:eur(pb),c:eur(pc),head:'Comptes',text:'Vous êtes quittes',btn:'none'};
+    else split={a:eur(pa),b:eur(pb),c:eur(pc),head:'Pour être quittes',text:diff>0?'Antoine doit '+eur(diff)+' à Alex':'Alex doit '+eur(-diff)+' à Antoine',btn:'flex'};
+    const isRome=t.id==='rome';
+    const dItin=isRome?[{k:'Jour 1',v:'Arrivée, Trastevere, dîner chez Enzo'},{k:'Jour 2',v:"Vatican le matin, Castel Sant'Angelo"},{k:'Jour 3',v:'Colisée, Forum, apéro à Monti'},{k:'Jour 4',v:'Villa Borghese à vélo, Pigneto le soir'},{k:'Jour 5',v:"Campo de' Fiori, vol de 18 h"}]:[{k:'Jour 1',v:'Arrivée et première balade'},{k:'Jour 2',v:'Journée visites'},{k:'Jour 3',v:'Journée libre'}];
+    const dNotes=isRome?[{dot:'var(--alex-base)',meta:'Alex · Jour 3',t:'On a marché 24 km. Antoine dit que ça compte comme du sport.'},{dot:'var(--antoine-base)',meta:'Antoine · Jour 4',t:'Les vélos de la Villa Borghese avaient des freins… optionnels. Personne n’est tombé.'}]:[{dot:t.who==='antoine'?'var(--antoine-base)':'var(--alex-base)',meta:(t.who==='commun'?'Alex':WHO[t.who])+' · Retour',t:t.memory}];
+    const nPh=(s.photos[t.id]||0)+t.photos;
+    const phBgs=['#ecb8b0','#d5dde8','#f0d9a8','#cfe0d8','#e3d9e9','#d3dcc3','#e8c9d4','#f6dfc6'];
+    const secs=[['dep','Dépenses'],['itin','Itinéraire'],['souv','Souvenirs']];
+    const secD=(id,d)=>desk||s.sec===id?(d||'flex'):'none';
+
+    // step
+    const st=steps.find(x=>x.id===s.stepId)||steps[0];
+    const ss=this.stStyle(st.status);
+    const auto=st.mode==='auto';
+    const isLines=st.kind==='lines';
+    const showEmpty=isLines&&auto&&!st.gen;
+    const lines=(st.props[st.sel]||[]).map((l,i)=>({k:l.k,v:l.v,bt:i?'1px solid var(--color-border)':'none',anim:s.regen&&!l.locked?an('qgShimmer .7s ease'):'none',
+      edit:e=>{const v=e.target.value;this.upd(x=>{x.props[x.sel][i].v=v;x.gen=true;if(x.status==='todo')x.status='wip';return x;});},
+      lock:()=>this.upd(x=>{x.props[x.sel][i].locked=!x.props[x.sel][i].locked;return x;}),
+      lockDisp:auto?'flex':'none',lockLabel:l.locked?'Gardée ✓':'Garder',lockBg:l.locked?'var(--color-ink)':'var(--color-chip)',lockColor:l.locked?'var(--color-ink-inverse)':'var(--color-ink)'}));
+    const budgetRows=budgetStep?CATS.map(c=>({e:c.e,bg:c.bg,n:c.n,v:String(budgetStep.budget[c.id]),w:(budgetStep.budget[c.id]/(bTot||1)*100).toFixed(1)+'%',anim:s.regen?an('qgShimmer .7s ease'):'none',edit:e=>{const v=parseInt(e.target.value.replace(/\D/g,''))||0;this.setState(S=>({steps:{...S.steps,[S.prepTrip]:S.steps[S.prepTrip].map(x=>x.id==='budget'?{...x,budget:{...x.budget,[c.id]:v},status:x.status==='todo'?'wip':x.status}:x)}}));}})):[];
+    const pl=s.pack[s.packWho];
+    const packItems=pl.map((it,i)=>({t:it.t,tag:it.tag,mark:it.done?'✓':'',boxBg:it.done?'var(--user-base)':'transparent',boxBd:it.done?'var(--user-base)':'var(--color-border-strong)',tc:it.done?'var(--color-ink-soft)':'var(--color-ink)',td:it.done?'line-through':'none',anim:s.packFlash===s.packWho+i&&it.done?an('qgBounce .35s ease'):'none',
+      toggle:()=>{const who=s.packWho;this.setState(S=>{const p={...S.pack,[who]:S.pack[who].map((x,j)=>j===i?{...x,done:!x.done}:x)};return {pack:p,packFlash:who+i};},()=>{const L2=this.state.pack[who];if(L2.every(x=>x.done)&&!pl[i].done){this.confetti();this.toast(who==='commun'?'Sac commun bouclé !':'Valise de '+WHO[who]+' bouclée !');}});}}));
+    const pDone=pl.filter(x=>x.done).length;
+    const actsV=s.acts.map((a,i)=>({...a,cover:stripes(a.bg),st:ST[a.st].l,stBg:ST[a.st].bg,stColor:ST[a.st].c,day:a.day?'Jour '+a.day:'Pas placé',anim:s.regen?an('qgShimmer .7s ease'):'none',
+      cycle:()=>this.setState(S=>({acts:S.acts.map((x,j)=>j===i?{...x,st:(x.st+1)%3}:x)})),
+      cycleDay:()=>this.setState(S=>({acts:S.acts.map((x,j)=>j===i?{...x,day:(x.day+1)%6}:x)})),
+      map:()=>this.toast('Ouverture dans Maps…'),book:()=>this.toast('Ouverture du site officiel ↗')}));
+
+    // discover
+    const pool=OFFERS.filter(o=>(s.pf==='all'||(s.pf==='saved'?s.saved[o.id]:o.pf.includes(s.pf)))&&!s.gone[o.id]);
+    const vis=pool.slice(0,s.shown);
+    const offers=vis.map((o,i)=>{const sv=!!s.saved[o.id],lv=!!s.leaving[o.id];return {...o,cover:stripes(o.bg),rot:(o.id%2?-5:4),bt:i?'1px solid var(--color-border)':'none',
+      rel:o.rel,relTxt:o.rel?' · '+o.rel:'',relShort:o.rel?o.rel.replace('Relevé le ','').replace(' à 6 h',''):'idée',bookDisp:o.price==='—'?'none':'flex',
+      tx:lv?'translateX(-120%) rotate(-10deg)':'none',op:lv?0:1,anim:s.refreshing?an('qgShimmer .8s ease'):'none',
+      saveBg:sv?'var(--user-base)':'var(--color-surface)',saveColor:sv?'#fff':'var(--color-ink-soft)',saveAnim:s.popped===o.id?an('qgBounce .35s ease'):'none',
+      save:()=>{this.setState(S=>({saved:{...S.saved,[o.id]:!S.saved[o.id]},popped:o.id}));this.toast(sv?'Retiré des enregistrées':'Enregistré · le feed en tient compte');},
+      dismiss:()=>{this.setState(S=>({leaving:{...S.leaving,[o.id]:true}}));setTimeout(()=>this.setState(S=>({gone:{...S.gone,[o.id]:true}})),A?400:0);},
+      prep:()=>this.prepFrom(o),book:()=>this.toast('Ouverture du site officiel ↗')};});
+    const onMap=pool.filter(o=>COORD[o.id]),offMapL=pool.filter(o=>!COORD[o.id]);
+    const selO=onMap.find(o=>o.id===s.mapSel)||onMap[0];
+    const mapPins=onMap.map(o=>{const c=COORD[o.id],on=selO&&o.id===selO.id;return {label:o.price==='—'?o.e:o.price,x:((c[0]-EB[0])/(EB[2]-EB[0])*100).toFixed(1)+'%',y:((ym(EB[3])-ym(c[1]))/(ym(EB[3])-ym(EB[1]))*100).toFixed(1)+'%',sc:on?1.12:1,z:on?5:1,bg:on?'var(--color-ink)':'var(--color-surface)',color:on?'var(--color-ink-inverse)':'var(--color-ink)',pick:()=>this.setState({mapSel:o.id})};});
+    const selV=selO?offers.find(x=>x.id===selO.id)||(()=>{const sv2=!!s.saved[selO.id];return {...selO,rel:selO.rel?selO.rel.replace('Relevé le ','Relevé le '):'',saveBg:sv2?'var(--user-base)':'var(--color-chip)',saveColor:sv2?'#fff':'var(--color-ink)',save:()=>{this.setState(S=>({saved:{...S.saved,[selO.id]:!S.saved[selO.id]}}));this.toast(sv2?'Retiré des enregistrées':'Enregistré · le feed en tient compte');},dismiss:()=>this.setState(S=>({gone:{...S.gone,[selO.id]:true}})),prep:()=>this.prepFrom(selO)};})():{};
+    const nSaved=Object.values(s.saved).filter(Boolean).length,nGone=Object.keys(s.gone).length;
+    const fCount=FG.filter(g=>g.id!=='per'&&(s.fsel[g.id]||[]).length).length;
+
+    // onsite
+    const lnb=s.nb.lisbonne||{pages:[],cur:0},lcur=Math.min(lnb.cur||0,Math.max(lnb.pages.length-1,0)),lcp=lnb.pages[lcur]||{text:''};
+    const lis=s.exp.lisbonne||[];
+    const sheetT={exp:'Nouvelle dépense',filters:'Filtres',import:'Importer de Claude',pick:'Insérer une photo',photo:'Photo',qsouv:'Souvenirs du jour',custom:'Mon accueil'}[s.sheet]||'';
+    const expTrip=s.expTarget==='lisbonne'?'Lisbonne (en cours)':(TRIPS.find(x=>x.id===s.expTarget)||{}).name;
+    const amtN=parseFloat(String(s.expAmt).replace(',','.'))||0;
+    const meName=s.user==='alex'?'Alex':'Antoine';
+    const lpins=pinsOf('lisbonne');
+    this.mapSpec={trip:{pins:pinsOf(t.id)},acts:{pins:lpins},onsite:{pins:lpins},disc:{pins:onMap.map(o=>{const c=COORD[o.id],on=!!selO&&o.id===selO.id,lb=o.price==='—'?o.e:o.price;return {lon:c[0],lat:c[1],label:lb,on,z:on?1000:0,html:discHtml(lb,on),pick:()=>this.setState({mapSel:o.id})};})}};
+    const bal=id=>{const ex=this.getExp(s,id),sh=ex.filter(e=>e.who!=='commun'),T=sh.reduce((a,e)=>a+e.amt,0),pa=sh.filter(e=>e.who==='alex').reduce((a,e)=>a+e.amt,0),d=pa-T/2;return Math.abs(d)<1?'Vous êtes quittes':d>0?'Antoine doit '+eur(d)+' à Alex':'Alex doit '+eur(-d)+' à Antoine';};
+    const hord=s.homeOrder,hs={};hord.forEach((id,i)=>{hs[id]={o:i+1,d:s.homeOn[id]?'flex':'none'};});
+    const mv=(i,d)=>this.setState(S=>{const a=[...S.homeOrder],j=i+d;if(j<0||j>=a.length)return {homeOrder:S.homeOrder};[a[i],a[j]]=[a[j],a[i]];return {homeOrder:a};});
+    const homeCfg=hord.map((id,i)=>{const on=!!s.homeOn[id];return {l:HS[id].l,dsc:HS[id].dsc,btn:on?'Retirer':'Ajouter',bg:on?'var(--color-chip)':'var(--user-base)',color:on?'var(--color-ink)':'#fff',upOp:i?1:.3,downOp:i<hord.length-1?1:.3,up:()=>mv(i,-1),down:()=>mv(i,1),toggle:()=>this.setState(S=>({homeOn:{...S.homeOn,[id]:!S.homeOn[id]}}))};});
+    const lsteps=s.steps.lisbonne,nxS=lsteps.find(x=>x.status!=='ok')||lsteps[0],lDone=lsteps.filter(x=>x.status==='ok').length;
+    const lbS=lsteps.find(x=>x.id==='budget'),lbT=this.budgetTotal(lbS);
+    const savedList=OFFERS.filter(o=>s.saved[o.id]&&!s.gone[o.id]);
+    const lastTrip=TRIPS.find(x=>x.id==='rome');
+
+    return {
+      devSeg:[['mobile','Mobile'],['desktop','Ordinateur']].map(([id,l])=>({l,bg:s.device===id?'#f9f2ea':'transparent',go:()=>{this.setState({device:id});this.top();}})),
+      userSeg:[['alex','Alex','#b8434f'],['antoine','Antoine','#8a5a8c']].map(([id,l,dot])=>({l,dot,bg:s.user===id?'#f9f2ea':'transparent',go:()=>this.setState({user:id})})),
+      themeSeg:[['auto','Auto'],['light','Clair'],['dark','Sombre']].map(([id,l])=>({l,bg:s.themePref===id?'#f9f2ea':'transparent',go:()=>this.setState({themePref:id})})),
+      theme,user:s.user,me:meName,initial:meName[0],
+      fw:desk?'1240px':'390px',fh:desk?'820px':'844px',fr:desk?'20px':'38px',
+      sbDisp:disp(desk),barDisp:disp(!desk),bnDisp:disp(!desk),mobFlex:disp(!desk),
+      scTop:desk?'0':'44px',scPad:desk?'36px 40px 60px':'8px 18px 130px',scRef:this.scRef,
+      themeLabel:{auto:'Auto',light:'Clair',dark:'Sombre'}[s.themePref],
+      cycleTheme:()=>this.setState(S=>({themePref:{auto:'light',light:'dark',dark:'auto'}[S.themePref]})),
+      syncLabel:s.offline?'Hors connexion':'Synchronisé',syncDot:s.offline?'transparent':'var(--color-success)',
+      netLabel:s.offline?'Hors connexion':'Synchronisé',netBg:s.offline?'var(--color-ink)':'var(--color-chip)',netColor:s.offline?'var(--color-ink-inverse)':'var(--color-ink)',netDot:s.offline?'transparent':'var(--color-success)',offBanner:disp(s.offline,'block'),
+      toggleNet:()=>this.setState(S=>({offline:!S.offline})),
+      sideNav:[sideItem('qg','🏡','var(--color-surface)','Accueil',0),sideItem('hab','💪','#d3dcc3','Habitudes',-6),carnetHead,
+        sideItem('home','🌍','#f0d9a8','Accueil',0,true),sideItem('trips','🧳','#f6dfc6','Nos voyages',-5,true),sideItem('prep','🗺️','#cfe0d8','Préparer',5,true),sideItem('discover','🧭','#d5dde8','Discover',-3,true),sideItem('onsite','📍','#ecb8b0','Sur place',4,true),
+        sideItem('jr','🌙','#e3d9e9','Journal',-3),sideItem('bob','🎬','#ecb8b0','Bobine',6)],
+      navL:[navItem('home','🌍','#f0d9a8','Accueil',4),navItem('trips','🧳','#f6dfc6','Voyages',-5)],
+      navR:[navItem('prep','🗺️','#cfe0d8','Préparer',5),navItem('onsite','📍','#ecb8b0','Sur place',-3)],
+      compRot:s.turns*360+(s.tab==='discover'?20:0),compBd:s.tab==='discover'?'var(--user-base)':'var(--color-surface)',compFw:s.tab==='discover'?800:600,compColor:s.tab==='discover'?'var(--user-text)':'var(--color-ink-soft)',
+      dHome:disp(scr==='home'),dTrips:disp(scr==='trips'),dTrip:disp(scr==='trip'),dPrep:disp(scr==='prep'),dStep:disp(scr==='step'),dDisc:disp(scr==='discover'),dOnsite:disp(scr==='onsite'),
+      backQG:()=>this.toast('Retour à l’accueil du QG'),
+      goPrep:()=>this.go('prep'),goTrips:()=>this.go('trips'),goDiscover:()=>this.go('discover'),
+      count:s.count,floatAnim:an('qgFloat 3.2s ease-in-out infinite'),prepDone,prepPct:(prepDone/9*100)+'%',frise:fr,
+      tripsMeta:'4 communs · 3 perso',updatedLabel:s.updated,origin:ORIGINS[s.origin],
+      teaser:OFFERS.filter(o=>!s.gone[o.id]).slice(0,3).map(o=>({e:o.e,bg:o.bg,dest:o.dest,price:o.price})),
+      tripTabs:[['commun','Communs'],['perso','Perso']].map(([id,l])=>({l,bg:seg(s.tripsTab===id),go:()=>this.setState({tripsTab:id})})),
+      persoDisp:disp(s.tripsTab==='perso'),
+      persoChips:[['tous','Tous',''],['alex','Alex','var(--alex-base)'],['antoine','Antoine','var(--antoine-base)']].map(([id,l,dot])=>({l,dot,dotDisp:dot?'block':'none',bg:chipBg(s.persoF===id),color:chipC(s.persoF===id),go:()=>this.setState({persoF:id})})),
+      statTotal:eur(tot),statMeta:tlS.length+' voyage'+(tlS.length>1?'s':'')+' · '+nPays+' pays · '+nCont+' continent'+(nCont>1?'s':'')+' · '+nDays+' j',
+      statSeg:[['cat','Catégories'],['geo','Pays']].map(([id,l])=>({l,bg:seg(s.statMode===id),go:()=>this.setState({statMode:id})})),
+      statCatDisp:disp(s.statMode==='cat'),statGeoDisp:disp(s.statMode==='geo'),statCats,statGeo,
+      tripCount:tl.length+' voyage'+(tl.length>1?'s':''),
+      viewSeg:[['list','Liste'],['grid','Grille']].map(([id,l])=>({l,bg:seg(s.tripsView===id),go:()=>this.setState({tripsView:id})})),
+      listDisp:disp(s.tripsView==='list','grid'),gridDisp:disp(s.tripsView==='grid','grid'),tripList,
+      dt:{...own(t),name:t.name,country:t.country,dates:t.dates,days:t.days,memory:t.memory,e:t.e,rot:t.rot,cover:stripes(t.bg)},
+      soon:()=>this.toast('Partage en lecture : Available soon…'),
+      secChipsDisp:disp(!desk),secChips:secs.map(([id,l])=>({l,bg:chipBg(s.sec===id),color:chipC(s.sec===id),go:()=>this.setState({sec:id})})),
+      gridRef:this.gridRef,secDep:secD('dep','block'),secSplit:secD('dep'),secItin:secD('itin','block'),secPhotos:secD('souv'),secNotes:secD('souv'),secMap:secD('itin'),
+      backLabel:{home:'Accueil',onsite:'Sur place',trips:'Nos voyages'}[s.backTo||'trips'],goBack:()=>this.go(s.backTo||'trips'),toolsDisp:disp(s.tools),toolsArrow:s.tools?'▴':'▾',toggleTools:()=>this.setState(S=>({tools:!S.tools})),...this.nbVals(s,t),
+      dExp,split,dItin,dNotes,
+      settle:()=>{this.setState(S=>({settled:{...S.settled,[t.id]:true}}));this.confetti();this.toast('Comptes à zéro !');},
+      soonWrite:()=>this.toast('Nouvelle page du carnet'),tripMapRef:this.mapRef('trip'),actsMapRef:this.mapRef('acts'),onsiteMapRef:this.mapRef('onsite'),discMapRef:this.mapRef('disc'),actsMapDisp:disp(st.kind==='acts'),
+      fabDisp:disp(scr==='trip'||scr==='onsite'),fabRight:desk?'36px':'20px',fabBottom:desk?'32px':'104px',
+      openExp:()=>this.setState({sheet:'exp',expTarget:scr==='onsite'?'lisbonne':t.id,expAmt:'',expLabel:'',expWho:s.user}),
+      // prep
+      prepTripChips:[{id:'lisbonne',l:'Lisbonne',sub:'26 – 30 nov.'},...s.drafts].map(c=>({l:c.l,sub:c.sub,bg:chipBg(s.prepTrip===c.id),color:chipC(s.prepTrip===c.id),go:()=>this.setState({prepTrip:c.id})})),
+      newDraft:()=>{const id='d'+Date.now();this.setState(S=>({drafts:[...S.drafts,{id,l:'Sans titre',sub:'brouillon'}],steps:{...S.steps,[id]:this.draftSteps(null)},prepTrip:id}));this.toast('Nouveau voyage en préparation');},
+      rb:{total:eur(bTot),fill:pct(bTot),fillBg:bTot>bLimit?'#e98b8b':bTot>bIdeal?'var(--color-quest-stripe)':'#9cc27a',idealPos:pct(bIdeal),limitPos:pct(bLimit),ideal:eur(bIdeal),limit:eur(bLimit),done:prepDone,ring:'conic-gradient(var(--color-ink-inverse) '+(prepDone/9*360)+'deg, rgba(127,110,98,.45) 0)'},
+      stepCards:steps.map(x=>({...this.stStyle(x.status),rec:x.id===recId?'Suggérée':'',shadow:x.id===recId?'0 0 0 2px var(--user-base),var(--shadow-card)':'var(--shadow-card)',e:x.e,bg:x.bg,rot:x.rot,t:x.t,sum:this.summary(x),mode:x.mode==='auto'?'✦ Automatique':'✎ Manuel',anim:s.stamp===x.id&&x.status==='ok'?an('qgStamp .5s ease'):'none',open:()=>{this.setState({sub:'step',stepId:x.id,adjust:''});this.top();}})),
+      prepName:(s.prepTrip==='lisbonne'?'Lisbonne':(s.drafts.find(d=>d.id===s.prepTrip)||{}).l),
+      sv:{...ss,e:st.e,bg:st.bg,rot:st.rot,t:st.t,anim:s.stamp===st.id&&st.status==='ok'?an('qgStamp .5s ease'):'none'},
+      modeSeg:[['manual','✎ Manuel'],['auto','✦ Automatique']].map(([id,l])=>({l,bg:seg(st.mode===id),go:()=>this.upd(x=>{x.mode=id;return x;})})),
+      aiDisp:disp(auto,'block'),countDisp:disp(isLines),
+      countSeg:[1,2,3].map(n=>({l:String(n),bg:seg(st.count===n),go:()=>{this.upd(x=>{x.count=n;while(x.props.length<n){const k=x.props.length;x.props.push(x.props[0].map(l=>({...l,v:l.alts[k-1]||l.v,alts:[...l.alts],locked:false})));}if(x.sel>=n)x.sel=0;return x;});if(n>st.count)this.doRegen(n+' propositions côte à côte');}})),
+      regen:()=>this.doRegen(isLines?null:(st.kind==='pack'?'Liste régénérée · cases cochées gardées':st.kind==='acts'?'Activités régénérées':'Budget régénéré')),regenRot:s.regenRot,
+      regenLabel:'Régénérer cette étape',optDisp:disp(s.optOpen),optLabel:s.optOpen?'Moins d’options ▴':'Options ▾',toggleOpt:()=>this.setState(S=>({optOpen:!S.optOpen})),
+      openImport:()=>this.setState({sheet:'import',copied:false}),
+      adjChips:['Moins cher','Plus calme','Plus court','Plus fun'].map(l=>({l,go:()=>this.setState(S=>({adjust:S.adjust?S.adjust+', '+l.toLowerCase():l}))})),
+      adjust:s.adjust,onAdjust:e=>this.setState({adjust:e.target.value}),
+      sendAdjust:()=>{if(!s.adjust.trim()){this.toast('Écris ou choisis un ajustement');return;}this.doRegen('Ajusté : « '+s.adjust.toLowerCase()+' »');this.setState({adjust:''});},
+      propTabsDisp:disp(isLines&&auto&&st.gen&&st.count>1),
+      propTabs:st.props.slice(0,st.count).map((p,i)=>({l:(st.sel===i?'✓ ':'')+'Option '+'ABC'[i],bg:chipBg(st.sel===i),color:chipC(st.sel===i),go:()=>this.upd(x=>{x.sel=i;return x;})})),
+      emptyDisp:disp(showEmpty),linesDisp:disp(isLines&&!showEmpty),stepLines:lines,
+      addLineDisp:disp(!auto),addLine:()=>this.upd(x=>{x.props[x.sel].push(L('Nouvelle ligne',''));return x;}),
+      bookStepDisp:disp(!!st.book&&st.gen),bookStep:()=>this.toast('Ouverture du site officiel ↗'),
+      budgetDisp:disp(st.kind==='budget'),budgetRows,
+      packDisp:disp(st.kind==='pack'),packParams:['Lisbonne · 17 °C, averses','5 j','Bagage cabine 10 kg','Ville + rando à Sintra','Une liste par personne + une commune'],
+      packSeg:[['alex','Alex','var(--alex-base)','none'],['antoine','Antoine','var(--antoine-base)','none'],['commun','Commun','var(--alex-base)','block']].map(([id,l,d1,d2])=>({l,d1,d2,bg:seg(s.packWho===id),go:()=>this.setState({packWho:id})})),
+      packTitle:s.packWho==='commun'?'Sac commun':'Valise de '+WHO[s.packWho],packProg:pDone+'/'+pl.length,packPct:(pDone/(pl.length||1)*100)+'%',packItems,
+      packTpl:[['Week-end ville',['Plan de métro hors ligne']],['Plage',['Crème solaire','Serviette']],['Rando',['Frontale','Pansements ampoules']]].map(([l,items])=>({l,go:()=>{const who=s.packWho;this.setState(S=>({pack:{...S.pack,[who]:[...S.pack[who],...items.map(t2=>({t:t2,done:false,tag:l.toLowerCase()}))]}}));this.toast('Modèle « '+l+' » ajouté');}})),
+      saveTpl:()=>this.toast('Modèle enregistré'),
+      actsDisp:disp(st.kind==='acts','grid'),acts:actsV,
+      valLabel:st.status==='ok'?'Étape validée ✓ · Rouvrir':'Valider cette étape',valBg:st.status==='ok'?'var(--color-chip)':'var(--user-base)',valColor:st.status==='ok'?'var(--color-ink)':'#fff',
+      validate:()=>{const ok=st.status!=='ok';this.upd(x=>{x.status=ok?'ok':'wip';x.gen=true;return x;});if(ok){this.setState({stamp:st.id});this.toast('Étape validée · '+(prepDone+1)+'/9');if(prepDone+1===9)this.confetti();}},
+      // discover
+      refresh:()=>{this.setState(S=>({refreshing:true,refreshRot:S.refreshRot+360}));setTimeout(()=>this.setState({refreshing:false,updated:'Mis à jour à l’instant'}),900);},refreshRot:s.refreshRot,
+      cycleOrigin:()=>{const n=(s.origin+1)%ORIGINS.length;this.setState({origin:n});this.toast('Départs depuis '+ORIGINS[n]);},
+      pfChips:[...(s.pfMore?PF:PF.slice(0,5)).map(p=>({l:p.id==='saved'?'♥ Enregistrées'+(nSaved?' · '+nSaved:''):p.l,bg:chipBg(s.pf===p.id),color:chipC(s.pf===p.id),go:()=>this.setState({pf:p.id,shown:6})})),{l:s.pfMore?'Moins ▴':'Plus ▾',bg:'transparent',color:'var(--color-ink-soft)',go:()=>this.setState(S=>({pfMore:!S.pfMore}))}],emptyMsg:s.pf==='saved'?'Touche ♥ sur une offre pour la retrouver ici.':'Essaie un autre raccourci ou actualise le feed.',
+      openFilters:()=>this.setState({sheet:'filters'}),filterCount:fCount?' · '+fCount:'',
+      feedSeg:[['cards','Feed'],['rows','Liste'],['map','Carte']].map(([id,l])=>({l,bg:seg(s.feed===id),go:()=>this.setState({feed:id})})),
+      learnLabel:'Le feed apprend de vos choix · '+nSaved+' enregistrée'+(nSaved>1?'s':'')+', '+nGone+' écartée'+(nGone>1?'s':''),
+      cardsDisp:disp(s.feed==='cards'&&vis.length,'grid'),rowsDisp:disp(s.feed==='rows'&&vis.length),offers,emptyFeed:disp(!pool.length),
+      mapDisp:disp(s.feed==='map'&&pool.length),euMap:osm(EB),mapPins,selDisp:disp(!!selO),sel:selV,offMapDisp:disp(s.feed==='map'&&offMapL.length),offMap:offMapL.map(o=>o.dest.split(',')[0]+' '+o.price).join(' · '),
+      moreDisp:disp(pool.length>s.shown&&s.feed!=='map'),more:()=>this.setState(S=>({shown:S.shown+3})),
+      // onsite
+      quick:[{e:'💶',bg:'#d3dcc3',l:'Dépense',rot:-4,go:()=>this.setState({sheet:'exp',expTarget:'lisbonne',expAmt:'',expLabel:'',expWho:s.user})},{e:'📖',bg:'#e3d9e9',l:'Souvenirs',rot:3,go:()=>{this.setNb('lisbonne',n=>{if(!n.mode){n.mode='daily';n.pages=Array.from({length:5},()=>({title:'',text:'',pics:[]}));n.cur=0;}return n;});this.setState({sheet:'qsouv'});}}],
+      today:[['9 h 40','Vol Orly → Lisbonne',2],['13 h','Arrivée à l’appart, Alfama',1],['16 h','Balade Alfama et miradouro de Santa Luzia',0],['20 h 30','Dîner à Graça',0]].map(([h,t2,k])=>({h,t:t2,tc:k===1?'var(--user-text)':k===2?'var(--color-ink-faint)':'var(--color-ink)',dot:k===2?'var(--color-ink-faint)':k===1?'var(--user-base)':'transparent',dbd:k===2?'var(--color-ink-faint)':k===1?'var(--user-base)':'var(--color-border-strong)',fw:k===1?800:500,anim:k===1?an('qgPulse 1.8s ease-out infinite'):'none'})),
+      docs:[{e:'✈️',bg:'#d5dde8',t:'Billets d’avion · 2 PDF'},{e:'🛏️',bg:'#e3d9e9',t:'Réservation logement'},{e:'🛡️',bg:'#d3dcc3',t:'Assurance voyage'},{e:'🪪',bg:'#f6dfc6',t:'Cartes d’identité'}],
+      lisSplit:(()=>{const sh=lis.filter(e=>e.who!=='commun'),T=sh.reduce((a,e)=>a+e.amt,0),pa=sh.filter(e=>e.who==='alex').reduce((a,e)=>a+e.amt,0),d=pa-T/2;return Math.abs(d)<1?'Vous êtes quittes':d>0?'Antoine doit '+eur(d)+' à Alex':'Alex doit '+eur(-d)+' à Antoine';})(),lisTotal:eur(lis.reduce((a,e)=>a+e.amt,0)),lisEmpty:disp(!lis.length,'block'),
+      lisRows:lis.slice().reverse().map((e,i)=>({e:CAT[e.cat].e,bg:CAT[e.cat].bg,label:e.label,amt:eur(e.amt),meta:(e.who==='commun'?'Épargne commune':'Payé par '+WHO[e.who])+(e.pending?' · en attente d’envoi':''),anim:i===0?an('qgIn .5s ease'):'none'})),
+      qLabel:'Jour '+((lcur||0)+1)+' · Lisbonne',qText:lcp.text,onQText:e=>this.setNb('lisbonne',n=>{if(n.pages[n.cur])n.pages[n.cur].text=e.target.value;return n;}),
+      qPics:this.getPics(s,'lisbonne').map(p=>({bgc:bgc(p)})),qCount:this.getPics(s,'lisbonne').length,onQFiles:e=>{this.addFiles('lisbonne',e.target.files);e.target.value='';},
+      goTripSouv:()=>{this.setState({sheet:null});this.openTrip('lisbonne','souv','onsite');},
+      hs,homeCfg,openCustom:()=>this.setState({sheet:'custom'}),lisDone:lDone,lisPct:(lDone/9*100)+'%',
+      nx:{e:nxS.e,bg:nxS.bg,t:nxS.t,sum:this.summary(nxS),open:()=>{this.setState({tab:'prep',sub:'step',stepId:nxS.id,prepTrip:'lisbonne',adjust:''});this.top();}},
+      savedRows:savedList.slice(0,3).map(o=>({dest:o.dest,price:o.price,bg:o.bg,go:()=>this.prepFrom(o)})),savedEmptyDisp:disp(!savedList.length),goSavedAll:()=>{this.setState({pf:'saved',shown:6});this.go('discover');},
+      lastTrip:{name:lastTrip.name,e:lastTrip.e,bg:lastTrip.bg,memory:lastTrip.memory},lastBal:bal('rome'),openLastSouv:()=>this.openTrip('rome','souv','home'),openLastDep:()=>this.openTrip('rome','dep','home'),
+      hb:{total:eur(lbT),fill:pct(lbT),fillBg:lbT>bLimit?'var(--color-loss)':'var(--color-ink)',idealPos:pct(bIdeal),limitPos:pct(bLimit),ideal:eur(bIdeal),limit:eur(bLimit)},
+      // toast/confetti
+      toast:s.toast,toastDisp:disp(!!s.toast),toastAnim:an((s.toastN%2?'qgPopA':'qgPopB')+' .45s ease both'),toastBottom:desk?'32px':'102px',
+      confDisp:disp(s.conf,'block'),confetti:s.conf?Array.from({length:22},(_,i)=>({x:((i*37)%100)+'%',w:(6+i%3*3)+'px',bg:CONF_COLORS[i%CONF_COLORS.length],anim:'qgConf '+(1+(i%5)*0.1)+'s ease-in '+((i%7)*0.05)+'s both'})):[],
+      // sheets
+      sheetDisp:disp(!!s.sheet),closeSheet:()=>this.setState({sheet:null}),stop:e=>e.stopPropagation(),
+      shAlign:desk?'center':'flex-end',shW:desk?'460px':'100%',shRad:desk?'28px':'30px 30px 0 0',shAnim:an(desk?'qgIn .25s ease':'qgUp .3s cubic-bezier(.2,.9,.3,1)'),handleDisp:disp(!desk,'block'),
+      sheetTitle:sheetT,shExp:disp(s.sheet==='exp'),shFilters:disp(s.sheet==='filters'),shImport:disp(s.sheet==='import'),shPick:disp(s.sheet==='pick'),shQNote:disp(s.sheet==='qsouv'),shQPhoto:disp(s.sheet==='qsouv'),shCustom:disp(s.sheet==='custom'),shPhoto:disp(s.sheet==='photo'),
+      expTargetName:expTrip,expAmt:s.expAmt,onExpAmt:e=>this.setState({expAmt:e.target.value.replace(/[^0-9.,]/g,'')}),
+      expCats:CATS.map(c=>({e:c.e,bg:c.bg,n:c.n,sc:s.expCat===c.id?1.08:1,fw:s.expCat===c.id?800:600,ring:s.expCat===c.id?'0 0 0 2.5px var(--color-surface),0 0 0 4.5px var(--user-base)':'var(--shadow-sticker)',go:()=>this.setState({expCat:c.id})})),
+      whoSeg:[['alex','Alex','var(--alex-base)','none'],['antoine','Antoine','var(--antoine-base)','none'],['commun','Commun','var(--alex-base)','block']].map(([id,l,d1,d2])=>({l,d1,d2,bg:seg(s.expWho===id),go:()=>this.setState({expWho:id})})),
+      whoHelp:s.expWho==='commun'?'Sort de l’épargne commune. Ne change pas qui doit quoi.':s.expWho==='alex'?'Alex avance : Antoine lui doit la moitié.':'Antoine avance : Alex lui doit la moitié.',
+      expLabel:s.expLabel,onExpLabel:e=>this.setState({expLabel:e.target.value}),
+      expOp:amtN>0?1:.5,expBtn:amtN>0?'Ajouter '+amtN.toLocaleString('fr-FR')+'\u00a0€':'Ajouter',
+      addExp:()=>{if(!(amtN>0)){this.toast('Indique un montant');return;}const tg=s.expTarget;const item={cat:s.expCat,label:s.expLabel||CAT[s.expCat].n,amt:amtN,who:s.expWho,day:tg==='lisbonne'?'Jeu. 26 nov.':"Aujourd'hui",pending:s.offline};this.setState(S=>({exp:{...S.exp,[tg]:[...this.getExp(S,tg),item]},sheet:null,newExp:tg}));this.toast('+'+amtN.toLocaleString('fr-FR')+'\u00a0€ · '+CAT[s.expCat].n+(s.offline?' · en attente d’envoi':''));},
+      fGroups:FG.map(g=>({t:g.t,opts:g.opts.map(o=>{const on=(s.fsel[g.id]||[]).includes(o);return {l:o,bg:chipBg(on),color:chipC(on),go:()=>this.setState(S=>{const cur=S.fsel[g.id]||[];const nx=g.multi?(cur.includes(o)?cur.filter(x=>x!==o):[...cur,o]):(cur.includes(o)?[]:[o]);return {fsel:{...S.fsel,[g.id]:nx}};})};})})),
+      resetFilters:()=>this.setState({fsel:{per:['Pour deux']}}),applyFilters:()=>{this.setState({sheet:null});this.toast('Filtres appliqués');},
+      copyPrompt:()=>this.setState({copied:true}),copyLabel:s.copied?'Copié ✓':'Copier la demande',
+      doImport:()=>{this.setState({sheet:null});this.doRegen('Proposition importée');}
+    };
+  }
+  getPics(s,id){return s.pics[id]||place(id);}
+  setNb(id,fn){this.setState(S=>{const c=S.nb[id]||{mode:null,pages:[],cur:0,view:'write'};const n=fn({...c,pages:c.pages.map(p=>({...p,pics:[...p.pics]}))});return {nb:{...S.nb,[id]:n}};});}
+  addFiles(id,files,insert){
+    const list=Array.from(files||[]).filter(f=>/^image\//.test(f.type));if(!list.length)return;
+    const room=20-this.getPics(this.state,id).length;
+    if(room<=0){this.toast('20 photos max par voyage');return;}
+    if(list.length>room)this.toast('20 photos max : '+room+' ajoutée(s)');
+    list.slice(0,room).forEach(f=>{const r=new FileReader();r.onload=()=>{const pic={u:r.result};
+      this.setState(S=>({pics:{...S.pics,[id]:[...this.getPics(S,id),pic]},newPic:id}));
+      if(insert)this.setNb(id,n=>{if(n.pages[n.cur])n.pages[n.cur].pics.push(pic);return n;});};r.readAsDataURL(f);});
+    if(insert)this.setState({sheet:null});
+    else this.toast('Photo'+(list.length>1?'s':'')+' ajoutée'+(list.length>1?'s':''));
+  }
+  nbVals(s,t){
+    const A=this.anim(),an=x=>A?x:'none';
+    const id=t.id,nbv=s.nb[id]||{mode:null,pages:[],cur:0,view:'write'},pages=nbv.pages;
+    const cur=Math.min(nbv.cur,Math.max(pages.length-1,0)),cp=pages[cur]||{title:'',text:'',pics:[]};
+    const daily=nbv.mode==='daily',pics=this.getPics(s,id);
+    const seg=on=>on?'var(--color-surface)':'transparent';
+    const chipBg=on=>on?'var(--color-ink)':'var(--color-surface-sunken)',chipC=on=>on?'var(--color-ink-inverse)':'var(--color-ink)';
+    const disp=(c,d)=>c?(d||'flex'):'none';
+    const go=d=>{this.setNb(id,n=>{n.cur=Math.max(0,Math.min(n.pages.length-1,n.cur+d));return n;});this.setState(S=>({flip:{n:S.flip.n+1,dir:d>0?'next':'prev'}}));};
+    const lb=s.lightbox!=null?pics[s.lightbox]:null;
+    const edit=(k,v)=>this.setNb(id,n=>{n.pages[n.cur][k]=v;return n;});
+    return {
+      pics:pics.map((p,i)=>({bgc:bgc(p),anim:s.newPic===id&&i===pics.length-1&&p.u?an('qgStamp .4s ease'):'none',open:()=>this.setState({lightbox:i,sheet:'photo'})})),
+      photoCount:pics.length,photoPct:(pics.length/20*100)+'%',photoEmptyDisp:disp(!pics.length),galleryDisp:disp(pics.length,'grid'),addTileDisp:disp(pics.length<20),
+      onFiles:e=>{this.addFiles(id,e.target.files);e.target.value='';},onPickFiles:e=>{this.addFiles(id,e.target.files,true);e.target.value='';},
+      prevent:e=>e.preventDefault(),onDrop:e=>{e.preventDefault();this.addFiles(id,e.dataTransfer.files);},
+      pickPics:pics.map(p=>({bgc:bgc(p),pick:()=>{this.setNb(id,n=>{n.pages[n.cur].pics.push(p);return n;});this.setState({sheet:null});this.toast('Photo insérée dans la page');}})),
+      lbBg:lb?bgc(lb):'transparent',lbNum:s.lightbox!=null?(s.lightbox+1)+' / '+pics.length:'',
+      lbDelete:()=>{const i=s.lightbox;this.setState(S=>({pics:{...S.pics,[id]:this.getPics(S,id).filter((_,j)=>j!==i)},sheet:null,lightbox:null}));this.toast('Photo supprimée');},
+      nbChooseDisp:disp(!nbv.mode),nbMainDisp:disp(!!nbv.mode),
+      resetMode:()=>this.setNb(id,n=>{n.mode=null;return n;}),
+      chooseFree:()=>this.setNb(id,n=>{n.mode='free';n.view='write';if(!n.pages.some(p=>p.text)){n.pages=[{title:'',text:'',pics:[]}];n.cur=0;}return n;}),
+      chooseDaily:()=>this.setNb(id,n=>{n.mode='daily';n.view='write';if(!n.pages.some(p=>p.text)){n.pages=Array.from({length:t.days},()=>({title:'',text:'',pics:[]}));n.cur=0;}return n;}),
+      nbViewSeg:[['write','✎ Écrire'],['book','📖 Livre']].map(([k,l])=>({l,bg:seg(nbv.view===k),go:()=>this.setNb(id,n=>{n.view=k;return n;})})),
+      writeDisp:disp(nbv.view!=='book'),bookDisp:disp(nbv.view==='book'),
+      pageChips:pages.map((p,i)=>({l:daily?'Jour '+(i+1):(p.title||'Page '+(i+1)),bg:chipBg(i===cur),color:chipC(i===cur),go:()=>this.setNb(id,n=>{n.cur=i;return n;})})),
+      addPageDisp:disp(nbv.mode==='free'),addPage:()=>this.setNb(id,n=>{n.pages.push({title:'',text:'',pics:[]});n.cur=n.pages.length-1;return n;}),
+      pageLabel:(daily?'Jour '+(cur+1)+' · ':'Page '+(cur+1)+' · ')+t.name+' · écrit par '+(s.user==='alex'?'Alex':'Antoine'),
+      pTitle:cp.title,pText:cp.text,onTitle:e=>edit('title',e.target.value),onText:e=>edit('text',e.target.value),
+      pPicsDisp:disp(cp.pics.length,'grid'),
+      pPics:cp.pics.map((p,i)=>({bgc:bgc(p),remove:()=>this.setNb(id,n=>{n.pages[n.cur].pics.splice(i,1);return n;})})),
+      pPicsBook:cp.pics.map(p=>({bgc:bgc(p)})),
+      openPick:()=>this.setState({sheet:'pick'}),
+      bookMeta:t.name+(daily?' · Jour '+(cur+1):''),bookTitle:cp.title||(daily?'Jour '+(cur+1):'Sans titre'),
+      bookText:cp.text||'Page vide. Passe en mode Écrire pour la remplir.',bookColor:cp.text?'var(--color-ink)':'var(--color-ink-faint)',
+      bookNum:(cur+1)+' / '+(pages.length||1),prevOp:cur>0?1:.4,nextOp:cur<pages.length-1?1:.4,
+      prevPage:()=>go(-1),nextPage:()=>go(1),
+      flipOrigin:s.flip.dir==='next'?'left center':'right center',
+      flipAnim:s.flip.n?an('qgFlip'+(s.flip.dir==='next'?'N':'P')+(s.flip.n%2?'A':'B')+' .45s ease'):'none'
+    };
+  }
+  mapRef(k){this._mr=this._mr||{};this.mapEls=this.mapEls||{};return this._mr[k]||(this._mr[k]=el=>{this.mapEls[k]=el;});}
+  loadSaved(){try{const d=JSON.parse(localStorage.getItem('qg_carnet_v1')||'null');if(!d)return;const p={};['nb','pics','saved','gone','homeOrder','homeOn','exp','settled'].forEach(k=>{if(d[k]!==undefined)p[k]=d[k];});if(p.nb)p.nb={...NB0,...p.nb};if(p.exp)p.exp={...this.state.exp,...p.exp};this.setState(p);}catch(e){}}
+  tick(){const s=this.state,keys=['nb','pics','saved','gone','homeOrder','homeOn','exp','settled'];
+    if(!this._ls)this._ls=keys.map(k=>s[k]);else if(keys.some((k,i)=>this._ls[i]!==s[k])){this._ls=keys.map(k=>s[k]);try{localStorage.setItem('qg_carnet_v1',JSON.stringify(Object.fromEntries(keys.map(k=>[k,s[k]]))));}catch(e){}}
+    this.syncMaps();}
+  syncMaps(){const Lf=window.L;if(!Lf||!this.mapSpec)return;this.maps=this.maps||{};this.mapEls=this.mapEls||{};
+    Object.keys(this.mapSpec).forEach(k=>{const el=this.mapEls[k],sp=this.mapSpec[k];if(!el||!el.offsetParent)return;
+      let m=this.maps[k];if(m&&m.el!==el){try{m.map.remove();}catch(e){}m=null;}
+      if(!m){const map=Lf.map(el,{scrollWheelZoom:false});Lf.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(map);m=this.maps[k]={map,el,layer:Lf.layerGroup().addTo(map),sig:null,fit:null};}
+      m.map.invalidateSize();
+      const sig=JSON.stringify(sp.pins.map(p=>[p.lon,p.lat,p.label||p.l,p.on]));
+      if(m.sig!==sig){m.layer.clearLayers();sp.pins.forEach(p=>{const mk=Lf.marker([p.lat,p.lon],{icon:Lf.divIcon({className:'',html:p.html,iconSize:null})}).addTo(m.layer);if(p.z)mk.setZIndexOffset(p.z);if(p.pick)mk.on('click',p.pick);});
+        const fk=sp.pins.map(p=>p.lon+','+p.lat).join('|');if(m.fit!==fk&&sp.pins.length){m.map.fitBounds(sp.pins.map(p=>[p.lat,p.lon]),{padding:[40,40],maxZoom:15});m.fit=fk;}m.sig=sig;}});}
+  openTrip(id,sec,from){this.setState({tab:'trips',sub:'trip',tripId:id,sec:sec||'dep',newExp:null,backTo:from||'trips'},()=>{this.top();});}
+  draftSteps(o){const st=baseSteps().map(x=>({...x,status:x.id==='docs'?'todo':'todo',gen:x.kind!=='lines'||x.id==='docs',count:1,sel:0,props:x.kind==='lines'?[x.props[0].map(l=>({...l,v:x.id==='docs'?l.v:'',alts:x.id==='dest'?[]:l.alts}))]:x.props}));
+    if(o){const d=st.find(x=>x.id==='dest');d.props=[[L('Ville',o.dest),L('Trajet',o.trip),L('Météo',o.meteo),L('Source','Discover · '+(o.rel||'idée'))]];d.status='ia';d.gen=true;
+      const dt=st.find(x=>x.id==='dates');dt.props=[[L('Période',o.dates),L('Durée','')]];dt.status='ia';dt.gen=true;
+      const b=st.find(x=>x.id==='budget');const p=parseInt(String(o.price).replace(/\D/g,''))||0;b.budget={transport:p,logement:0,resto:0,activites:0,courses:0,shopping:0,local:0};b.status='ia';}
+    return st;}
+  prepFrom(o){const id='d'+o.id;const name=o.dest.split(',')[0];
+    this.setState(S=>S.steps[id]?{prepTrip:id,tab:'prep',sub:null}:{drafts:[...S.drafts,{id,l:name,sub:'brouillon'}],steps:{...S.steps,[id]:this.draftSteps(o)},prepTrip:id,tab:'prep',sub:null});
+    this.top();this.toast('« '+name+' » pré-rempli : destination, dates, budget');}
+}
+</script>
+</body>
+</html>

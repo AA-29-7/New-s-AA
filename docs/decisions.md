@@ -143,3 +143,12 @@
   puis fusionnées dans `preprod` par pull request.
 - Raison : `main` ne contient que le commit initial ; la configuration Hosting
   nécessaire au déploiement de la préprod n'était que sur `data-layer`.
+
+## 2026-11-13 — Carnet de voyage : cartes Leaflet + OpenStreetMap
+- Décision : cartes embarquées avec Leaflet (paquet npm, chargé à la demande)
+  et les tuiles OpenStreetMap, comme dans le prototype. Routes du module sous
+  `/carnet/*` (convention du registre) plutôt que `/voyage/*`.
+- Conséquences : les tuiles demandent le réseau ; hors connexion la carte
+  reste grise mais les repères et le reste de l'écran s'affichent. Génération
+  IA dans l'app, partage en lecture et convertisseur restent « Available
+  soon… » ; « Importer depuis Claude » fonctionne par copier-coller.
