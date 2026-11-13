@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { AppModule } from '../../app/modules'
 import { CRYPTO, QUOTES } from '../home/content'
@@ -5,7 +6,7 @@ import { FunFactCard } from '../home/FunFact'
 import { dayIndex, longDate } from '../lib/dates'
 import { nameOf, usePerson } from '../person'
 import { QuestCard } from '../quest/QuestCard'
-import { Avatar, Lock, Sticker, useOnline } from '../ui'
+import { Avatar, Lock, Sheet, Sticker, useOnline } from '../ui'
 import { useShell } from './AppShell'
 
 /** Ligne d'info sous la salutation : citation du jour (Alex) ou cours crypto (Antoine). */
@@ -60,6 +61,7 @@ export function Home({ modules }: { modules: AppModule[] }) {
   const { me } = usePerson()
   const { openProfile } = useShell()
   const online = useOnline()
+  const [adding, setAdding] = useState(false)
   const today = modules.filter((m) => m.TodayCard)
   const tiles = modules.filter((m) => !m.TodayCard)
 
@@ -101,6 +103,19 @@ export function Home({ modules }: { modules: AppModule[] }) {
           <FunFactCard />
         </div>
       </div>
+      <button type="button" className="btn btn--dashed btn--block" onClick={() => setAdding(true)}>
+        + Ajouter un widget
+      </button>
+      <Sheet open={adding} onClose={() => setAdding(false)} title="Ajouter un widget">
+        <div className="empty empty--inline">
+          <Sticker emoji="🧩" color="lavender" size={72} rotate={-4} />
+          <strong>Aucun widget pour l'instant</strong>
+          <p className="empty__text">Les widgets arrivent bientôt : tu pourras choisir ce qui s'affiche sur ton accueil.</p>
+        </div>
+        <button type="button" className="btn btn--primary btn--block" onClick={() => setAdding(false)}>
+          Compris
+        </button>
+      </Sheet>
     </div>
   )
 }
