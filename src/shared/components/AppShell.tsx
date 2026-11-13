@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { PINNED_MODULES, type AppModule } from '../../app/modules'
+import { useDataError } from '../../lib/data'
 import { nameOf, usePerson } from '../person'
 import { useTheme } from '../theme'
 import { Avatar, Lock, Sheet, Sticker, SyncStatus, cx } from '../ui'
@@ -21,6 +22,7 @@ export function AppShell({ modules }: { modules: AppModule[] }) {
   const { pathname } = useLocation()
   const [profile, setProfile] = useState(false)
   const [all, setAll] = useState(false)
+  const dataError = useDataError()
   const ctx = useMemo(() => ({ openProfile: () => setProfile(true) }), [])
 
   const active = modules.find((m) => pathname === `/${m.id}` || pathname.startsWith(`/${m.id}/`))
@@ -86,6 +88,11 @@ export function AppShell({ modules }: { modules: AppModule[] }) {
         </aside>
 
         <main className="shell__main">
+          {dataError && (
+            <p className="banner shell__banner" role="alert">
+              {dataError}
+            </p>
+          )}
           <Outlet />
         </main>
 

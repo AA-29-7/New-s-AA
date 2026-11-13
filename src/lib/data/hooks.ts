@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { where } from 'firebase/firestore'
 import { repo } from './repo'
+import { reportDataError } from './errors'
 import { useScope } from './session'
 import type { BaseDoc, CollectionName, WithId } from './types'
 
@@ -29,7 +30,10 @@ export function useCollection<T extends BaseDoc>(name: CollectionName, opts: { e
     return repo<T>(name, scope).subscribe(
       (docs) => setState({ key, docs }),
       constraints,
-      (error) => setState({ key, docs: [], error }),
+      (error) => {
+        reportDataError(name, error)
+        setState({ key, docs: [], error })
+      },
     )
   }, [key])
 
