@@ -1,10 +1,11 @@
 import { createContext, createElement, useContext, useMemo, useState, type ReactNode } from 'react'
 import { repo, useCollection, usePeople, useRepo, type DeepPartial } from '../../lib/data'
-import { daysBetween, parseIso } from '../../shared/lib/dates'
+import { parseIso } from '../../shared/lib/dates'
+import { useToday } from '../../shared/lib/useToday'
 import { usePerson } from '../../shared/person'
 import type { DemoSeeder } from '../../shared/seed/DemoSeed'
 import { DEFAULT_PREFS, NEXT_TRIP_ID, PHOTO_COLORS, ROME_EXPENSES, ROME_NOTEBOOK, TRIPS, lisbonPrep } from './data/demo'
-import { generatedExpenses } from './logic'
+import { daysUntil, generatedExpenses, selectTrips } from './logic'
 import {
   prepDoc,
   prepPatch,
@@ -27,22 +28,14 @@ const fire = (p: Promise<unknown>) => void p.catch((e) => console.error('Écritu
 const pageId = (tripId: string, index: number) => `${tripId}_${String(index).padStart(3, '0')}`
 const shortMonth = (iso: string) => parseIso(iso).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })
 
-/* ---------- Dates ---------- */
-/** Jours avant le départ (négatif une fois parti). */
-export const daysUntil = (trip: Trip, today = new Date()) => daysBetween(today, parseIso(trip.start))
-/** Voyage terminé (le retour est passé). */
-export const isPast = (trip: Trip, today = new Date()) => daysBetween(parseIso(trip.end), today) > 0
-/** Jour du voyage en cours (1 = jour du départ), ou null hors du voyage. */
-export function tripDay(trip: Trip, today = new Date()): number | null {
-  const n = daysBetween(parseIso(trip.start), today) + 1
-  return n >= 1 && daysBetween(today, parseIso(trip.end)) >= 0 ? n : null
-}
+export { daysUntil, isPast, tripDay } from './logic'
 
 /* ---------- Données du Carnet ---------- */
 function useCarnetData() {
   const { me } = usePerson()
   const { uidOf } = usePeople()
   const myUid = uidOf(me)
+  const today = useToday()
 
   const tripDocs = useCollection<TripDoc>('trips')
   const expenseDocs = useCollection<ExpenseDoc>('tripExpenses')
@@ -63,15 +56,8 @@ function useCarnetData() {
   const loading = tripDocs.loading || expenseDocs.loading || noteDocs.loading || prepDocs.loading || prefsDocs.loading
 
   return useMemo(() => {
-    const trips: Trip[] = tripDocs.docs.map(toTrip).sort((a, b) => b.start.localeCompare(a.start))
+    const { sorted: trips, nextTrip, lastTrip, friseTrips } = selectTrips(tripDocs.docs.map(toTrip), today)
     const tripById = (id: string | undefined) => trips.find((t) => t.id === id)
-
-    const today = new Date()
-    const upcoming = trips.filter((t) => !isPast(t, today)).sort((a, b) => a.start.localeCompare(b.start))
-    const finished = trips.filter((t) => isPast(t, today))
-    const nextTrip: Trip | undefined = upcoming[0]
-    const lastTrip: Trip | undefined = finished[0]
-    const friseTrips = finished.filter((t) => t.owner === 'both').slice(0, 5).reverse()
 
     const expensesByTrip = new Map<string, Expense[]>()
     for (const d of expenseDocs.docs) {
@@ -185,7 +171,7 @@ function useCarnetData() {
       dismiss: (id: number) => fire(prefsRepo.arrayToggle(prefsId, 'dismissed', id, true, priv)),
 
     }
-  }, [tripDocs.docs, expenseDocs.docs, noteDocs.docs, prepDocs.docs, prefsDocs.docs, loading, me, myUid, optimistic])
+  }, [tripDocs.docs, expenseDocs.docs, noteDocs.docs, prepDocs.docs, prefsDocs.docs, loading, me, myUid, optimistic, today])
 }
 
 export type Carnet = ReturnType<typeof useCarnetData>
@@ -219,7 +205,8 @@ export function useTripPhotos(trip: Trip) {
     photos,
     loading,
     /** Ajoute des images (redimensionnées) dans la limite de 20 ; renvoie les identifiants créés et le nombre refusé. */
-    add: async (files: FileList | File[] | null): Promise<{ ids: string[]; skipped: number; failed: number }> => {
+    add: async (files: FileList | File[] | null): Promise<{ ids: string[]; skipped: number; failed: number; loading?: boolean }> => {
+      if (loading) return { ids: [], skipped: 0, failed: 0, loading: true }
       const images = Array.from(files ?? []).filter((f) => f.type.startsWith('image/'))
       const room = Math.max(0, MAX_PHOTOS - photos.length)
       const ids: string[] = []
@@ -245,21 +232,18 @@ export function useTripPhotos(trip: Trip) {
 export function useCarnetSummary() {
   const trips = useCollection<TripDoc>('trips')
   const preps = useCollection<PrepDoc>('tripPreps')
+  const today = useToday()
   return useMemo(() => {
-    const today = new Date()
-    const next = trips.docs
-      .map(toTrip)
-      .filter((t) => !isPast(t, today))
-      .sort((a, b) => a.start.localeCompare(b.start))[0]
+    const next = selectTrips(trips.docs.map(toTrip), today).nextTrip
     if (!next) return { title: trips.loading ? '…' : 'Aucun voyage prévu' }
     const days = daysUntil(next, today)
     const prep = preps.docs.find((p) => p.id === next.id)
-    const done = prep ? Object.values(prep.steps ?? {}).filter((s) => s?.status === 'ok').length : 0
+    const done = prep ? toPrep(prep).steps.filter((s) => s.status === 'ok').length : 0
     return {
       title: next.name,
       note: days > 1 ? `dans ${days} jours` : days === 1 ? 'demain' : days === 0 ? 'c’est aujourd’hui' : `${done}/9 étapes`,
     }
-  }, [trips.docs, trips.loading, preps.docs])
+  }, [trips.docs, trips.loading, preps.docs, today])
 }
 
 /* ---------- Démo ---------- */
@@ -279,22 +263,23 @@ export const carnetSeeder: DemoSeeder = {
     const notes = repo<NoteDoc>('tripNotes', scope)
     const preps = repo<PrepDoc>('tripPreps', scope)
 
-    if (await preps.isEmptyOnServer()) {
+    // Éléments communs : la préparation (écrite en dernier) sert de repère, un semis interrompu est repris.
+    if (!(await preps.existsOnServer(NEXT_TRIP_ID))) {
       await Promise.all([
-        ...TRIPS.filter((t) => t.owner === 'both').map((t) => trips.upsert(t.id, tripToDoc(t, null))),
-        ...ROME_EXPENSES.map(({ id, ...e }) => expenses.upsert(id, { ...e, tripId: 'rome', ownerId: null })),
+        ...TRIPS.filter((t) => t.owner === 'both').map((t) => trips.createIfMissing(t.id, tripToDoc(t, null))),
+        ...ROME_EXPENSES.map(({ id, ...e }) => expenses.createIfMissing(id, { ...e, tripId: 'rome', ownerId: null })),
         ...TRIPS.flatMap((t) =>
           Array.from({ length: t.photos }, (_, i) =>
-            photos.upsert(`${t.id}-demo${i}`, { tripId: t.id, color: PHOTO_COLORS[i % PHOTO_COLORS.length], at: i, ownerId: null }),
+            photos.createIfMissing(`${t.id}-demo${i}`, { tripId: t.id, color: PHOTO_COLORS[i % PHOTO_COLORS.length], at: i, ownerId: null }),
           ),
         ),
-        notes.upsert('rome_mode', { tripId: 'rome', mode: ROME_NOTEBOOK.mode!, ownerId: null }),
-        ...ROME_NOTEBOOK.pages.map((p, i) => notes.upsert(pageId('rome', i), { tripId: 'rome', index: i, ...p, ownerId: null })),
-        preps.upsert(NEXT_TRIP_ID, { ...prepDoc(lisbonPrep(), 1), ownerId: null }),
+        notes.createIfMissing('rome_mode', { tripId: 'rome', mode: ROME_NOTEBOOK.mode!, ownerId: null }),
+        ...ROME_NOTEBOOK.pages.map((p, i) => notes.createIfMissing(pageId('rome', i), { tripId: 'rome', index: i, ...p, ownerId: null })),
       ])
+      await preps.createIfMissing(NEXT_TRIP_ID, { ...prepDoc(lisbonPrep(), 1), ownerId: null })
     }
-    if (await trips.isEmptyOnServer('mine')) {
-      await Promise.all(TRIPS.filter((t) => t.owner === me).map((t) => trips.upsert(t.id, tripToDoc(t, scope.uid))))
-    }
+    // Mes voyages personnels.
+    const mine = TRIPS.filter((t) => t.owner === me)
+    await Promise.all(mine.map((t) => trips.createIfMissing(t.id, tripToDoc(t, scope.uid))))
   },
 }

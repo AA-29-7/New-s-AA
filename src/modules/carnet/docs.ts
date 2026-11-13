@@ -20,7 +20,8 @@ export type PrepDoc = BaseDoc & {
   steps: Partial<Record<Step['id'], StepDoc>>
   pack: Record<Payer, PackItem[]>
   packParams: string[]
-  activities: Activity[]
+  /** Une activité par clé (`a0`, `a1`…) pour que deux personnes qui en modifient deux ne s'écrasent pas. */
+  activities: Record<string, Activity>
 }
 export type PrefsDoc = BaseDoc & Partial<Prefs>
 
@@ -40,7 +41,9 @@ export const toPrep = (d: WithId<PrepDoc>): PrepTrip => ({
   steps: STEP_ORDER.map((id) => d.steps?.[id]).filter((s): s is StepDoc => !!s).map(decodeStep),
   pack: d.pack ?? { alex: [], antoine: [], commun: [] },
   packParams: d.packParams ?? [],
-  activities: d.activities ?? [],
+  activities: Object.entries(d.activities ?? {})
+    .sort(([a], [b]) => Number(a.slice(1)) - Number(b.slice(1)))
+    .map(([, a]) => a),
 })
 
 /** Ce qui a changé entre deux préparations : une étape modifiée = un champ de `steps` (pas de conflit entre étapes). */
@@ -49,9 +52,16 @@ export function prepPatch(before: PrepTrip, after: PrepTrip): DeepPartial<PrepDo
   if (before.name !== after.name) patch.name = after.name
   if (before.ideal !== after.ideal) patch.ideal = after.ideal
   if (before.limit !== after.limit) patch.limit = after.limit
-  if (!same(before.pack, after.pack)) patch.pack = after.pack
+  // Une liste de valise modifiée = un champ : la valise de l'autre n'est pas réécrite.
+  const pack: Partial<Record<Payer, PackItem[]>> = {}
+  for (const who of ['alex', 'antoine', 'commun'] as const) if (!same(before.pack[who], after.pack[who])) pack[who] = after.pack[who]
+  if (Object.keys(pack).length) patch.pack = pack
   if (!same(before.packParams, after.packParams)) patch.packParams = after.packParams
-  if (!same(before.activities, after.activities)) patch.activities = after.activities
+  const activities: Record<string, Activity> = {}
+  after.activities.forEach((a, i) => {
+    if (!same(before.activities[i], a)) activities[`a${i}`] = a
+  })
+  if (Object.keys(activities).length) patch.activities = activities
   const steps: Partial<Record<Step['id'], StepDoc>> = {}
   for (const s of after.steps) {
     const old = before.steps.find((x) => x.id === s.id)
@@ -69,6 +79,6 @@ export const prepDoc = (p: PrepTrip, at: number) => ({
   steps: Object.fromEntries(p.steps.map((s) => [s.id, encodeStep(s)])),
   pack: p.pack,
   packParams: p.packParams,
-  activities: p.activities,
+  activities: Object.fromEntries(p.activities.map((a, i) => [`a${i}`, a])),
 })
 

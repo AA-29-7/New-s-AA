@@ -28,8 +28,9 @@ export function useAddPhotos(trip: Trip) {
       toast('20 photos max par voyage')
       return []
     }
-    const { ids, skipped, failed } = await gallery.add(files)
-    if (skipped > 0) toast('20 photos max par voyage')
+    const { ids, skipped, failed, loading } = await gallery.add(files)
+    if (loading) toast('Les photos se chargent, réessaie dans un instant')
+    else if (skipped > 0) toast('20 photos max par voyage')
     else if (failed > 0) toast('Une image n’a pas pu être lue')
     return ids
   }

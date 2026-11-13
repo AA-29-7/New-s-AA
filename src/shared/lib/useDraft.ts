@@ -11,9 +11,14 @@ export function useDraft(value: string, onCommit: (v: string) => void, delay = 7
   const latest = useRef({ draft, onCommit })
   latest.current = { draft, onCommit }
 
+  const release = useRef<number | undefined>(undefined)
   const commit = useCallback((v: string) => {
     window.clearTimeout(timer.current)
     latest.current.onCommit(v)
+    // La donnée enregistrée peut être normalisée (« » → « 0 ») : on rend la main à la valeur
+    // partagée peu après l'envoi, sauf nouvelle frappe entre-temps.
+    window.clearTimeout(release.current)
+    release.current = window.setTimeout(() => setDraft((d) => (d === v ? null : d)), 1500)
   }, [])
 
   // Une fois la valeur distante rattrapée, on rend la main à la donnée partagée.
@@ -26,6 +31,7 @@ export function useDraft(value: string, onCommit: (v: string) => void, delay = 7
     () => () => {
       if (timer.current !== undefined && latest.current.draft !== null) latest.current.onCommit(latest.current.draft)
       window.clearTimeout(timer.current)
+      window.clearTimeout(release.current)
     },
     [],
   )
@@ -34,6 +40,7 @@ export function useDraft(value: string, onCommit: (v: string) => void, delay = 7
     value: draft ?? value,
     onChange: (v: string) => {
       setDraft(v)
+      window.clearTimeout(release.current)
       window.clearTimeout(timer.current)
       timer.current = window.setTimeout(() => commit(v), delay)
     },

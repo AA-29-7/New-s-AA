@@ -147,3 +147,33 @@ describe('documents Firestore', () => {
     expect(toTrip({ ...doc, id: 'rome', hid: 'foyer', visibility: 'household' }).pins).toEqual(rome.pins)
   })
 })
+
+describe('revue : écritures granulaires et voyages', () => {
+  it('ne réécrit que la liste de valise modifiée', async () => {
+    const { prepPatch } = await import('../../src/modules/carnet/docs')
+    const before = lisbonPrep()
+    const after = { ...before, pack: { ...before.pack, alex: before.pack.alex.map((i, k) => (k === 2 ? { ...i, done: true } : i)) } }
+    expect(Object.keys(prepPatch(before, after).pack ?? {})).toEqual(['alex'])
+  })
+
+  it('ne réécrit que l’activité modifiée et la relit dans l’ordre', async () => {
+    const { prepPatch, prepDoc, toPrep } = await import('../../src/modules/carnet/docs')
+    const before = lisbonPrep()
+    const after = { ...before, activities: before.activities.map((a, k) => (k === 1 ? { ...a, status: 2 as const } : a)) }
+    expect(Object.keys(prepPatch(before, after).activities ?? {})).toEqual(['a1'])
+    const back = toPrep({ ...prepDoc(before, 1), id: 'x', hid: 'foyer', ownerId: null, visibility: 'household' })
+    expect(back.activities.map((a) => a.name)).toEqual(before.activities.map((a) => a.name))
+  })
+
+  it('choisit le prochain voyage, le dernier terminé et la frise', async () => {
+    const { selectTrips } = await import('../../src/modules/carnet/logic')
+    const today = new Date(2026, 10, 13)
+    const s = selectTrips(TRIPS, today)
+    expect(s.nextTrip?.id).toBe('lisbonne')
+    expect(s.lastTrip?.id).toBe('rome')
+    expect(s.friseTrips.map((t) => t.id)).toEqual(['crozon', 'mrk', 'cph', 'seville', 'rome'])
+    // En plein voyage, il reste « prochain » ; une fois terminé, il passe dans l'historique.
+    expect(selectTrips(TRIPS, new Date(2026, 10, 28)).nextTrip?.id).toBe('lisbonne')
+    expect(selectTrips(TRIPS, new Date(2026, 11, 2)).nextTrip).toBeUndefined()
+  })
+})

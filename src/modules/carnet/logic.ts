@@ -1,3 +1,4 @@
+import { daysBetween, parseIso } from '../../shared/lib/dates'
 import type { CatId, Expense, Offer, PrepTrip, Step, Trip } from './types'
 
 /**
@@ -244,3 +245,26 @@ export function matchesFilters(o: Offer, f: Record<string, string[]>): boolean {
 /** Nombre de filtres actifs (« Budget compté » ne compte pas). */
 export const activeFilters = (f: Record<string, string[]>) =>
   Object.entries(f).filter(([id, v]) => id !== 'per' && v.length > 0).length
+
+/** Jours avant le départ (négatif une fois parti). */
+export const daysUntil = (trip: Trip, today = new Date()) => daysBetween(today, parseIso(trip.start))
+/** Voyage terminé (le retour est passé). */
+export const isPast = (trip: Trip, today = new Date()) => daysBetween(parseIso(trip.end), today) > 0
+/** Jour du voyage en cours (1 = jour du départ), ou null hors du voyage. */
+export function tripDay(trip: Trip, today = new Date()): number | null {
+  const n = daysBetween(parseIso(trip.start), today) + 1
+  return n >= 1 && daysBetween(today, parseIso(trip.end)) >= 0 ? n : null
+}
+
+/** Prochain voyage (à venir ou en cours), dernier voyage terminé, frise des voyages communs (5 derniers, du plus ancien au plus récent). */
+export function selectTrips(trips: Trip[], today: Date) {
+  const sorted = [...trips].sort((a, b) => b.start.localeCompare(a.start))
+  const finished = sorted.filter((t) => isPast(t, today))
+  const upcoming = sorted.filter((t) => !isPast(t, today)).reverse()
+  return {
+    sorted,
+    nextTrip: upcoming[0] as Trip | undefined,
+    lastTrip: finished[0] as Trip | undefined,
+    friseTrips: finished.filter((t) => t.owner === 'both').slice(0, 5).reverse(),
+  }
+}
