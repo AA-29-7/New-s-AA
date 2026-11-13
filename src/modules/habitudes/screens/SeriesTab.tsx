@@ -27,24 +27,9 @@ const pct = (x: number) => `${Math.round(x * 100)} %`
 /** Niveau d'une barre : plein à 100 %, éclairci en dessous (charte §8). */
 const barLevel = (x: number) => (x >= 0.995 ? 3 : x >= 0.8 ? 2 : 1)
 
-/** Onglet Séries : régularité, récaps, « Nous » et duel. */
-export function SeriesTab({ onStreaks }: { onStreaks: (k: 'cur' | 'rec') => void }) {
-  const { me, other } = usePerson()
-  const store = useHabits()
-  const [period, setPeriod] = useState<Period>('mois')
-  const [scope, setScope] = useState<Scope>('me')
-  const monthOnly = scope === 'us' || scope === 'duel'
-  const p: Person = scope === 'other' ? other : me
-  const today = store.today
-  const H = store.habits
-  const hist = store.history
-  const mine = habitsOf(H, p)
-  const streakOf = (h: (typeof H)[number]) => currentStreak(h, hist[h.id] ?? {}, h.owner === 'both' ? p : h.owner, today)
-  const curMax = Math.max(0, ...mine.map(streakOf))
-  const recMax = Math.max(0, ...mine.map((h) => longestStreak(h, hist[h.id] ?? {}, p, today)))
-  const effective: Period = monthOnly ? 'mois' : period
-
-  const Counters = ({ items }: { items: { value: string; label: string; onClick?: () => void }[] }) => (
+/** Trois compteurs ; ceux qui ouvrent une liste portent un « › ». */
+function Counters({ items }: { items: { value: string; label: string; onClick?: () => void }[] }) {
+  return (
     <div className="hstats">
       {items.map((it) =>
         it.onClick ? (
@@ -61,6 +46,24 @@ export function SeriesTab({ onStreaks }: { onStreaks: (k: 'cur' | 'rec') => void
       )}
     </div>
   )
+}
+
+/** Onglet Séries : régularité, récaps, « Nous » et duel. */
+export function SeriesTab({ onStreaks }: { onStreaks: (k: 'cur' | 'rec') => void }) {
+  const { me, other } = usePerson()
+  const store = useHabits()
+  const [period, setPeriod] = useState<Period>('mois')
+  const [scope, setScope] = useState<Scope>('me')
+  const monthOnly = scope === 'us' || scope === 'duel'
+  const p: Person = scope === 'other' ? other : me
+  const today = store.today
+  const H = store.habits
+  const hist = store.history
+  const mine = habitsOf(H, p)
+  const streakOf = (h: (typeof H)[number]) => currentStreak(h, hist[h.id] ?? {}, h.owner === 'both' ? p : h.owner, today)
+  const curMax = Math.max(0, ...mine.map(streakOf))
+  const recMax = Math.max(0, ...mine.map((h) => longestStreak(h, hist[h.id] ?? {}, p, today)))
+  const effective: Period = monthOnly ? 'mois' : period
 
   const month = () => {
     const start = monthStartOf(today)

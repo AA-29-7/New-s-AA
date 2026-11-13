@@ -6,15 +6,9 @@ import { canCheck, didOn, type Habit } from '../logic'
 import { HabitRow } from '../parts/HabitRow'
 import { useHabits } from '../store'
 
-/** Onglet Aujourd'hui : par qui (à moi, communes, chez l'autre) ou par thème. */
-export function TodayTab({ onOpen, onCategories }: { onOpen: (id: string) => void; onCategories: () => void }) {
-  const { me, other } = usePerson()
-  const store = useHabits()
-  const [filter, setFilter] = useState('all')
-  const H = store.habits
-  const orphans = H.filter((h) => !store.categoryOf(h))
-
-  const Group = ({ title, meta, owner, habits, muted }: { title: string; meta: string; owner: Habit['owner']; habits: Habit[]; muted?: boolean }) => (
+/** Carte d'un groupe « Par qui ». */
+function Group({ title, meta, owner, habits, muted, onOpen }: { title: string; meta: string; owner: Habit['owner']; habits: Habit[]; muted?: boolean; onOpen: (id: string) => void }) {
+  return (
     <section className={cx('card hgroup', muted && 'card--muted')}>
       <div className="spread hgroup__head">
         <span className="hgroup__title">
@@ -29,6 +23,15 @@ export function TodayTab({ onOpen, onCategories }: { onOpen: (id: string) => voi
       {habits.length === 0 && <p className="meta hgroup__empty">Rien ici pour l'instant.</p>}
     </section>
   )
+}
+
+/** Onglet Aujourd'hui : par qui (à moi, communes, chez l'autre) ou par thème. */
+export function TodayTab({ onOpen, onCategories }: { onOpen: (id: string) => void; onCategories: () => void }) {
+  const { me, other } = usePerson()
+  const store = useHabits()
+  const [filter, setFilter] = useState('all')
+  const H = store.habits
+  const orphans = H.filter((h) => !store.categoryOf(h))
 
   const groups = [
     ...store.categories.map((c) => ({ id: c.id, name: c.name, emoji: c.emoji, color: c.color, habits: H.filter((h) => h.categoryId === c.id) })),
@@ -56,9 +59,9 @@ export function TodayTab({ onOpen, onCategories }: { onOpen: (id: string) => voi
 
       {store.mode === 'who' ? (
         <div className="grid-auto hgrid">
-          <Group title="À moi" meta={`Visible par ${nameOf(other)}`} owner={me} habits={H.filter((h) => h.owner === me)} />
-          <Group title="Communes" meta="Chacun coche la sienne" owner="both" habits={H.filter((h) => h.owner === 'both')} />
-          <Group title={`Chez ${nameOf(other)}`} meta="Lecture seule" owner={other} habits={H.filter((h) => h.owner === other)} muted />
+          <Group title="À moi" meta={`Visible par ${nameOf(other)}`} owner={me} habits={H.filter((h) => h.owner === me)} onOpen={onOpen} />
+          <Group title="Communes" meta="Chacun coche la sienne" owner="both" habits={H.filter((h) => h.owner === 'both')} onOpen={onOpen} />
+          <Group title={`Chez ${nameOf(other)}`} meta="Lecture seule" owner={other} habits={H.filter((h) => h.owner === other)} muted onOpen={onOpen} />
         </div>
       ) : (
         <>

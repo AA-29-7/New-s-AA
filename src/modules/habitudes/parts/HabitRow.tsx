@@ -20,7 +20,7 @@ export function HabitRow({ habit: h, first, onOpen, compact }: { habit: Habit; f
     h.owner === me ? 'À moi' : h.owner === 'both' ? `${nameOf(other)} ${didOn(checks, today, other) ? 'l’a fait' : 'pas encore'}` : nameOf(other)
 
   return (
-    <div className={cx('row hrow', first && 'row--first', compact && 'hrow--compact')} onClick={onOpen} role={onOpen ? 'button' : undefined} tabIndex={onOpen ? 0 : undefined} onKeyDown={(e) => e.key === 'Enter' && onOpen?.()}>
+    <div className={cx('row hrow', first && 'row--first', compact && 'hrow--compact')} onClick={onOpen} role={onOpen ? 'button' : undefined} tabIndex={onOpen ? 0 : undefined} onKeyDown={(e) => e.target === e.currentTarget && e.key === 'Enter' && onOpen?.()}>
       <CheckCircle
         checked={done}
         size={compact ? 28 : 30}

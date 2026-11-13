@@ -319,6 +319,7 @@ export function CreateSheet({ open, onClose }: { open: boolean; onClose: () => v
 export function StreakListSheet({ kind, onClose }: { kind: 'cur' | 'rec' | null; onClose: () => void }) {
   const { me } = usePerson()
   const store = useHabits()
+  if (!kind) return null
   const rows = store.habits
     .map((h) => {
       const who = h.owner === 'both' ? me : h.owner
@@ -329,7 +330,7 @@ export function StreakListSheet({ kind, onClose }: { kind: 'cur' | 'rec' | null;
     .sort((a, b) => b.n - a.n)
     .slice(0, 5)
   return (
-    <Sheet open={!!kind} onClose={onClose} title={kind === 'rec' ? 'Plus longues séries' : 'Séries en cours'}>
+    <Sheet open onClose={onClose} title={kind === 'rec' ? 'Plus longues séries' : 'Séries en cours'}>
       <p className="meta">{kind === 'rec' ? 'Les records, toutes habitudes confondues.' : 'De la plus longue à la plus courte.'}</p>
       <div>
         {rows.map(({ h, n }, i) => (

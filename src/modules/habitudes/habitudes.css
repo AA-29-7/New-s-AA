@@ -232,7 +232,7 @@
   width: 100%;
   max-width: 34px;
   height: calc(var(--h) * 120px);
-  border-radius: 8px;
+  border-radius: var(--radius-bar);
 }
 .hbars__bar[data-level='1'] {
   background: color-mix(in srgb, var(--c) 40%, var(--color-surface));
