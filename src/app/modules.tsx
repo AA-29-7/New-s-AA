@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { CARNET_NAV, CarnetModule, useCarnetSummary } from '../modules/carnet'
 import { ComingSoon, type StickerColor } from '../shared/ui'
 
 /** Entrée de navigation interne à un module (barre basse mobile, barre latérale bureau). */
@@ -66,8 +67,10 @@ export const modules: AppModule[] = [
     emoji: '🌍',
     color: 'honey',
     rotate: 4,
-    component: soon('🌍', 'honey', 'Carnet de voyage'),
-    summary: { title: 'Bientôt', note: 'En préparation' },
+    component: CarnetModule,
+    summary: { title: 'Carnet de voyage' },
+    useSummary: useCarnetSummary,
+    subnav: [...CARNET_NAV],
   },
   {
     id: 'journal',
