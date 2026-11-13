@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "firebase emulators:exec --only firestore --project demo-test \"vitest run\""
+    "test": "firebase emulators:exec --only firestore --project demo-test \"vitest run\"",
+    "test:unit": "vitest run tests/unit"
   },
   "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
     "firebase": "^13.0.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

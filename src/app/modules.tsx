@@ -1,21 +1,94 @@
 import type { ComponentType } from 'react'
-import { ModulePlaceholder } from '../shared/components/ModulePlaceholder'
+import { ComingSoon, type StickerColor } from '../shared/ui'
 
+/** Entrée de navigation interne à un module (barre basse mobile, barre latérale bureau). */
+export interface ModuleNavItem {
+  /** Chemin relatif au module ('' = accueil du module). */
+  to: string
+  label: string
+  emoji: string
+  color: StickerColor
+  rotate?: number
+  /** Bouton central rond qui dépasse de la barre basse. */
+  central?: boolean
+}
+
+export interface ModuleSummary {
+  title: string
+  note?: string
+}
+
+/**
+ * Un module = une gommette (fond + émoji) + un nom + une carte sur l'accueil.
+ * Le registre est le seul point de contact entre la coque et les modules :
+ * l'accueil n'importe jamais le code d'un module directement.
+ */
 export interface AppModule {
   id: string
   label: string
-  icon: string
-  /** Page du module ; remplacer le placeholder lorsque le module est livré. */
+  /** Libellé court pour la barre basse mobile. */
+  navLabel?: string
+  emoji: string
+  color: StickerColor
+  rotate: number
+  /** Page du module ; remplacer l'écran « bientôt » lorsque le module est livré. */
   component: ComponentType
+  /** Module privé : signalé par un cadenas (Journal). */
+  private?: boolean
+  /** Texte de la carte du module sur l'accueil. */
+  summary: ModuleSummary
+  /** Variante dynamique de `summary`, fournie par le module (hook React). */
+  useSummary?: () => ModuleSummary
+  /** Navigation interne du module. */
+  subnav?: ModuleNavItem[]
+  /** Carte du jour affichée sur l'accueil (remplace la carte du module). */
+  TodayCard?: ComponentType
 }
 
-const placeholder = (label: string, phase: string) => () => (
-  <ModulePlaceholder label={label} phase={phase} />
+const soon = (emoji: string, color: StickerColor, title: string) => () => (
+  <ComingSoon emoji={emoji} color={color} title={title} />
 )
 
 export const modules: AppModule[] = [
-  { id: 'habitudes', label: 'Habitudes', icon: '✅', component: placeholder('Habitudes', 'Phase 2') },
-  { id: 'carnet', label: 'Carnet', icon: '🧭', component: placeholder('Carnet de voyage', 'Phase 2') },
-  { id: 'journal', label: 'Journal', icon: '📓', component: placeholder('Journal', 'Phase 3') },
-  { id: 'bobine', label: 'Bobine', icon: '🎞️', component: placeholder('Bobine de film', 'Phase 3') },
+  {
+    id: 'habitudes',
+    label: 'Habitudes',
+    emoji: '💪',
+    color: 'sage',
+    rotate: -6,
+    component: soon('💪', 'sage', 'Habitudes'),
+    summary: { title: 'Bientôt', note: 'En préparation' },
+  },
+  {
+    id: 'carnet',
+    label: 'Carnet de voyage',
+    navLabel: 'Voyages',
+    emoji: '🌍',
+    color: 'honey',
+    rotate: 4,
+    component: soon('🌍', 'honey', 'Carnet de voyage'),
+    summary: { title: 'Bientôt', note: 'En préparation' },
+  },
+  {
+    id: 'journal',
+    label: 'Journal',
+    emoji: '🌙',
+    color: 'lavender',
+    rotate: -3,
+    private: true,
+    component: soon('🌙', 'lavender', 'Journal'),
+    summary: { title: 'Pas encore écrit' },
+  },
+  {
+    id: 'bobine',
+    label: 'Bobine',
+    emoji: '🎬',
+    color: 'coral',
+    rotate: 6,
+    component: soon('🎬', 'coral', 'Bobine'),
+    summary: { title: 'Lancer la roue', note: 'Bientôt' },
+  },
 ]
+
+/** Modules épinglés dans la barre basse mobile (les autres sont sous « Tout »). */
+export const PINNED_MODULES = ['habitudes', 'carnet', 'journal']

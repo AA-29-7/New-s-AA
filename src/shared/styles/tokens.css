@@ -1,0 +1,220 @@
+/*
+ * Tokens du QG — source : docs/design/CHARTE_GRAPHIQUE.md §2.
+ * Le code n'utilise que ces variables : aucune couleur, aucun rayon,
+ * aucun espacement en dur dans les composants.
+ */
+:root {
+  /* Surfaces */
+  --color-bg-top: #ecdfd1;
+  --color-bg-bottom: #e7dacb;
+  --color-surface: #f9f2ea;
+  --color-surface-sunken: #efe3d4;
+  --color-surface-muted: rgba(249, 242, 234, 0.55);
+  --color-sidebar: #e3d4c3;
+  --color-input: #fffaf3;
+
+  /* Traits et remplissages neutres */
+  --color-border: #ecdfd2;
+  --color-border-strong: #d3c1ad;
+  --color-track: #e6d6c4;
+  --color-chip: #e0d0bf;
+  --color-handle: #d8c7b4;
+  --color-dash: #b9a28c;
+  --color-sidebar-border: #d6c4b0;
+
+  /* Encre */
+  --color-ink: #3a2c24;
+  --color-ink-body: #4f3f34;
+  --color-ink-soft: #6f5a4a;
+  --color-ink-faint: #a8907a;
+  --color-ink-inverse: #f9f2ea;
+  --color-on-accent: #fff;
+
+  /* Personnes (valeurs fixes) */
+  --alex-base: #b8434f;
+  --alex-tint: #f6e0e1;
+  --alex-ink: #8f2f3a;
+  --antoine-base: #8a5a8c;
+  --antoine-tint: #efe2ef;
+  --antoine-ink: #6a4270;
+
+  /* Série (streak), quête, alerte, réussite */
+  --color-streak-bg: #f6dfc6;
+  --color-streak-ink: #8a4a12;
+  --color-quest-soft: #f0d9a8;
+  --color-quest-stripe: #e8c36a;
+  --color-alert-bg: #f6dfc6;
+  --color-alert-ink: #6b3a0c;
+  --color-done-bg: #e1ead4;
+  --color-done-ink: #46602a;
+
+  /* États */
+  --color-success: #5e7d33;
+  --color-gain: #3f7a4f;
+  --color-loss: #a33a3a;
+  --color-budget-ok: #9cc27a;
+  --color-budget-over: #e98b8b;
+
+  /* Journal (espace privé, dedans) */
+  --journal-bg: #e6ebf1;
+  --journal-surface: #f5f7fa;
+  --journal-ink: #1f2a3d;
+  --journal-ink-soft: #5a6578;
+  --journal-border: #d3dbe6;
+  --journal-accent: #2c3d5c;
+
+  /* Voile des feuilles et modales */
+  --color-scrim: rgba(40, 28, 22, 0.45);
+
+  /* Fonds de gommette (palette de la charte §6) */
+  --sticker-sage: #d3dcc3;
+  --sticker-honey: #f0d9a8;
+  --sticker-coral: #ecb8b0;
+  --sticker-lavender: #e3d9e9;
+  --sticker-mist: #d5dde8;
+  --sticker-peach: #f6dfc6;
+  --sticker-mint: #cfe0d8;
+  --sticker-rose: #e8c9d4;
+  --sticker-ink: #3a2c24;
+  --stripe: rgba(255, 255, 255, 0.35);
+
+  /* Espacements (échelle de 4, demi-pas compris) */
+  --space-0: 2px;
+  --space-1: 4px;
+  --space-1h: 6px;
+  --space-2: 8px;
+  --space-2h: 10px;
+  --space-3: 12px;
+  --space-3h: 14px;
+  --space-4: 16px;
+  --space-4h: 18px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+
+  /* Rayons */
+  --radius-tick: 2px; /* segment de frise, cadenas */
+  --radius-lock: 4px;
+  --radius-bar: 8px; /* barre de graphique */
+  --radius-xs: 6px;
+  --radius-sm: 12px;
+  --radius-field: 16px;
+  --radius-seg: 18px;
+  --radius-seg-sm: 15px;
+  --radius-md: 20px;
+  --radius-card: 22px;
+  --radius-lg: 24px;
+  --radius-nav: 26px;
+  --radius-modal: 28px;
+  --radius-xl: 30px;
+  --radius-pill: 999px;
+
+  /* Ombres */
+  --shadow-card: 0 1px 0 rgba(90, 60, 40, 0.05), 0 10px 24px rgba(90, 60, 40, 0.08);
+  --shadow-nav: 0 8px 22px rgba(60, 40, 30, 0.12);
+  --shadow-sheet: 0 20px 50px rgba(40, 28, 22, 0.35);
+  --shadow-sticker: 0 2px 0 rgba(60, 40, 30, 0.14);
+  --shadow-sticker-lg: 0 4px 0 rgba(60, 40, 30, 0.14);
+  --shadow-fab: 0 8px 18px rgba(60, 40, 30, 0.3);
+
+  /* Typographie */
+  --font-sans: 'Manrope Variable', 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+
+  /* Cibles tactiles */
+  --tap-min: 44px;
+  --tap-cta: 54px;
+
+  /* Mise en page */
+  --sidebar-w: 244px;
+  --nav-h: 72px;
+  --page-pad: var(--space-4h);
+
+  color-scheme: light;
+}
+
+/* Thème sombre « cacao nuit » (proposition du prototype Carnet de voyage). */
+:root[data-theme='dark'] {
+  --color-bg-top: #2b221d;
+  --color-bg-bottom: #231b17;
+  --color-surface: #382c25;
+  --color-surface-sunken: #2e241e;
+  --color-surface-muted: rgba(56, 44, 37, 0.55);
+  --color-sidebar: #1f1814;
+  --color-input: #2e241e;
+
+  --color-border: #463830;
+  --color-border-strong: #6b5647;
+  --color-track: #4a3b32;
+  --color-chip: #4a3c33;
+  --color-handle: #6b5647;
+  --color-dash: #8c7766;
+  --color-sidebar-border: #382c25;
+
+  --color-ink: #f4e9dd;
+  --color-ink-body: #e2d3c4;
+  --color-ink-soft: #cbb6a3;
+  --color-ink-faint: #8c7766;
+  --color-ink-inverse: #2b221d;
+
+  --alex-tint: #5a2b31;
+  --alex-ink: #f0a3ab;
+  --antoine-tint: #47324b;
+  --antoine-ink: #d9b3db;
+
+  --color-streak-bg: #5a3d22;
+  --color-streak-ink: #f6dfc6;
+  --color-alert-bg: #5a3d22;
+  --color-alert-ink: #f6dfc6;
+  --color-done-bg: #35432a;
+  --color-done-ink: #cfe3b4;
+
+  --color-success: #6f9440;
+  --color-gain: #7fbf8f;
+  --color-loss: #e98b8b;
+
+  --journal-bg: #1c2330;
+  --journal-surface: #262f3f;
+  --journal-ink: #e6ebf1;
+  --journal-ink-soft: #a9b4c6;
+  --journal-border: #3a465a;
+  --journal-accent: #b9c8e6;
+
+  --color-scrim: rgba(10, 6, 4, 0.6);
+  --stripe: rgba(255, 255, 255, 0.22);
+
+  --shadow-card: 0 1px 0 rgba(0, 0, 0, 0.2), 0 10px 24px rgba(0, 0, 0, 0.28);
+  --shadow-nav: 0 8px 22px rgba(0, 0, 0, 0.4);
+  --shadow-sheet: 0 20px 50px rgba(0, 0, 0, 0.55);
+  --shadow-fab: 0 8px 18px rgba(0, 0, 0, 0.45);
+
+  color-scheme: dark;
+}
+
+/* La personne connectée fixe --user-* ; l'autre fixe --other-*. */
+:root,
+[data-user='alex'] {
+  --user-base: var(--alex-base);
+  --user-tint: var(--alex-tint);
+  --user-ink: var(--alex-ink);
+  --other-base: var(--antoine-base);
+  --other-tint: var(--antoine-tint);
+  --other-ink: var(--antoine-ink);
+}
+[data-user='antoine'] {
+  --user-base: var(--antoine-base);
+  --user-tint: var(--antoine-tint);
+  --user-ink: var(--antoine-ink);
+  --other-base: var(--alex-base);
+  --other-tint: var(--alex-tint);
+  --other-ink: var(--alex-ink);
+}
+
+@media (min-width: 900px) {
+  :root {
+    --page-pad: var(--space-9);
+  }
+}

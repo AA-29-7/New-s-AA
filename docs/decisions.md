@@ -96,3 +96,50 @@
 - Conséquences : à faire plus tard — remplacer par la vraie icône et ajouter
   les versions PNG 192×192 et 512×512 dans le manifeste (`vite.config.ts`),
   car iOS gère mal le SVG pour l'écran d'accueil.
+
+## 2026-10-26 — L'application s'appelle « Le QG »
+- Décision : le nom de l'application devient « Le QG » (anciennement « New AA's »).
+- Conséquences : documentation mise à jour (CLAUDE.md, README, skills de
+  session). Les anciennes entrées de ce journal gardent l'ancien nom, par
+  fidélité à l'historique. Le nom affiché dans l'interface (AuthGate, AppShell,
+  index.html, manifeste PWA dans vite.config.ts), le nom du paquet npm, le
+  dépôt GitHub et les noms de projets Firebase restent à renommer si voulu.
+
+## 2026-11-13 — Design du QG : charte, thèmes clair et sombre
+- Décision : la charte `docs/design/CHARTE_GRAPHIQUE.md` est la source de vérité
+  du style. Tokens CSS dans `src/shared/styles/tokens.css`, composants communs
+  dans `src/shared/ui/`. Deux thèmes disponibles partout : clair (cachemire) et
+  sombre (« cacao nuit », valeurs proposées par le prototype du Carnet), au
+  choix par appareil (clair / sombre / automatique).
+- Écarté : thème sombre limité au Carnet de voyage (la charte demande qu'il
+  s'applique à toute l'app s'il existe).
+- Conséquences : aucune couleur, aucun rayon ni espacement en dur dans les
+  composants. Police Manrope hébergée en local (paquet
+  `@fontsource-variable/manrope`), aucun CDN.
+
+## 2026-11-13 — Première livraison des écrans : données de démonstration, gardées sur l'appareil
+- Décision : l'accueil, la quête du QG, le Carnet de voyage et les Habitudes
+  sont livrés avec les données fictives des maquettes ; les actions (coches,
+  dépenses, notes) sont gardées sur l'appareil (`src/shared/lib/localStore.ts`,
+  localStorage ; photos en IndexedDB) et partagées par les deux profils de cet
+  appareil.
+- Écarté : branchement Firestore immédiat (nouvelles collections et règles de
+  sécurité à concevoir, non testable sans accès au projet Firebase).
+- Conséquences : rien n'est encore synchronisé entre les deux téléphones.
+  Le branchement sur `src/lib/data/` (Firestore) est l'étape suivante, module
+  par module. Les règles métier sont des fonctions pures testées
+  (`npm run test:unit`), réutilisables telles quelles.
+
+## 2026-11-13 — Profil choisi sur l'appareil
+- Décision : au premier lancement, chacun choisit son profil (Alex ou Antoine).
+  Le choix est mémorisé par compte sur l'appareil et fixe `data-user`
+  (couleurs `--user-*` / `--other-*`). Il se change depuis le profil.
+- Conséquences : à remplacer par une correspondance uid → personne portée par
+  le foyer (`households/{hid}`) quand les données seront synchronisées.
+
+## 2026-11-13 — Branches de design basées sur data-layer
+- Décision : les branches `qg/design`, `carnet/design` et `habitudes/design`
+  sont empilées à partir de `data-layer` (preprod + configuration Hosting),
+  puis fusionnées dans `preprod` par pull request.
+- Raison : `main` ne contient que le commit initial ; la configuration Hosting
+  nécessaire au déploiement de la préprod n'était que sur `data-layer`.

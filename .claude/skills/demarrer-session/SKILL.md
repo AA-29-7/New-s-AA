@@ -1,10 +1,10 @@
 ---
 name: demarrer-session
-description: Démarre une session de travail sur New AA's — fait le point git puis prépare (avec confirmation) une branche pour un module.
+description: Démarre une session de travail sur Le QG — fait le point git puis prépare (avec confirmation) une branche pour un module.
 disable-model-invocation: true
 ---
 
-Tu exécutes le rituel de démarrage de session du projet New AA's. Suis ces
+Tu exécutes le rituel de démarrage de session du projet Le QG. Suis ces
 étapes dans l'ordre, sans rien faire d'autre.
 
 ## 1. État git

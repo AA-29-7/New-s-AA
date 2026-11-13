@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e9e4dc;font-family:Manrope,system-ui,sans-serif;color:#3a2c24}
+a{color:#8f2f3a;text-decoration:none}a:hover{color:#3a2c24}
+.noscroll{scrollbar-width:none}.noscroll::-webkit-scrollbar{display:none;width:0;height:0}
+</style>
+</helmet>
+<div style="min-height:100vh;box-sizing:border-box;padding:24px 20px 40px;display:flex;flex-direction:column;align-items:center;gap:20px;font-family:Manrope,sans-serif">
+  <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center">
+    <div style="display:flex;gap:4px;padding:4px;background:#d9d0c3;border-radius:22px">
+      <div onClick="{{ setMobile }}" style="height:38px;padding:0 18px;border-radius:19px;background:{{ mobBg }};display:flex;align-items:center;font-size:14px;font-weight:800;cursor:pointer;color:#3a2c24">Mobile</div>
+      <div onClick="{{ setDesktop }}" style="height:38px;padding:0 18px;border-radius:19px;background:{{ deskBg }};display:flex;align-items:center;font-size:14px;font-weight:800;cursor:pointer;color:#3a2c24">Ordinateur</div>
+    </div>
+    <div style="display:flex;gap:4px;padding:4px;background:#d9d0c3;border-radius:22px">
+      <div onClick="{{ setAlex }}" style="height:38px;padding:0 18px;border-radius:19px;background:{{ alexBg }};display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;cursor:pointer;color:#3a2c24"><span style="width:10px;height:10px;border-radius:50%;background:#b8434f"></span>Alex</div>
+      <div onClick="{{ setAntoine }}" style="height:38px;padding:0 18px;border-radius:19px;background:{{ antBg }};display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;cursor:pointer;color:#3a2c24"><span style="width:10px;height:10px;border-radius:50%;background:#8a5a8c"></span>Antoine</div>
+    </div>
+  </div>
+
+  <div style="width:{{ fw }};max-width:100%;height:{{ fh }};border-radius:{{ fr }};box-shadow:{{ fsh }};overflow:hidden;position:relative;display:flex;background:linear-gradient(180deg,#ecdfd1 0%,#e7dacb 100%);color:#3a2c24;flex:none">
+
+    <div style="display:{{ sbDisp }};width:244px;flex:none;background:#e3d4c3;padding:28px 16px;box-sizing:border-box;flex-direction:column;gap:4px">
+      <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;padding:0 10px 22px">Le QG</div>
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+        <div onClick="{{ n.go }}" style="display:flex;align-items:center;gap:12px;height:50px;padding:0 10px;border-radius:16px;background:{{ n.rowBg }};color:{{ n.color }};font-size:14px;font-weight:{{ n.weight }};cursor:pointer"><span style="width:30px;height:30px;border-radius:50%;background:{{ n.bg }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);font-size:14px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ n.e }}</span>{{ n.label }}</div>
+      </sc-for>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 10px 0;border-top:1px solid #d6c4b0">
+        <div style="width:38px;height:38px;border-radius:50%;background:{{ acc }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">{{ initial }}</div>
+        <div><div style="font-size:14px;font-weight:700">{{ me }}</div><div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6f5a4a"><span style="width:6px;height:6px;border-radius:50%;background:#5e7d33"></span>Synchronisé</div></div>
+      </div>
+    </div>
+
+    <div style="flex:1;min-width:0;position:relative">
+      <div style="display:{{ barDisp }};justify-content:space-between;padding:22px 28px 0;font-size:14px;font-weight:700"><span>8:12</span><span style="width:22px;height:10px;border:1.5px solid #3a2c24;border-radius:3px;box-sizing:border-box"></span></div>
+      <div class="noscroll" style="position:absolute;top:{{ scTop }};left:0;right:0;bottom:0;overflow-y:auto;padding:{{ scPad }};box-sizing:border-box">
+
+        <div style="display:{{ pgHome }};flex-direction:column;gap:16px">
+          <div style="padding:0 6px"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6f5a4a">Jeudi 12 novembre</div><div style="font-size:34px;font-weight:700;letter-spacing:-.01em;line-height:1.1;margin-top:6px">Bonjour <span style="color:{{ acc }}">{{ me }}</span></div><div style="font-size:13px;font-weight:600;line-height:1.5;color:#6f5a4a;margin-top:8px;max-width:560px;text-wrap:pretty">{{ infoLine }}</div></div>
+          <div style="display:grid;grid-template-columns:{{ homeCols }};gap:16px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+              <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:16px;position:relative;overflow:hidden">
+                <div style="position:absolute;left:0;top:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#f0d9a8 0 14px,#e8c36a 14px 28px)"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;flex-wrap:wrap;gap:4px 8px"><span style="white-space:nowrap;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a4a12">🏁 La quête du QG</span><span style="white-space:nowrap;font-size:12px;color:#6f5a4a">{{ questBy }}</span></div>
+                <div onClick="{{ toggleQuest }}" style="display:flex;align-items:center;gap:12px;margin-top:12px;cursor:pointer;min-height:48px">
+                  <span style="width:32px;height:32px;border-radius:50%;border:2px solid {{ questBd }};background:{{ questBg }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex:none">{{ questCheck }}</span>
+                  <span style="width:38px;height:38px;border-radius:50%;background:#d5dde8;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 2px 0 rgba(60,40,30,.14);font-size:17px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">📵</span>
+                  <div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700;line-height:1.2">Pas d'écran après 22 h</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">Jour 12 sur 30 · novembre</div></div>
+                </div>
+                <div style="display:flex;gap:2px;margin-top:14px"><sc-for list="{{ questDays }}" as="q" hint-placeholder-count="30"><span style="flex:1;height:8px;border-radius:2px;background:{{ q.bg }}"></span></sc-for></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:8px;flex-wrap:wrap"><span style="font-size:12px;font-weight:700;color:#6f5a4a">{{ questWho }}</span><span style="display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:12px;background:#f6dfc6;color:#8a4a12;font-size:12px;font-weight:800;white-space:nowrap;flex:none">{{ questStreak }}</span></div>
+              </div>
+              <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:14px 16px 6px">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:6px"><span style="display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800"><span style="width:30px;height:30px;border-radius:50%;background:#d3dcc3;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);font-size:14px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">💪</span>Aujourd'hui</span><span onClick="{{ goHabits }}" style="font-size:13px;font-weight:800;color:{{ accDark }};cursor:pointer;min-height:44px;display:flex;align-items:center">{{ doneTxt }} · tout voir ›</span></div>
+                <sc-for list="{{ homeRows }}" as="h" hint-placeholder-count="4">
+                  <div onClick="{{ h.open }}" style="display:flex;align-items:center;gap:12px;min-height:58px;border-top:1px solid #ecdfd2;cursor:pointer">
+                    <span onClick="{{ h.toggle }}" style="cursor:{{ h.cursor }};width:28px;height:28px;border-radius:50%;background:{{ h.boxBg }};border:2px solid {{ h.boxBd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex:none">{{ h.check }}</span>
+                    <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:{{ h.tColor }};text-decoration:{{ h.tDeco }}">{{ h.title }}</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">{{ h.meta }}</div></div>
+                    <span style="display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:12px;background:#f6dfc6;color:#8a4a12;font-size:12px;font-weight:800;white-space:nowrap;flex:none">{{ h.streak }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+              <div style="display:flex;flex-wrap:wrap;gap:12px">
+                <div onClick="{{ goTravel }}" style="flex:1 1 140px;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:22px;padding:16px;min-height:132px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer" style-hover="transform:translateY(-2px)"><span style="width:40px;height:40px;border-radius:50%;background:#f0d9a8;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);font-size:18px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">🌍</span><div><div style="font-size:12px;font-weight:700;color:#6f5a4a">Carnet de voyage</div><div style="font-size:18px;font-weight:700">Lisbonne</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">dans 23 jours</div></div></div>
+                <div onClick="{{ goJournal }}" style="flex:1 1 140px;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:22px;padding:16px;min-height:132px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer" style-hover="transform:translateY(-2px)"><div style="display:flex;justify-content:space-between;align-items:flex-start"><span style="width:40px;height:40px;border-radius:50%;background:#e3d9e9;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);font-size:18px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">🌙</span><span style="display:flex;flex-direction:column;align-items:center;margin-top:6px"><span style="width:6px;height:4px;border:1.5px solid #3a2c24;border-bottom:none;border-radius:4px 4px 0 0"></span><span style="width:10px;height:7px;background:#3a2c24;border-radius:2px"></span></span></div><div><div style="font-size:12px;font-weight:700;color:#6f5a4a">Journal · privé</div><div style="font-size:18px;font-weight:700">Pas encore écrit</div></div></div>
+                <div onClick="{{ goReel }}" style="flex:1 1 140px;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:22px;padding:16px;min-height:132px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer" style-hover="transform:translateY(-2px)"><span style="width:40px;height:40px;border-radius:50%;background:#ecb8b0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);font-size:18px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">🎬</span><div><div style="font-size:12px;font-weight:700;color:#6f5a4a">Bobine</div><div style="font-size:18px;font-weight:700">Lancer la roue</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">142 films</div></div></div>
+              </div>
+              <div onClick="{{ openFact }}" style="cursor:pointer;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:22px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start" style-hover="transform:translateY(-2px)">
+                <span style="width:38px;height:38px;border-radius:50%;background:#f0d9a8;display:flex;align-items:center;justify-content:center;flex:none;transform:rotate(-4deg);box-shadow:0 2px 0 rgba(60,40,30,.14);font-size:18px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">💡</span>
+                <div style="flex:1;display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6f5a4a">Fun fact du jour</span><div style="font-size:15px;font-weight:600;line-height:1.45;text-wrap:pretty">{{ factText }}</div><div style="display:flex;justify-content:space-between;align-items:center;min-height:36px"><span style="font-size:12px;color:#6f5a4a">{{ factCat }}</span><span style="font-size:13px;font-weight:800;color:{{ accDark }}">En savoir plus →</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:{{ pgHabits }};flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:0 6px;flex-wrap:wrap"><div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6f5a4a">Jeudi 12 novembre</div><div style="font-size:32px;font-weight:800;letter-spacing:-.02em;line-height:1.05;margin-top:6px">Habitudes</div></div><div style="display:flex;align-items:center;gap:12px"><div onClick="{{ openCreate }}" style="display:{{ btnDisp }};align-items:center;gap:8px;height:44px;padding:0 18px;border-radius:22px;background:{{ acc }};color:#fff;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap" style-active="transform:scale(.97)"><span style="font-size:20px;font-weight:500;line-height:1">+</span>Nouvelle habitude</div><div style="font-size:14px;color:#6f5a4a;text-align:right;max-width:120px;line-height:1.3">{{ headline }}</div><div style="width:46px;height:46px;border-radius:50%;background:{{ ringBg }};display:flex;align-items:center;justify-content:center;flex:none"><span style="width:36px;height:36px;border-radius:50%;background:#ecdfd1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">{{ doneTxt }}</span></div></div></div>
+          <div style="display:flex;gap:4px;padding:4px;background:#e0d0bf;border-radius:22px;max-width:460px">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><div onClick="{{ t.go }}" style="flex:1;height:40px;border-radius:18px;background:{{ t.bg }};display:flex;align-items:center;justify-content:center;font-weight:{{ t.weight }};font-size:14px;color:{{ t.color }};cursor:pointer">{{ t.label }}</div></sc-for>
+          </div>
+
+          <div style="display:{{ tabToday }};flex-direction:column;gap:16px">
+<div style="display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center;justify-content:space-between"><div style="display:flex;gap:4px;padding:3px;background:#e0d0bf;border-radius:18px"><sc-for list="{{ modes }}" as="m" hint-placeholder-count="2"><span onClick="{{ m.go }}" style="height:36px;padding:0 14px;border-radius:15px;background:{{ m.bg }};display:flex;align-items:center;font-size:13px;font-weight:{{ m.weight }};cursor:pointer;color:{{ m.color }}">{{ m.label }}</span></sc-for></div><span onClick="{{ openCats }}" style="font-size:13px;font-weight:700;color:#6f5a4a;cursor:pointer;min-height:44px;display:flex;align-items:center">⚙︎ Gérer les catégories</span></div>
+<div class="noscroll" style="display:{{ todayTheme }};gap:8px;overflow-x:auto;margin:0 -2px;padding:0 2px"><sc-for list="{{ catChips }}" as="c" hint-placeholder-count="5"><span onClick="{{ c.go }}" style="height:40px;padding:0 14px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:{{ c.weight }};flex:none;cursor:pointer;background:{{ c.bg }};color:{{ c.color }}">{{ c.label }}</span></sc-for></div>
+<div style="display:{{ todayTheme }};grid-template-columns:{{ groupCols }};gap:16px;align-items:start"><sc-for list="{{ themeGroups }}" as="g" hint-placeholder-count="3"><div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:14px 16px 4px"><div style="display:flex;align-items:center;gap:10px;padding-bottom:10px"><span style="width:32px;height:32px;border-radius:50%;background:{{ g.bg }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:15px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ g.e }}</span><span style="flex:1;font-size:16px;font-weight:800">{{ g.name }}</span><span style="font-size:13px;font-weight:800;color:#6f5a4a">{{ g.cnt }}</span></div><sc-for list="{{ g.rows }}" as="h" hint-placeholder-count="2"><div onClick="{{ h.open }}" style="display:flex;align-items:center;gap:12px;min-height:60px;border-top:1px solid #ecdfd2;cursor:pointer"><span onClick="{{ h.toggle }}" style="cursor:{{ h.cursor }};width:30px;height:30px;border-radius:50%;background:{{ h.boxBg }};border:2px solid {{ h.boxBd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex:none;opacity:{{ h.op }}">{{ h.check }}</span><span style="width:34px;height:34px;border-radius:50%;background:{{ h.gb }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:16px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ h.emoji }}</span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:{{ h.tColor }};text-decoration:{{ h.tDeco }}">{{ h.title }}</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">{{ h.meta }}</div></div><span style="display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:12px;background:#f6dfc6;color:#8a4a12;font-size:12px;font-weight:800;white-space:nowrap;flex:none">{{ h.streak }}</span></div></sc-for></div></sc-for></div>
+<div style="display:{{ todayWho }};grid-template-columns:{{ groupCols }};gap:16px;align-items:start">
+            <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:14px 16px 4px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px"><span style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;white-space:nowrap"><span style="width:9px;height:9px;border-radius:50%;background:{{ acc }}"></span>À moi</span><span style="font-size:12px;color:#6f5a4a;white-space:nowrap;flex:none">Visible par {{ other }}</span></div>
+              <sc-for list="{{ mine }}" as="h" hint-placeholder-count="3"><div onClick="{{ h.open }}" style="display:flex;align-items:center;gap:12px;min-height:62px;border-top:1px solid #ecdfd2;cursor:pointer"><span onClick="{{ h.toggle }}" style="cursor:{{ h.cursor }};width:30px;height:30px;border-radius:50%;background:{{ h.boxBg }};border:2px solid {{ h.boxBd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex:none">{{ h.check }}</span><span style="width:34px;height:34px;border-radius:50%;background:{{ h.gb }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:16px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ h.emoji }}</span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:{{ h.tColor }};text-decoration:{{ h.tDeco }}">{{ h.title }}</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">{{ h.meta }}</div></div><span style="display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:12px;background:#f6dfc6;color:#8a4a12;font-size:12px;font-weight:800;white-space:nowrap;flex:none">{{ h.streak }}</span></div></sc-for>
+            </div>
+            <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:14px 16px 4px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px"><span style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;white-space:nowrap"><span style="display:flex"><span style="width:9px;height:9px;border-radius:50%;background:#b8434f"></span><span style="width:9px;height:9px;border-radius:50%;background:#8a5a8c;margin-left:-3px"></span></span>Communes</span><span style="font-size:12px;color:#6f5a4a;white-space:nowrap;flex:none">Chacun coche la sienne</span></div>
+              <sc-for list="{{ common }}" as="h" hint-placeholder-count="2"><div onClick="{{ h.open }}" style="display:flex;align-items:center;gap:12px;min-height:62px;border-top:1px solid #ecdfd2;cursor:pointer"><span onClick="{{ h.toggle }}" style="cursor:{{ h.cursor }};width:30px;height:30px;border-radius:50%;background:{{ h.boxBg }};border:2px solid {{ h.boxBd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex:none">{{ h.check }}</span><span style="width:34px;height:34px;border-radius:50%;background:{{ h.gb }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:16px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ h.emoji }}</span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:{{ h.tColor }};text-decoration:{{ h.tDeco }}">{{ h.title }}</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">{{ h.meta }}</div></div><span style="display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:12px;background:#f6dfc6;color:#8a4a12;font-size:12px;font-weight:800;white-space:nowrap;flex:none">{{ h.streak }}</span></div></sc-for>
+            </div>
+            <div style="background:rgba(249,242,234,.55);border-radius:24px;padding:14px 16px 4px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px"><span style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;white-space:nowrap"><span style="width:9px;height:9px;border-radius:50%;background:{{ otherC }}"></span>Chez {{ other }}</span><span style="font-size:12px;color:#6f5a4a;white-space:nowrap;flex:none">Lecture seule</span></div>
+              <sc-for list="{{ others }}" as="h" hint-placeholder-count="3"><div onClick="{{ h.open }}" style="display:flex;align-items:center;gap:12px;min-height:62px;border-top:1px solid #ecdfd2;cursor:pointer"><span onClick="{{ h.toggle }}" style="cursor:{{ h.cursor }};width:30px;height:30px;border-radius:50%;background:{{ h.boxBg }};border:2px solid {{ h.boxBd }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;flex:none;opacity:.75">{{ h.check }}</span><span style="width:34px;height:34px;border-radius:50%;background:{{ h.gb }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:16px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ h.emoji }}</span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:{{ h.tColor }};text-decoration:{{ h.tDeco }}">{{ h.title }}</div></div><span style="display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:12px;background:#f6dfc6;color:#8a4a12;font-size:12px;font-weight:800;white-space:nowrap;flex:none">{{ h.streak }}</span></div></sc-for>
+            </div>
+          </div>
+
+          </div>
+          <div style="display:{{ tabSeries }};flex-direction:column;gap:16px">
+<div style="display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center">
+ <div style="display:flex;gap:4px;padding:4px;background:#e0d0bf;border-radius:22px"><sc-for list="{{ periods }}" as="p" hint-placeholder-count="3"><div onClick="{{ p.go }}" style="height:38px;padding:0 16px;border-radius:18px;background:{{ p.bg }};display:flex;align-items:center;font-weight:{{ p.weight }};font-size:14px;color:{{ p.color }};cursor:pointer;opacity:{{ p.op }}">{{ p.label }}</div></sc-for></div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ scopes }}" as="c" hint-placeholder-count="4"><span onClick="{{ c.go }}" style="height:38px;padding:0 14px;border-radius:19px;background:{{ c.bg }};color:{{ c.color }};display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;cursor:pointer">{{ c.label }}</span></sc-for></div>
+</div>
+<div style="display:{{ vRecap }};flex-direction:column;gap:14px">
+ <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:16px;display:flex;align-items:center;gap:16px"><div style="width:92px;height:92px;border-radius:50%;background:{{ rRing }};display:flex;align-items:center;justify-content:center;flex:none"><span style="width:72px;height:72px;border-radius:50%;background:#f9f2ea;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;letter-spacing:-.02em">{{ rPct }}</span></div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:#6f5a4a;letter-spacing:.08em;text-transform:uppercase">{{ rTitle }}</div><div style="font-size:14px;line-height:1.45;color:#4f3f34;margin-top:4px;text-wrap:pretty">{{ rText }}</div></div></div>
+ <div style="display:flex;gap:10px"><div style="flex:1;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:18px;padding:12px 14px"><div style="font-size:22px;font-weight:800;letter-spacing:-.02em">{{ rS1 }}</div><div style="font-size:11px;color:#6f5a4a;margin-top:2px">{{ rS1l }}</div></div><div onClick="{{ openRec }}" style="cursor:pointer;flex:1;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:18px;padding:12px 14px"><div style="font-size:22px;font-weight:800;letter-spacing:-.02em;color:#8a4a12">🔥 {{ rS2 }}</div><div style="font-size:11px;color:#6f5a4a;margin-top:2px">plus longue série ›</div></div><div onClick="{{ openCur }}" style="cursor:pointer;flex:1;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:18px;padding:12px 14px"><div style="font-size:22px;font-weight:800;letter-spacing:-.02em;color:#8a4a12">🔥 {{ rS3 }}</div><div style="font-size:11px;color:#6f5a4a;margin-top:2px">série en cours ›</div></div></div>
+ <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:16px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px"><span style="font-size:15px;font-weight:800">{{ rBarsTitle }}</span><span style="font-size:12px;color:#6f5a4a">% d'habitudes faites</span></div><div style="display:flex;align-items:flex-end;gap:6px;height:120px"><sc-for list="{{ rBars }}" as="b" hint-placeholder-count="7"><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%"><span style="width:100%;height:{{ b.h }}px;border-radius:8px;background:{{ b.bg }};border:{{ b.bd }};box-sizing:border-box"></span><span style="font-size:11px;font-weight:700;color:#6f5a4a">{{ b.l }}</span></div></sc-for></div></div>
+ <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:16px"><div style="font-size:15px;font-weight:800;margin-bottom:6px">Les plus solides</div><sc-for list="{{ rTops }}" as="t" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:12px;min-height:54px"><span style="width:34px;height:34px;border-radius:50%;background:{{ t.bg }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:16px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ t.e }}</span><div style="flex:1"><div style="font-size:14px;font-weight:600">{{ t.t }}</div><div style="height:6px;border-radius:3px;background:#e6d6c4;margin-top:6px"><div style="width:{{ t.p }}%;height:100%;border-radius:3px;background:{{ acc2 }}"></div></div></div><span style="font-size:14px;font-weight:800;width:44px;text-align:right">{{ t.p }} %</span></div></sc-for></div>
+</div>
+<div style="display:{{ vUs }};flex-direction:column;gap:14px">
+ <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:16px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="display:flex"><span style="width:10px;height:10px;border-radius:50%;background:#b8434f"></span><span style="width:10px;height:10px;border-radius:50%;background:#8a5a8c;margin-left:-3px"></span></span><span style="font-size:16px;font-weight:800">À deux</span></div><div style="font-size:14px;color:#4f3f34;line-height:1.5">Vous avez fait les habitudes communes ensemble <b>5 jours sur 7</b> cette semaine. Meilleure série commune : <b>21 jours</b>.</div></div>
+ <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:14px 16px 6px"><div style="font-size:15px;font-weight:800;padding-bottom:6px">Habitudes communes</div><sc-for list="{{ usRows }}" as="r" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:12px;min-height:62px;border-top:1px solid #ecdfd2"><span style="width:34px;height:34px;border-radius:50%;background:{{ r.bg }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:16px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ r.e }}</span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600">{{ r.t }}</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">{{ r.meta }}</div></div><span style="display:flex;gap:4px;flex:none"><span style="width:22px;height:22px;border-radius:50%;box-sizing:border-box;background:{{ r.aBg }};border:2px solid {{ r.aBd }};color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">{{ r.aC }}</span><span style="width:22px;height:22px;border-radius:50%;box-sizing:border-box;background:{{ r.nBg }};border:2px solid {{ r.nBd }};color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">{{ r.nC }}</span></span><span style="display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:12px;background:#f6dfc6;color:#8a4a12;font-size:12px;font-weight:800;white-space:nowrap;flex:none">{{ r.streak }}</span></div></sc-for></div>
+</div>
+<div style="display:{{ vDuel }};flex-direction:column;gap:14px">
+ <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:18px 16px;display:flex;align-items:center;justify-content:space-between"><div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:44px;height:44px;border-radius:50%;background:{{ lC }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px">{{ lI }}</span><span style="font-size:13px;font-weight:700">{{ lN }}</span></div><div style="text-align:center"><div style="font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1"><span style="color:{{ lC }}">{{ lScore }}</span><span style="color:#b9a28c;font-size:28px;margin:0 8px">–</span><span style="color:{{ rC }}">{{ rScore }}</span></div><div style="font-size:12px;color:#6f5a4a;margin-top:6px">manches gagnées ce mois</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:44px;height:44px;border-radius:50%;background:{{ rC }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px">{{ rI }}</span><span style="font-size:13px;font-weight:700">{{ rN }}</span></div></div>
+ <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:16px"><div style="font-size:15px;font-weight:800;margin-bottom:14px">Face à face</div><div style="display:flex;flex-direction:column;gap:18px"><sc-for list="{{ vsRows }}" as="v" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:20px;font-weight:800;letter-spacing:-.02em;color:{{ lC }};opacity:{{ v.aOp }}">{{ v.a }}</span><span style="font-size:12px;font-weight:700;color:#6f5a4a;text-align:center;line-height:1.3">{{ v.label }}</span><span style="font-size:20px;font-weight:800;letter-spacing:-.02em;color:{{ rC }};opacity:{{ v.bOp }}">{{ v.b }}</span></div><div style="display:flex;height:10px;gap:3px"><span style="width:{{ v.pa }}%;background:{{ lC }};border-radius:5px 0 0 5px"></span><span style="flex:1;background:{{ rC }};border-radius:0 5px 5px 0"></span></div></div></sc-for></div></div>
+</div>
+<div style="display:{{ vMonth }};grid-template-columns:{{ seriesCols }};gap:16px;align-items:start">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;gap:10px">
+                <div onClick="{{ openCur }}" style="cursor:pointer;flex:1;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:18px;padding:12px 14px"><div style="font-size:24px;font-weight:800;color:#8a4a12;letter-spacing:-.02em">21 j</div><div style="font-size:11px;color:#6f5a4a;margin-top:2px">série en cours ›</div></div>
+                <div onClick="{{ openRec }}" style="cursor:pointer;flex:1;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:18px;padding:12px 14px"><div style="font-size:24px;font-weight:800;color:#8a4a12;letter-spacing:-.02em">31 j</div><div style="font-size:11px;color:#6f5a4a;margin-top:2px">plus longue série ›</div></div>
+                <div style="flex:1;background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:18px;padding:12px 14px"><div style="font-size:24px;font-weight:800;color:{{ acc }};letter-spacing:-.02em">78 %</div><div style="font-size:11px;color:#6f5a4a;margin-top:2px">ce mois-ci</div></div>
+              </div>
+              <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:16px">
+                <div style="font-size:15px;font-weight:800;margin-bottom:12px">Streaks en cours</div>
+                <sc-for list="{{ streakRows }}" as="r" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:12px;min-height:54px;border-top:1px solid #ecdfd2"><span style="width:34px;height:34px;border-radius:50%;background:{{ r.bg }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:16px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ r.e }}</span><div style="flex:1;font-size:14px;font-weight:600">{{ r.t }}</div><span style="font-size:15px;font-weight:800;color:#8a4a12">🔥 {{ r.n }} j</span></div></sc-for>
+              </div>
+            </div>
+            <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:18px 16px 16px">
+              <div style="text-align:center;font-size:18px;font-weight:800;margin-bottom:12px">Novembre 2026</div>
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;font-size:11px;font-weight:700;color:#6f5a4a;text-align:center;margin-bottom:8px"><span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span></div>
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px"><sc-for list="{{ heat }}" as="c" hint-placeholder-count="35"><span style="aspect-ratio:1;border-radius:50%;background:{{ c.bg }};border:{{ c.bd }};box-shadow:{{ c.sh }};box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:{{ c.fw }};color:{{ c.tc }}">{{ c.n }}</span></sc-for></div>
+            </div>
+          </div>
+
+          </div>
+          <div style="display:{{ tabGoals }};flex-direction:column;gap:16px"><div style="display:flex;gap:4px;padding:4px;background:#e0d0bf;border-radius:22px;max-width:360px"><sc-for list="{{ goalTabs }}" as="t" hint-placeholder-count="2"><div onClick="{{ t.go }}" style="flex:1;height:38px;border-radius:18px;background:{{ t.bg }};display:flex;align-items:center;justify-content:center;font-weight:{{ t.weight }};font-size:14px;color:{{ t.color }};cursor:pointer">{{ t.label }}</div></sc-for></div><div style="display:grid;grid-template-columns:{{ groupCols }};gap:16px;align-items:start">
+            <sc-for list="{{ goals }}" as="g" hint-placeholder-count="3">
+              <div style="background:#f9f2ea;box-shadow:0 1px 0 rgba(90,60,40,.05),0 10px 24px rgba(90,60,40,.08);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:50%;background:{{ g.bg }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:18px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ g.e }}</span><div style="flex:1;min-width:0"><div style="font-size:16px;font-weight:700;line-height:1.25">{{ g.t }}</div><div style="font-size:12px;color:#6f5a4a;margin-top:3px">{{ g.own }} · pour le {{ g.dl }}</div></div></div>
+                <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:22px;font-weight:800;letter-spacing:-.02em;color:{{ g.c }}">{{ g.cur }}<span style="font-size:13px;font-weight:600;color:#6f5a4a"> / {{ g.tot }} {{ g.unit }}</span></span><span style="font-size:13px;font-weight:800;color:{{ g.c }}">{{ g.pct }} %</span></div>
+                <div style="height:10px;border-radius:5px;background:#e6d6c4"><div style="width:{{ g.pct }}%;height:100%;border-radius:5px;background:{{ g.c }}"></div></div>
+              </div>
+            </sc-for>
+          </div></div>
+        </div>
+
+        <div style="display:{{ pgSoon }};flex-direction:column;align-items:center;text-align:center;gap:14px;padding:60px 24px">
+          <span style="width:96px;height:96px;border-radius:50%;background:{{ soonBg }};display:flex;align-items:center;justify-content:center;transform:rotate(-6deg);box-shadow:0 4px 0 rgba(60,40,30,.14);font-size:44px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ soonE }}</span>
+          <div style="font-size:28px;font-weight:800;letter-spacing:-.02em">{{ soonTitle }}</div>
+          <div style="font-size:14px;color:#6f5a4a;line-height:1.5;max-width:320px">Cet écran n'est pas encore dessiné. Il arrive dans une prochaine étape.</div>
+          <div onClick="{{ goHome }}" style="height:48px;padding:0 24px;border-radius:24px;background:{{ acc }};color:#fff;display:flex;align-items:center;font-weight:800;font-size:15px;cursor:pointer">Retour à l'accueil</div>
+        </div>
+
+      </div>
+
+      <div onClick="{{ openCreate }}" style="display:{{ fabDisp }};position:absolute;right:20px;bottom:104px;width:56px;height:56px;border-radius:50%;background:{{ acc }};color:#fff;align-items:center;justify-content:center;font-size:28px;cursor:pointer;box-shadow:0 8px 18px rgba(60,40,30,.3);z-index:3" style-active="transform:scale(.95)">+</div>
+<div style="display:{{ bnDisp }};position:absolute;left:0;right:0;bottom:0;height:116px;background:linear-gradient(rgba(231,218,203,0),#e7dacb 45%);pointer-events:none"></div>
+      <div style="display:{{ bnDisp }};position:absolute;left:12px;right:12px;bottom:16px;height:72px;background:#f9f2ea;border-radius:26px;box-shadow:0 8px 22px rgba(60,40,30,.12);padding:4px;box-sizing:border-box">
+        <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+          <div onClick="{{ n.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:{{ n.weight }};color:{{ n.color }};cursor:pointer"><span style="padding:2px;border-radius:50%;box-shadow:{{ n.ring }}"><span style="width:30px;height:30px;border-radius:50%;background:{{ n.bg }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);font-size:14px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ n.e }}</span></span>{{ n.label }}</div>
+        </sc-for>
+      </div>
+    </div>
+
+  <div style="display:{{ sheetDisp }};position:absolute;inset:0;z-index:12;align-items:{{ modalAlign }};justify-content:center"><div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(40,28,22,.45)"></div><div style="position:relative;width:{{ modalW }};max-width:100%;max-height:92%;overflow-y:auto;background:#f9f2ea;border-radius:{{ modalR }};padding:18px 18px 22px;box-sizing:border-box;box-shadow:0 20px 50px rgba(40,28,22,.35)" class="noscroll"><div style="width:40px;height:5px;border-radius:3px;background:#d8c7b4;margin:0 auto 14px"></div><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:24px;font-weight:800;letter-spacing:-.02em">{{ sheetTitle }}</span><span onClick="{{ closeSheet }}" style="font-size:14px;font-weight:700;color:#6f5a4a;cursor:pointer;min-height:44px;display:flex;align-items:center">Fermer</span></div><div style="font-size:13px;color:#6f5a4a;margin:2px 0 12px">{{ sheetSub }}</div><sc-for list="{{ sheetRows }}" as="r" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:12px;min-height:64px;border-top:1px solid #ecdfd2"><span style="width:40px;height:40px;border-radius:50%;background:{{ r.bg }};display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 2px 0 rgba(60,40,30,.14);font-size:18px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ r.e }}</span><div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:700">{{ r.t }}</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">{{ r.d }}</div></div><span style="display:inline-flex;align-items:center;height:28px;padding:0 11px;border-radius:14px;background:{{ r.pillBg }};color:{{ r.pillCol }};font-size:13px;font-weight:800;white-space:nowrap;flex:none">{{ r.v }}</span></div></sc-for></div></div>
+  <div style="display:{{ dDisp }};position:absolute;inset:0;z-index:12;align-items:{{ modalAlign }};justify-content:center"><div onClick="{{ closeDetail }}" style="position:absolute;inset:0;background:rgba(40,28,22,.45)"></div><div style="position:relative;width:{{ modalW }};max-width:100%;max-height:92%;overflow-y:auto;background:#f9f2ea;border-radius:{{ modalR }};padding:18px 18px 22px;box-sizing:border-box;box-shadow:0 20px 50px rgba(40,28,22,.35)" class="noscroll"><div style="width:40px;height:5px;border-radius:3px;background:#d8c7b4;margin:0 auto 14px"></div>
+<div style="display:flex;align-items:center;gap:14px"><span style="width:56px;height:56px;border-radius:50%;background:{{ dBg }};display:flex;align-items:center;justify-content:center;transform:rotate(-6deg);box-shadow:0 3px 0 rgba(60,40,30,.14);font-size:26px;flex:none;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ dE }}</span><div style="flex:1;min-width:0"><div style="font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.15">{{ dT }}</div><div style="font-size:12px;color:#6f5a4a;margin-top:4px">{{ dMeta }}</div></div><span onClick="{{ closeDetail }}" style="font-size:14px;font-weight:700;color:#6f5a4a;cursor:pointer;min-height:44px;display:flex;align-items:center">Fermer</span></div>
+<div style="display:flex;gap:10px;margin:16px 0"><div style="flex:1;background:#efe3d4;border-radius:16px;padding:12px 14px"><div style="font-size:22px;font-weight:800;color:#8a4a12">🔥 {{ dStreak }}</div><div style="font-size:11px;color:#6f5a4a;margin-top:2px">série en cours</div></div><div style="flex:1;background:#efe3d4;border-radius:16px;padding:12px 14px"><div style="font-size:22px;font-weight:800">{{ dRec }}</div><div style="font-size:11px;color:#6f5a4a;margin-top:2px">record</div></div></div>
+<div style="display:{{ dCommon }};flex-direction:column;gap:14px"><div style="display:flex;gap:10px"><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px"><span style="width:56px;height:56px;border-radius:50%;background:{{ p1C }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;position:relative">{{ p1I }}<span style="position:absolute;right:-4px;bottom:-2px;width:24px;height:24px;border-radius:50%;box-sizing:border-box;border:2px solid #f9f2ea;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:{{ p1Bg }};color:{{ p1Col }}">{{ p1Mk }}</span></span><div style="font-size:14px;font-weight:700">{{ p1N }}</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px"><span style="width:56px;height:56px;border-radius:50%;background:{{ p2C }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;position:relative">{{ p2I }}<span style="position:absolute;right:-4px;bottom:-2px;width:24px;height:24px;border-radius:50%;box-sizing:border-box;border:2px solid #f9f2ea;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:{{ p2Bg }};color:{{ p2Col }}">{{ p2Mk }}</span></span><div style="font-size:14px;font-weight:700">{{ p2N }}</div></div></div>
+<div style="display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:#f6dfc6;color:#6b3a0c;font-size:13px;font-weight:600;line-height:1.4"><span style="font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;font-size:16px">⏳</span><span>{{ dAlert }}</span></div>
+<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6f5a4a">Règle de la série</div>
+<div style="display:flex;gap:4px;padding:4px;background:#e0d0bf;border-radius:22px"><div onClick="{{ ruleBoth }}" style="flex:1;min-height:44px;border-radius:18px;background:{{ rBothBg }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;cursor:pointer">À deux</div><div onClick="{{ ruleEach }}" style="flex:1;min-height:44px;border-radius:18px;background:{{ rEachBg }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;cursor:pointer">Chacun la sienne</div></div>
+<div style="font-size:13px;color:#4f3f34;line-height:1.5;text-wrap:pretty">{{ dRuleText }}</div>
+<div style="display:flex;align-items:center;justify-content:space-between;min-height:56px;border-top:1px solid #dccdbc"><div><div style="font-size:15px;font-weight:700">Joker de la semaine</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">Un oubli par semaine ne casse pas la série.</div></div><span onClick="{{ toggleJoker }}" style="width:52px;height:32px;border-radius:16px;background:{{ jokerBg }};display:flex;align-items:center;justify-content:{{ jokerJ }};padding:3px;box-sizing:border-box;cursor:pointer;flex:none"><span style="width:26px;height:26px;border-radius:50%;background:#fff"></span></span></div></div>
+<div style="display:{{ dReadonly }};font-size:13px;color:#6f5a4a;line-height:1.5">Habitude d'{{ dOwner }} : visible, mais seul {{ dOwner }} peut la cocher.</div></div></div>
+  <div style="display:{{ catDisp }};position:absolute;inset:0;z-index:12;align-items:{{ modalAlign }};justify-content:center"><div onClick="{{ closeCats }}" style="position:absolute;inset:0;background:rgba(40,28,22,.45)"></div><div style="position:relative;width:{{ modalW }};max-width:100%;max-height:92%;overflow-y:auto;background:#f9f2ea;border-radius:{{ modalR }};padding:18px 18px 22px;box-sizing:border-box;box-shadow:0 20px 50px rgba(40,28,22,.35)" class="noscroll"><div style="width:40px;height:5px;border-radius:3px;background:#d8c7b4;margin:0 auto 14px"></div><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:24px;font-weight:800;letter-spacing:-.02em">Catégories</span><span onClick="{{ closeCats }}" style="font-size:14px;font-weight:700;color:#6f5a4a;cursor:pointer;min-height:44px;display:flex;align-items:center">Fermer</span></div><div style="font-size:13px;color:#6f5a4a;margin:2px 0 8px;line-height:1.45">Communes à Alex et Antoine. La couleur de la catégorie colore toutes ses habitudes.</div><sc-for list="{{ catList }}" as="c" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:12px;min-height:64px;border-top:1px solid #ecdfd2"><span style="color:#b9a28c;font-size:18px;width:18px;flex:none">⋮⋮</span><span style="width:40px;height:40px;border-radius:50%;background:{{ c.bg }};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 rgba(60,40,30,.14);flex:none;font-size:18px;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ c.e }}</span><div style="flex:1"><div style="font-size:16px;font-weight:700">{{ c.name }}</div><div style="font-size:12px;color:#6f5a4a;margin-top:2px">{{ c.n }}</div></div></div></sc-for><div onClick="{{ openNewCat }}" style="margin-top:12px;height:54px;border-radius:27px;border:1.5px dashed #b9a28c;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;cursor:pointer">+ Nouvelle catégorie</div></div></div>
+  <div style="display:{{ ncDisp }};position:absolute;inset:0;z-index:12;align-items:{{ modalAlign }};justify-content:center"><div onClick="{{ closeNewCat }}" style="position:absolute;inset:0;background:rgba(40,28,22,.45)"></div><div style="position:relative;width:{{ modalW }};max-width:100%;max-height:92%;overflow-y:auto;background:#f9f2ea;border-radius:{{ modalR }};padding:18px 18px 22px;box-sizing:border-box;box-shadow:0 20px 50px rgba(40,28,22,.35)" class="noscroll"><div style="width:40px;height:5px;border-radius:3px;background:#d8c7b4;margin:0 auto 14px"></div><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:22px;font-weight:800;letter-spacing:-.02em">Nouvelle catégorie</span><span onClick="{{ closeNewCat }}" style="font-size:14px;font-weight:700;color:#6f5a4a;cursor:pointer;min-height:44px;display:flex;align-items:center">Annuler</span></div>
+<div style="display:flex;align-items:center;gap:12px;margin:10px 0 14px"><span style="width:52px;height:52px;border-radius:50%;background:{{ ncBg }};display:flex;align-items:center;justify-content:center;transform:rotate(-6deg);box-shadow:0 3px 0 rgba(60,40,30,.14);font-size:24px;flex:none;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ ncEmoji }}</span><input type="text" value="{{ ncName }}" onInput="{{ setNcName }}" placeholder="Nom de la catégorie" style="flex:1;min-width:0;height:52px;border-radius:16px;background:#fffaf3;border:1.5px solid {{ acc }};padding:0 14px;font-size:16px;font-weight:600;font-family:inherit;color:#3a2c24;outline:none;box-sizing:border-box"></div>
+<div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6f5a4a;margin-bottom:10px">Couleur de la catégorie</div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px"><sc-for list="{{ ncSwatches }}" as="w" hint-placeholder-count="8"><span onClick="{{ w.pick }}" style="width:40px;height:40px;border-radius:50%;background:{{ w.hex }};box-shadow:0 0 0 2px #f9f2ea,0 0 0 4px {{ w.ring }};cursor:pointer"></span></sc-for></div>
+<div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin-bottom:14px"><sc-for list="{{ ncEmojis }}" as="e" hint-placeholder-count="16"><span onClick="{{ e.pick }}" style="height:40px;border-radius:12px;background:{{ e.bg }};display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ e.ch }}</span></sc-for></div>
+<div onClick="{{ createCat }}" style="height:54px;border-radius:27px;background:{{ acc }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;cursor:pointer;opacity:{{ ncOp }}">Créer la catégorie</div></div></div>
+  <div style="display:{{ factDisp }};position:absolute;inset:0;z-index:12;align-items:{{ modalAlign }};justify-content:center"><div onClick="{{ closeFact }}" style="position:absolute;inset:0;background:rgba(40,28,22,.45)"></div><div class="noscroll" style="position:relative;width:{{ modalW }};max-width:100%;max-height:92%;overflow-y:auto;background:#f9f2ea;border-radius:{{ modalR }};padding:18px 20px 22px;box-sizing:border-box;box-shadow:0 20px 50px rgba(40,28,22,.35)"><div style="width:40px;height:5px;border-radius:3px;background:#d8c7b4;margin:0 auto 14px"></div>
+<div style="display:flex;align-items:center;gap:12px"><span style="width:52px;height:52px;border-radius:50%;background:#f0d9a8;display:flex;align-items:center;justify-content:center;transform:rotate(-4deg);box-shadow:0 3px 0 rgba(60,40,30,.14);font-size:24px;flex:none;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ factE }}</span><div style="flex:1"><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6f5a4a">Fun fact · {{ factCat }}</div></div><span onClick="{{ closeFact }}" style="font-size:14px;font-weight:700;color:#6f5a4a;cursor:pointer;min-height:44px;display:flex;align-items:center">Fermer</span></div>
+<div style="font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.25;margin:14px 0 10px;text-wrap:pretty">{{ factText }}</div>
+<sc-for list="{{ factDeep }}" as="p" hint-placeholder-count="3"><div style="font-size:14px;line-height:1.6;color:#4f3f34;margin-bottom:10px;text-wrap:pretty">{{ p.t }}</div></sc-for>
+<div style="font-size:12px;color:#6f5a4a;margin:6px 0 16px">Source : {{ factSrc }}</div>
+<div onClick="{{ nextFact }}" style="height:52px;border-radius:26px;background:{{ acc }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;cursor:pointer" style-active="transform:scale(.98)">🎲 Un autre fun fact</div>
+<div style="min-height:48px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:{{ accDark }};cursor:pointer">Lire l'article complet ›</div>
+</div></div>
+  <div style="display:{{ createDisp }};position:absolute;inset:0;z-index:10;align-items:{{ modalAlign }};justify-content:center">
+    <div onClick="{{ closeCreate }}" style="position:absolute;inset:0;background:rgba(40,28,22,.45)"></div>
+    <div style="position:relative;width:{{ modalW }};max-width:100%;background:#f9f2ea;border-radius:{{ modalR }};padding:20px 18px 18px;box-sizing:border-box;box-shadow:0 20px 50px rgba(40,28,22,.35);display:flex;flex-direction:column;gap:14px;margin:{{ modalM }};max-height:94%;overflow-y:auto" class="noscroll">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:22px;font-weight:800;letter-spacing:-.02em">Nouvelle habitude</span><span onClick="{{ closeCreate }}" style="font-size:14px;font-weight:700;color:#6f5a4a;cursor:pointer;min-height:44px;display:flex;align-items:center">Annuler</span></div>
+      <input type="text" value="{{ nName }}" onInput="{{ setName }}" placeholder="Nom de l'habitude" style="height:56px;border-radius:16px;background:#fffaf3;border:1.5px solid {{ acc }};padding:0 16px;font-size:17px;font-weight:600;font-family:inherit;color:#3a2c24;outline:none;box-sizing:border-box;width:100%">
+      <div style="display:flex;align-items:center;gap:14px"><span style="width:56px;height:56px;border-radius:50%;background:{{ nBgC }};display:flex;align-items:center;justify-content:center;transform:rotate(-6deg);box-shadow:0 3px 0 rgba(60,40,30,.14);font-size:26px;flex:none;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ nEmojiC }}</span><span style="display:{{ swNoteDisp }};font-size:12px;color:#6f5a4a;line-height:1.4;flex:1">Le fond suit la catégorie « {{ nCatName }} »</span><div style="display:{{ swDisp }};gap:8px;flex-wrap:wrap"><sc-for list="{{ nSwatches }}" as="w" hint-placeholder-count="6"><span onClick="{{ w.pick }}" style="width:34px;height:34px;border-radius:50%;background:{{ w.hex }};box-shadow:0 0 0 2px #f9f2ea,0 0 0 4px {{ w.ring }};cursor:pointer"></span></sc-for></div></div>
+      <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px"><sc-for list="{{ nEmojis }}" as="e" hint-placeholder-count="16"><span onClick="{{ e.pick }}" style="height:40px;border-radius:12px;background:{{ e.bg }};display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">{{ e.ch }}</span></sc-for></div>
+      <div style="display:flex;gap:4px;padding:4px;background:#e0d0bf;border-radius:22px"><div onClick="{{ ownMe }}" style="flex:1;height:44px;border-radius:18px;background:{{ ownMeBg }};display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:14px;cursor:pointer"><span style="width:9px;height:9px;border-radius:50%;background:{{ acc }}"></span>À moi</div><div onClick="{{ ownCo }}" style="flex:1;height:44px;border-radius:18px;background:{{ ownCoBg }};display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:14px;cursor:pointer"><span style="display:flex"><span style="width:9px;height:9px;border-radius:50%;background:#b8434f"></span><span style="width:9px;height:9px;border-radius:50%;background:#8a5a8c;margin-left:-3px"></span></span>Commune</div></div>
+      <div style="font-size:12px;color:#6f5a4a;margin-top:-6px;padding:0 4px">{{ ownNote }}</div><div style="display:{{ nRuleDisp }};gap:4px;padding:4px;background:#e0d0bf;border-radius:22px"><div onClick="{{ nRuleBoth }}" style="flex:1;height:40px;border-radius:18px;background:{{ nrBothBg }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;cursor:pointer">Série à deux</div><div onClick="{{ nRuleEach }}" style="flex:1;height:40px;border-radius:18px;background:{{ nrEachBg }};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;cursor:pointer">Chacun la sienne</div></div><div><div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#6f5a4a;margin-bottom:8px">Catégorie</div><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ nCats }}" as="c" hint-placeholder-count="5"><span onClick="{{ c.pick }}" style="height:38px;padding:0 13px;border-radius:19px;display:inline-flex;align-items:center;font-size:13px;font-weight:700;cursor:pointer;background:{{ c.bg }};color:{{ c.color }}">{{ c.label }}</span></sc-for><span onClick="{{ openNewCat }}" style="height:38px;padding:0 13px;border-radius:19px;display:inline-flex;align-items:center;font-size:13px;font-weight:700;cursor:pointer;border:1.5px dashed #b9a28c">+ Nouvelle</span></div></div><div style="display:flex;gap:6px"><sc-for list="{{ nDaysList }}" as="d" hint-placeholder-count="7"><span onClick="{{ d.pick }}" style="flex:1;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;cursor:pointer;background:{{ d.bg }};color:{{ d.color }}">{{ d.l }}</span></sc-for></div>
+<div style="display:flex;align-items:center;justify-content:space-between;min-height:48px"><div><div style="font-size:15px;font-weight:700">Rappel</div><div style="font-size:12px;color:#6f5a4a">Chaque jour à 7 h 30</div></div><span onClick="{{ toggleRem }}" style="width:52px;height:32px;border-radius:16px;background:{{ remBg }};display:flex;align-items:center;justify-content:{{ remJ }};padding:3px;box-sizing:border-box;cursor:pointer"><span style="width:26px;height:26px;border-radius:50%;background:#fff"></span></span></div>
+      <div onClick="{{ createHabit }}" style="height:54px;border-radius:27px;background:{{ acc }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;cursor:pointer;opacity:{{ createOp }}" style-active="transform:scale(.98)">Créer l'habitude</div>
+    </div>
+  </div>
+  </div>
+  <div style="font-size:12px;color:#6f5a4a;text-align:center;max-width:520px;line-height:1.5">Prototype : changez d'appareil et de personne en haut, cochez les habitudes et la quête, naviguez entre les écrans. Carnet, Journal et Bobine ne sont pas encore dessinés.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1400,&quot;height&quot;:960}}">
+class Component extends DCLogic {
+  state = {
+    device: 'mobile', user: 'alex', factOpen: false, factOff: 0, page: 'home', tab: 'today', cats: [{ id: 'bien', e: '🧘', bg: '#d3dcc3', name: 'Bien-être' }, { id: 'sport', e: '🏃', bg: '#ecb8b0', name: 'Sport' }, { id: 'learn', e: '📖', bg: '#f0d9a8', name: 'Apprendre' }, { id: 'home', e: '🧹', bg: '#d5dde8', name: 'Maison' }], mode: 'who', catFilter: 'all', sheet: null, detail: null, catScreen: false, newCat: false, ncName: '', ncBg: '#d3dcc3', ncEmoji: '🧘', nCat: '', nRule: 'both', nDays: [1,1,1,1,1,0,0], nRem: true, goalTab: 'cur', per: 'mois', scope: 'me', creating: false, nName: '', nEmoji: '🧘', nBg: '#d3dcc3', nOwner: 'me',
+    quest: { alex: false, antoine: true },
+    habits: [
+      { id: 1, c: 'bien', rec: 31, rule: 'both', joker: true, t: 'Méditer 10 minutes', e: '🧘', bg: '#d3dcc3', o: 'alex', s: 11, d: { alex: false, antoine: false } },
+      { id: 2, c: 'learn', rec: 19, rule: 'both', joker: true, t: 'Lire 20 pages', e: '📖', bg: '#f0d9a8', o: 'alex', s: 7, d: { alex: true, antoine: false } },
+      { id: 3, c: 'bien', rec: 9, rule: 'both', joker: true, t: 'Étirements', e: '🤸', bg: '#ecb8b0', o: 'alex', s: 2, d: { alex: false, antoine: false } },
+      { id: 4, c: 'sport', rec: 21, rule: 'both', joker: true, t: 'Marcher ensemble', e: '🚶', bg: '#ecb8b0', o: 'both', s: 20, d: { alex: false, antoine: true } },
+      { id: 5, c: 'bien', rec: 12, rule: 'both', joker: true, t: 'Pas d’écran après 23 h', e: '📵', bg: '#d5dde8', o: 'both', s: 4, d: { alex: false, antoine: false } },
+      { id: 6, c: 'sport', rec: 26, rule: 'both', joker: true, t: 'Courir 30 minutes', e: '🏃', bg: '#f0d9a8', o: 'antoine', s: 13, d: { alex: false, antoine: true } },
+      { id: 7, c: 'bien', rec: 15, rule: 'both', joker: true, t: 'Boire 1,5 L d’eau', e: '💧', bg: '#d5dde8', o: 'antoine', s: 8, d: { alex: false, antoine: true } },
+      { id: 8, c: 'bien', rec: 6, rule: 'both', joker: true, t: 'Pas de sucre le soir', e: '🍬', bg: '#ecb8b0', o: 'antoine', s: 2, d: { alex: false, antoine: false } }
+    ]
+  };
+  P = { alex: { name: 'Alex', c: '#b8434f', d: '#8f2f3a', t: '#f6e0e1' }, antoine: { name: 'Antoine', c: '#8a5a8c', d: '#6a4270', t: '#efe2ef' } };
+  mix(hex, to, t) {
+    const p = h => [1,3,5].map(i => parseInt(h.slice(i,i+2),16));
+    const a = p(hex), b = p(to);
+    return '#' + a.map((v,i) => Math.round(v + (b[i]-v)*t).toString(16).padStart(2,'0')).join('');
+  }
+  go(page) { this.setState({ page }); }
+  toggle(id) {
+    const u = this.state.user;
+    this.setState(s => ({ habits: s.habits.map(h => h.id === id ? { ...h, d: { ...h.d, [u]: !h.d[u] } } : h) }));
+  }
+  row(h) {
+    const { user } = this.state, other = user === 'alex' ? 'antoine' : 'alex', P = this.P;
+    const canToggle = h.o === 'both' || h.o === user;
+    const who = canToggle ? user : other;
+    const done = h.d[who];
+    const col = P[who].c;
+    const meta = h.o === user ? 'À moi' : h.o === 'both' ? (h.d[other] ? P[other].name + ' l’a fait' : P[other].name + ' pas encore') : P[other].name;
+    return {
+      title: h.t, emoji: h.e, gb: this.catBg(h), meta, streak: '🔥 ' + (h.s + (done ? 1 : 0)) + ' j',
+      boxBg: done ? col : 'transparent', boxBd: done ? col : '#d3c1ad', check: done ? '✓' : '',
+      tColor: done ? '#6f5a4a' : '#3a2c24', tDeco: done ? 'line-through' : 'none',
+      cursor: canToggle ? 'pointer' : 'default', op: canToggle ? 1 : .75, open: () => this.setState({ detail: h.id }), toggle: (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (canToggle) this.toggle(h.id); }
+    };
+  }
+  extra(st, u, other, me, ot, mob, comH, my) {
+    const per = st.per, scope = st.scope, P = this.P;
+    const perDef = [['semaine', 'Semaine'], ['mois', 'Mois'], ['annee', 'Année']];
+    const duelOrUs = scope === 'us' || scope === 'duel';
+    const periods = perDef.map(([k, label]) => ({ label, bg: per === k ? '#f9f2ea' : 'transparent', weight: per === k ? 800 : 600, color: per === k ? '#3a2c24' : '#6f5a4a', op: duelOrUs && k !== 'mois' ? 0.5 : 1, go: () => this.setState({ per: k }) }));
+    const scDef = [['me', 'Moi'], ['other', ot.name], ['us', 'Nous'], ['duel', 'Duel']];
+    const scopes = scDef.map(([k, label]) => ({ label, bg: scope === k ? '#3a2c24' : '#f9f2ea', color: scope === k ? '#f9f2ea' : '#3a2c24', go: () => this.setState({ scope: k }) }));
+    const pp = scope === 'other' ? ot : me, who = scope === 'other' ? other : u;
+    const lc = (v) => v === 100 ? pp.c : v >= 80 ? this.mix(pp.c, '#ffffff', .3) : this.mix(pp.c, '#ffffff', .6);
+    const wk = { alex: { pct: 86, text: '24 habitudes cochées sur 28. +6 points par rapport à la semaine dernière.', bars: [100, 86, 71, 100, 57, 86, 100], tops: [['📖', '#f0d9a8', 'Lire 20 pages', 100], ['🧘', '#d3dcc3', 'Méditer 10 minutes', 86], ['🤸', '#ecb8b0', 'Étirements', 43]] }, antoine: { pct: 79, text: '22 habitudes cochées sur 28. Comme la semaine dernière.', bars: [86, 86, 57, 100, 71, 86, 86], tops: [['🏃', '#f0d9a8', 'Courir 30 minutes', 100], ['💧', '#d5dde8', 'Boire 1,5 L d’eau', 86], ['🍬', '#ecb8b0', 'Pas de sucre le soir', 43]] } };
+    const yr = { alex: { pct: 74, text: '1 842 coches depuis janvier. Tu as tout fait 94 jours dans l’année.', bars: [58, 64, 91, 77, 70, 82, 61, 55, 79, 88], tops: [['📖', '#f0d9a8', 'Lire 20 pages', 91], ['🚶', '#ecb8b0', 'Marcher ensemble', 84], ['🧘', '#d3dcc3', 'Méditer 10 minutes', 72]] }, antoine: { pct: 71, text: '1 760 coches depuis janvier. 81 jours parfaits dans l’année.', bars: [52, 60, 84, 80, 66, 78, 65, 58, 74, 83], tops: [['🏃', '#f0d9a8', 'Courir 30 minutes', 93], ['💧', '#d5dde8', 'Boire 1,5 L d’eau', 88], ['🚶', '#ecb8b0', 'Marcher ensemble', 84]] } };
+    const isRecap = !duelOrUs && (per === 'semaine' || per === 'annee');
+    const d = per === 'semaine' ? wk[who] : yr[who];
+    const dayL = ['L', 'M', 'M', 'J', 'V', 'S', 'D'], monL = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O'];
+    const rBars = per === 'semaine'
+      ? d.bars.map((v, i) => ({ l: dayL[i], h: Math.round(v * .9), bg: lc(v), bd: '0' }))
+      : d.bars.map((v, i) => ({ l: monL[i], h: Math.round(v * .9), bg: lc(v >= 85 ? 100 : v), bd: '0' })).concat([{ l: 'N', h: 14, bg: 'transparent', bd: '1.5px dashed #d3c1ad' }, { l: 'D', h: 14, bg: 'transparent', bd: '1.5px dashed #d3c1ad' }]);
+    const A = this.P.alex, M = this.P.antoine;
+    const done = (h, k) => h.d[k];
+    const usRows = comH.map(h => ({ e: h.e, bg: h.bg, t: h.t, meta: done(h, 'alex') && done(h, 'antoine') ? 'Faite à deux aujourd’hui' : done(h, 'alex') || done(h, 'antoine') ? 'Une personne sur deux' : 'Pas encore faite', streak: '🔥 ' + (h.s + (done(h, 'alex') && done(h, 'antoine') ? 1 : 0)) + ' j', aBg: done(h, 'alex') ? A.c : 'transparent', aBd: done(h, 'alex') ? A.c : '#d3c1ad', aC: done(h, 'alex') ? '✓' : '', nBg: done(h, 'antoine') ? M.c : 'transparent', nBd: done(h, 'antoine') ? M.c : '#d3c1ad', nC: done(h, 'antoine') ? '✓' : '' }));
+    const v = { alex: [78, 9, 31, 6], antoine: [72, 7, 26, 7] }, lv = v[u], rv = v[other];
+    const lab = ['Régularité du mois', 'Jours parfaits', 'Plus longue série', 'Habitudes tenues'];
+    const vsRows = lab.map((label, i) => ({ label, a: i === 0 ? lv[i] + ' %' : i === 2 ? lv[i] + ' j' : '' + lv[i], b: i === 0 ? rv[i] + ' %' : i === 2 ? rv[i] + ' j' : '' + rv[i], pa: Math.round(lv[i] / (lv[i] + rv[i]) * 100), aOp: lv[i] >= rv[i] ? 1 : .55, bOp: rv[i] >= lv[i] ? 1 : .55 }));
+    const emojis = ['🧘', '📖', '💧', '🏃', '🛏️', '🥗', '🧹', '🎸', '💪', '🚶', '🧠', '✍️', '🎨', '🌿', '☀️', '🍎'];
+    const bgs = ['#d3dcc3', '#f0d9a8', '#ecb8b0', '#e3d9e9', '#d5dde8', '#f6dfc6'];
+    const ok = st.nName.trim().length > 0;
+    return {
+      periods, scopes, vRecap: isRecap ? 'flex' : 'none', vUs: scope === 'us' ? 'flex' : 'none', vDuel: scope === 'duel' ? 'flex' : 'none', vMonth: !duelOrUs && per === 'mois' ? 'grid' : 'none',
+      acc2: pp.c, rRing: 'conic-gradient(' + pp.c + ' ' + Math.round(d.pct * 3.6) + 'deg, #e6d6c4 0)', rPct: d.pct + ' %', rText: d.text,
+      rTitle: (scope === 'other' ? ot.name + ' · ' : '') + (per === 'semaine' ? 'Du 5 au 11 novembre' : 'Année 2026'),
+      rBarsTitle: per === 'semaine' ? 'Jour par jour' : 'Mois par mois', rBars, rTops: d.tops.map(t => ({ e: t[0], bg: t[1], t: t[2], p: t[3] })),
+      usRows, vsRows, lC: me.c, rC: ot.c, lI: me.name[0], rI: ot.name[0], lN: me.name, rN: ot.name, lScore: u === 'alex' ? 4 : 3, rScore: u === 'alex' ? 3 : 4,
+      openCreate: () => this.setState({ creating: true }), closeCreate: () => this.setState({ creating: false }),
+      createDisp: st.creating ? 'flex' : 'none', btnDisp: mob ? 'none' : 'flex', fabDisp: mob && st.page === 'habits' ? 'flex' : 'none',
+      modalAlign: mob ? 'flex-end' : 'center', modalW: mob ? '100%' : '460px', modalR: mob ? '30px 30px 0 0' : '28px', modalM: mob ? '0' : '0',
+      nName: st.nName, setName: (e) => this.setState({ nName: e.target.value }), nBgC: (st.cats.find(c => c.id === st.nCat) || { bg: st.nBg }).bg, nEmojiC: st.nEmoji,
+      nSwatches: bgs.map(hex => ({ hex, ring: hex === st.nBg ? '#3a2c24' : 'transparent', pick: () => this.setState({ nBg: hex }) })),
+      nEmojis: emojis.map(ch => ({ ch, bg: ch === st.nEmoji ? me.t : 'transparent', pick: () => this.setState({ nEmoji: ch }) })),
+      ownMe: () => this.setState({ nOwner: 'me' }), ownCo: () => this.setState({ nOwner: 'co' }),
+      ownMeBg: st.nOwner === 'me' ? '#f9f2ea' : 'transparent', ownCoBg: st.nOwner === 'co' ? '#f9f2ea' : 'transparent',
+      ownNote: st.nOwner === 'me' ? 'Visible par ' + ot.name + ', mais il ne la coche pas.' : 'Vous la cochez chacun de votre côté.',
+      createOp: ok ? 1 : .45,
+      createHabit: () => {
+        if (!ok) return;
+        this.setState(s => ({ habits: [...s.habits, { id: Date.now(), c: s.nCat, rec: 0, rule: s.nRule, joker: true, t: s.nName.trim(), e: s.nEmoji, bg: s.nBg, o: s.nOwner === 'me' ? s.user : 'both', s: 0, d: { alex: false, antoine: false } }], creating: false, nName: '', nCat: '', tab: 'today', page: 'habits' }));
+      }
+    };
+  }
+  catBg(h) { const c = this.state.cats.find(c => c.id === h.c); return c ? c.bg : h.bg; }
+  doneFor(h, u) { return h.o === 'both' ? h.d[u] : h.d[h.o]; }
+  extra2(st, u, other, me, ot, mob) {
+    const cats = st.cats, H = st.habits, P = this.P;
+    const catOf = id => cats.find(c => c.id === id);
+    const modes = [['who', 'Par qui'], ['theme', 'Par thème']].map(([k, label]) => ({ label, bg: st.mode === k ? '#f9f2ea' : 'transparent', weight: st.mode === k ? 800 : 600, color: st.mode === k ? '#3a2c24' : '#6f5a4a', go: () => this.setState({ mode: k }) }));
+    const catChips = [{ id: 'all', e: '', name: 'Tout' }].concat(cats).map(c => { const a = st.catFilter === c.id; return { label: (c.e ? c.e + ' ' : '') + c.name, bg: a ? '#3a2c24' : '#f9f2ea', color: a ? '#f9f2ea' : '#3a2c24', weight: a ? 800 : 600, go: () => this.setState({ catFilter: c.id }) }; }).concat(H.some(h => !cats.some(k => k.id === h.c)) ? [{ label: '📌 Sans catégorie', bg: st.catFilter === 'none' ? '#3a2c24' : '#f9f2ea', color: st.catFilter === 'none' ? '#f9f2ea' : '#3a2c24', weight: st.catFilter === 'none' ? 800 : 600, go: () => this.setState({ catFilter: 'none' }) }] : []);
+    const allCats = cats.concat([{ id: '', e: '📌', bg: '#e0d0bf', name: 'Sans catégorie' }]);
+    const themeGroups = allCats.filter(c => st.catFilter === 'all' || st.catFilter === (c.id || 'none')).map(c => {
+      const hs = H.filter(h => (c.id ? h.c === c.id : !cats.some(k => k.id === h.c))), mine = hs.filter(h => h.o !== other), dn = mine.filter(h => h.d[u]).length;
+      return { e: c.e, bg: c.bg, name: c.name, cnt: mine.length ? dn + ' / ' + mine.length : '', rows: hs.map(h => this.row(h)) };
+    }).filter(g => g.rows.length);
+    const nOf = h => h.s + (this.doneFor(h, u) ? 1 : 0);
+    const mk = (h, d, v) => ({ e: h.e, bg: this.catBg(h), t: h.t, d, v: '🔥 ' + v + ' j' });
+    const sh = st.sheet;
+    let sheetRows = [], sheetTitle = '', sheetSub = '';
+    if (sh === 'cur') { sheetTitle = 'Séries en cours'; sheetSub = 'De la plus longue à la plus courte.'; sheetRows = H.slice().sort((a, b) => nOf(b) - nOf(a)).slice(0, 5).map(h => mk(h, h.o === 'both' ? 'Commune' : P[h.o].name, nOf(h))); }
+    if (sh === 'rec') { sheetTitle = 'Plus longues séries'; sheetSub = 'Les records, toutes habitudes confondues.'; sheetRows = H.slice().sort((a, b) => b.rec - a.rec).slice(0, 5).map(h => mk(h, h.o === 'both' ? 'Commune' : P[h.o].name, h.rec)); }
+    sheetRows = sheetRows.map((r, i) => ({ ...r, pillBg: i === 0 ? me.c : '#f6dfc6', pillCol: i === 0 ? '#fff' : '#8a4a12' }));
+    const dh = H.find(h => h.id === st.detail);
+    const d = dh || { t: '', e: '', c: '', o: 'alex', s: 0, rec: 0, rule: 'both', joker: true, d: { alex: false, antoine: false } };
+    const dcat = catOf(d.c), common = d.o === 'both';
+    const pp = (k) => { const dn = d.d[k]; return { C: P[k].c, I: P[k].name[0], N: P[k].name, Bg: dn ? '#5e7d33' : '#e0d0bf', Col: dn ? '#fff' : '#6f5a4a', Mk: dn ? '✓' : '…' }; };
+    const p1 = pp('alex'), p2 = pp('antoine');
+    const both = d.d.alex && d.d.antoine, missing = !d.d.alex ? 'Alex' : 'Antoine';
+    const setRule = r => () => this.setState(s => ({ habits: s.habits.map(h => h.id === s.detail ? { ...h, rule: r } : h) }));
+    const catCount = id => H.filter(h => h.c === id).length;
+    const swat = ['#d3dcc3', '#f0d9a8', '#ecb8b0', '#e3d9e9', '#d5dde8', '#f6dfc6', '#cfe0d8', '#e8c9d4'];
+    const emo = ['🧘', '📖', '💧', '🏃', '🛏️', '🥗', '🧹', '🎸', '💪', '🚶', '🧠', '✍️', '🎨', '🌿', '☀️', '🍎'];
+    const ncOk = st.ncName.trim().length > 0;
+    const gdef = [['🏃', '#ecb8b0', 'Courir un semi-marathon', 'antoine', 13, 21, 'km', '15 mars'], ['🇵🇹', '#e3d9e9', 'Apprendre 200 mots de portugais', 'both', 140, 200, 'mots', '12 nov.'], ['📚', '#f0d9a8', 'Lire 24 livres cette année', 'alex', 15, 24, 'livres', '31 déc.']];
+    const ddef = [['📖', '#f0d9a8', 'Lire 12 livres', 'alex', 12, 12, 'livres', 'sept.'], ['🧘', '#d3dcc3', '100 jours de méditation', 'alex', 100, 100, 'jours', 'août'], ['🏃', '#ecb8b0', 'Courir 10 km sans s’arrêter', 'antoine', 10, 10, 'km', 'juin']];
+    const goals = (st.goalTab === 'cur' ? gdef : ddef).map(([e, bg, t, own, cur, tot, unit, dl]) => ({ e, bg, t, cur, tot, unit, dl, pct: Math.round(cur / tot * 100), c: own === 'both' ? '#3a2c24' : P[own].c, own: own === 'both' ? 'Commun' : own === u ? 'Moi' : P[own].name }));
+    const gt = [['cur', 'En cours'], ['done', 'Atteints · 3']].map(([k, label]) => ({ label, bg: st.goalTab === k ? '#f9f2ea' : 'transparent', weight: st.goalTab === k ? 800 : 600, color: st.goalTab === k ? '#3a2c24' : '#6f5a4a', go: () => this.setState({ goalTab: k }) }));
+    const ncat = catOf(st.nCat);
+    return {
+      modes, catChips, themeGroups, todayWho: st.mode === 'who' ? 'grid' : 'none', todayTheme: st.mode === 'theme' ? 'grid' : 'none',
+      openCats: () => this.setState({ catScreen: true }), closeCats: () => this.setState({ catScreen: false }), catDisp: st.catScreen ? 'flex' : 'none',
+      catList: cats.map(c => ({ e: c.e, bg: c.bg, name: c.name, n: catCount(c.id) + ' habitude' + (catCount(c.id) > 1 ? 's' : '') })),
+      openNewCat: () => this.setState({ newCat: true }), closeNewCat: () => this.setState({ newCat: false }), ncDisp: st.newCat ? 'flex' : 'none',
+      ncName: st.ncName, setNcName: e => this.setState({ ncName: e.target.value }), ncBg: st.ncBg, ncEmoji: st.ncEmoji, ncOp: ncOk ? 1 : .45,
+      ncSwatches: swat.map(hex => ({ hex, ring: hex === st.ncBg ? '#3a2c24' : 'transparent', pick: () => this.setState({ ncBg: hex }) })),
+      ncEmojis: emo.map(ch => ({ ch, bg: ch === st.ncEmoji ? me.t : 'transparent', pick: () => this.setState({ ncEmoji: ch }) })),
+      createCat: () => { if (!ncOk) return; this.setState(s => ({ cats: [...s.cats, { id: 'c' + Date.now(), e: s.ncEmoji, bg: s.ncBg, name: s.ncName.trim() }], newCat: false, ncName: '' })); },
+      sheetDisp: sh ? 'flex' : 'none', sheetTitle, sheetSub, sheetRows,
+      openCur: () => this.setState({ sheet: 'cur' }), openRec: () => this.setState({ sheet: 'rec' }), closeSheet: () => this.setState({ sheet: null }),
+      dDisp: dh ? 'flex' : 'none', closeDetail: () => this.setState({ detail: null }),
+      dE: d.e, dBg: dh ? this.catBg(d) : '#e0d0bf', dT: d.t, dMeta: (dcat ? dcat.name + ' · ' : '') + (common ? 'Commune' : d.o === u ? 'À moi' : 'Chez ' + P[d.o].name),
+      dStreak: (d.s + (dh && this.doneFor(d, u) ? 1 : 0)) + ' j', dRec: d.rec + ' j', dCommon: common ? 'flex' : 'none', dReadonly: dh && d.o === other ? 'block' : 'none', dOwner: P[d.o].name,
+      p1C: p1.C, p1I: p1.I, p1N: p1.N, p1Bg: p1.Bg, p1Col: p1.Col, p1Mk: p1.Mk, p2C: p2.C, p2I: p2.I, p2N: p2.N, p2Bg: p2.Bg, p2Col: p2.Col, p2Mk: p2.Mk,
+      dAlert: both ? 'Vous l’avez faite tous les deux aujourd’hui.' : missing + ' ne l’a pas encore faite. ' + (d.rule === 'both' ? 'La série de ' + (d.s + 1) + ' j est en jeu jusqu’à minuit.' : 'Seule sa série est en jeu.'),
+      ruleBoth: setRule('both'), ruleEach: setRule('each'),
+      rBothBg: d.rule === 'both' ? '#f9f2ea' : 'transparent', rEachBg: d.rule === 'each' ? '#f9f2ea' : 'transparent',
+      dRuleText: d.rule === 'both' ? 'La série continue seulement si vous l’avez faite tous les deux dans la journée. Si l’un oublie, elle repart de zéro pour les deux.' : 'Chacun garde sa propre série. Si Antoine oublie, la tienne continue.',
+      jokerBg: d.joker ? me.c : '#d3c1ad', jokerJ: d.joker ? 'flex-end' : 'flex-start',
+      toggleJoker: () => this.setState(s => ({ habits: s.habits.map(h => h.id === s.detail ? { ...h, joker: !h.joker } : h) })),
+      nCats: [{ id: '', e: '', name: 'Aucune' }].concat(cats).map(c => { const a = st.nCat === c.id; return { label: (c.e ? c.e + ' ' : '') + c.name, bg: a ? '#3a2c24' : '#efe3d4', color: a ? '#f9f2ea' : '#3a2c24', pick: () => this.setState({ nCat: c.id }) }; }),
+      nCatName: ncat ? ncat.name : '', swDisp: st.nCat ? 'none' : 'flex', swNoteDisp: st.nCat ? 'block' : 'none',
+      nRuleDisp: st.nOwner === 'co' ? 'flex' : 'none', nRuleBoth: () => this.setState({ nRule: 'both' }), nRuleEach: () => this.setState({ nRule: 'each' }),
+      nrBothBg: st.nRule === 'both' ? '#f9f2ea' : 'transparent', nrEachBg: st.nRule === 'each' ? '#f9f2ea' : 'transparent',
+      nDaysList: ['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((l, i) => ({ l, bg: st.nDays[i] ? me.c : '#e0d0bf', color: st.nDays[i] ? '#fff' : '#6f5a4a', pick: () => this.setState(s => ({ nDays: s.nDays.map((x, k) => k === i ? (x ? 0 : 1) : x) })) })),
+      remBg: st.nRem ? me.c : '#d3c1ad', remJ: st.nRem ? 'flex-end' : 'flex-start', toggleRem: () => this.setState(s => ({ nRem: !s.nRem })),
+      goals, goalTabs: gt,
+      rS1: st.per === 'semaine' ? '3 j' : '94', rS1l: st.per === 'semaine' ? 'tout fait d’affilée' : 'jours parfaits', rS2: '31 j', rS3: '21 j'
+    };
+  }
+  quoteOfDay() {
+    const Q = [['Ce n’est pas parce que les choses sont difficiles que nous n’osons pas, c’est parce que nous n’osons pas qu’elles sont difficiles.', 'Sénèque'], ['Peu importe la lenteur à laquelle tu avances, du moment que tu ne t’arrêtes pas.', 'Confucius'], ['Un voyage de mille lieues commence toujours par un premier pas.', 'Lao Tseu'], ['Nous sommes ce que nous faisons de manière répétée. L’excellence n’est donc pas un acte, mais une habitude.', 'Will Durant, d’après Aristote'], ['Celui qui a un pourquoi qui lui tient lieu de but peut supporter presque n’importe quel comment.', 'Nietzsche'], ['Au milieu de l’hiver, j’apprenais enfin qu’il y avait en moi un invincible été.', 'Albert Camus'], ['La vie d’un homme est ce que ses pensées en font.', 'Marc Aurèle'], ['Faites que votre rêve dévore votre vie afin que la vie ne dévore pas votre rêve.', 'attribué à Saint-Exupéry']];
+    const day = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+    const q = Q[day % Q.length];
+    return '« ' + q[0] + ' » ' + q[1];
+  }
+  facts() {
+    return [
+      { e: '🍯', cat: 'Histoire', t: 'Le miel ne se périme pas : des pots encore comestibles ont été retrouvés dans des tombes égyptiennes.', deep: ['Le miel contient très peu d’eau et il est naturellement acide, ce qui empêche la plupart des bactéries de s’y développer.', 'Les abeilles ajoutent aussi une enzyme qui produit en petite quantité un antiseptique, ce qui l’aide à se conserver.', 'Il peut cristalliser avec le temps, mais il suffit de le chauffer doucement pour le rendre liquide.'], src: 'archéologie et chimie alimentaire' },
+      { e: '🦦', cat: 'Biologie marine', t: 'Les loutres de mer se tiennent par la patte en dormant pour ne pas dériver l’une de l’autre.', deep: ['Elles dorment en groupe sur l’eau, et le courant pourrait les séparer.', 'Elles s’enroulent aussi parfois dans des algues pour rester en place pendant leur sommeil.', 'Ce sont aussi l’un des rares mammifères à utiliser des outils : elles cassent les coquillages avec une pierre posée sur le ventre.'], src: 'observations de biologie marine' },
+      { e: '🐙', cat: 'Animaux', t: 'Une pieuvre a trois cœurs : deux pour les branchies, un pour le reste du corps.', deep: ['Les deux petits cœurs envoient le sang vers les branchies, le grand cœur le distribue dans le corps.', 'Son sang est bleu, car il contient de l’hémocyanine, à base de cuivre, plus efficace que l’hémoglobine dans l’eau froide.', 'Quand elle nage, le cœur principal s’arrête : c’est l’une des raisons pour lesquelles elle préfère ramper.'], src: 'zoologie' },
+      { e: '🪐', cat: 'Astronomie', t: 'Sur Vénus, un jour dure plus longtemps qu’une année.', deep: ['Vénus met environ 243 jours terrestres à tourner sur elle-même, mais seulement 225 pour faire le tour du Soleil.', 'Elle tourne aussi dans le sens inverse de la plupart des planètes : le Soleil s’y lèverait à l’ouest.', 'Son atmosphère très dense en fait la planète la plus chaude du système solaire, devant Mercure.'], src: 'astronomie' },
+      { e: '🗼', cat: 'Paris', t: 'La tour Eiffel peut grandir d’une quinzaine de centimètres en été.', deep: ['Le fer se dilate avec la chaleur : par temps très chaud, la structure s’allonge un peu.', 'Les variations de température font aussi pencher légèrement le sommet, de quelques centimètres, à l’opposé du soleil.', 'Elle est repeinte tous les sept ans environ, ce qui protège le métal.'], src: 'physique et histoire des monuments' }
+    ];
+  }
+  renderVals() {
+    const st = this.state, u = st.user, other = u === 'alex' ? 'antoine' : 'alex', me = this.P[u], ot = this.P[other];
+    const mob = st.device === 'mobile';
+    const H = st.habits;
+    const mineH = H.filter(h => h.o === u), comH = H.filter(h => h.o === 'both'), othH = H.filter(h => h.o === other);
+    const my = H.filter(h => h.o !== other);
+    const done = my.filter(h => h.d[u]).length, total = my.length, left = total - done;
+    const pg = st.page, page = k => pg === k ? 'flex' : 'none';
+    const navDef = [['home','🏡','#f9f2ea','Accueil'],['habits','💪','#d3dcc3','Habitudes'],['travel','🌍','#f0d9a8','Voyages'],['journal','🌙','#e3d9e9','Journal'],['reel','🎬','#ecb8b0','Bobine']];
+    const nav = navDef.map(([k, e, bg, label]) => {
+      const a = pg === k;
+      return { e, bg, label, weight: a ? 800 : 600, color: a ? me.d : '#6f5a4a', rowBg: a ? me.t : 'transparent', ring: a ? '0 0 0 2px ' + me.c : 'none', go: () => this.go(k) };
+    });
+    const tabsDef = [['today','Aujourd’hui'],['series','Séries'],['goals','Objectifs']];
+    const q = st.quest, qDone = q[u];
+    const questDays = Array.from({ length: 30 }, (_, i) => ({ bg: i < 11 ? me.c : i === 11 ? (qDone ? me.c : '#f6e0e1') : '#e6d6c4' }));
+    const hp = st.scope === 'other' ? ot : me;
+    const cols = ['#e6d6c4', this.mix(hp.c, '#ffffff', .62), this.mix(hp.c, '#ffffff', .3), hp.c];
+    const heat = Array.from({ length: 35 }, (_, i) => {
+      const d = i - 6, day = d < 1 ? 26 + i : d > 30 ? d - 30 : d;
+      if (d < 1) return { n: '', bg: 'transparent', bd: '0', sh: 'none', fw: 600, tc: '#6f5a4a' };
+      if (d > 12) return { n: day, bg: 'transparent', bd: '1.5px dashed #d3c1ad', sh: 'none', fw: 600, tc: '#a8907a' };
+      const r = (d * 37 + 11) % 10, lv = d === 12 ? 1 : r < 1 ? 0 : r < 3 ? 1 : r < 6 ? 2 : 3;
+      return { n: day, bg: cols[lv], bd: '0', sh: d === 12 ? '0 0 0 2px #f9f2ea, 0 0 0 4.5px ' + hp.c : 'none', fw: 800, tc: lv === 0 ? '#6f5a4a' : lv === 1 ? hp.d : '#fff' };
+    });
+    const goalsDef = [
+      ['🏃','#ecb8b0','Courir un semi-marathon','antoine',13,21,'km','15 mars'],
+      ['🇵🇹','#e3d9e9','Apprendre 200 mots de portugais','both',140,200,'mots','12 nov.'],
+      ['📚','#f0d9a8','Lire 24 livres cette année','alex',15,24,'livres','31 déc.']
+    ];
+    const goals = goalsDef.map(([e, bg, t, own, cur, tot, unit, dl]) => ({ e, bg, t, cur, tot, unit, dl, pct: Math.round(cur / tot * 100), c: own === 'both' ? '#3a2c24' : this.P[own].c, own: own === 'both' ? 'Commun' : own === u ? 'Moi' : this.P[own].name }));
+    const soon = { travel: ['🌍','#f0d9a8','Carnet de voyage'], journal: ['🌙','#e3d9e9','Journal'], reel: ['🎬','#ecb8b0','Bobine'] }[pg] || ['','#e0d0bf',''];
+    return {
+      setMobile: () => this.setState({ device: 'mobile' }), setDesktop: () => this.setState({ device: 'desktop' }),
+      setAlex: () => this.setState({ user: 'alex' }), setAntoine: () => this.setState({ user: 'antoine' }),
+      mobBg: mob ? '#f9f2ea' : 'transparent', deskBg: mob ? 'transparent' : '#f9f2ea',
+      alexBg: u === 'alex' ? '#f9f2ea' : 'transparent', antBg: u === 'antoine' ? '#f9f2ea' : 'transparent',
+      fw: mob ? '360px' : '1240px', fh: mob ? '780px' : '800px', fr: mob ? '38px' : '16px',
+      fsh: mob ? '0 0 0 8px #1c1a19, 0 30px 60px rgba(0,0,0,.2)' : '0 20px 50px rgba(0,0,0,.16)',
+      sbDisp: mob ? 'none' : 'flex', barDisp: mob ? 'flex' : 'none', bnDisp: mob ? 'flex' : 'none',
+      scTop: mob ? '56px' : '0', scPad: mob ? '8px 18px 130px' : '40px 36px 40px',
+      homeCols: mob ? '1fr' : 'repeat(auto-fit,minmax(340px,1fr))', groupCols: mob ? '1fr' : 'repeat(auto-fit,minmax(300px,1fr))', seriesCols: mob ? '1fr' : 'repeat(auto-fit,minmax(340px,1fr))',
+      nav, me: me.name, initial: me.name[0], acc: me.c, accDark: me.d, other: ot.name, otherC: ot.c,
+      infoLine: u === 'alex' ? this.quoteOfDay()  : 'BTC 61 240 € ▲ 2,4 %  ·  ETH 2 310 € ▼ 1,1 %  ·  SOL 142 € ▲ 4,8 %  ·  mis à jour 21:05',
+      pgHome: page('home'), pgHabits: page('habits'), pgSoon: (pg === 'travel' || pg === 'journal' || pg === 'reel') ? 'flex' : 'none',
+      soonE: soon[0], soonBg: soon[1], soonTitle: soon[2],
+      questBy: u === 'alex' ? 'proposée par Antoine' : 'choisie par toi',
+      questBd: qDone ? me.c : '#d3c1ad', questBg: qDone ? me.c : 'transparent', questCheck: qDone ? '✓' : '',
+      questDays, toggleQuest: () => this.setState(s => ({ quest: { ...s.quest, [u]: !s.quest[u] } })),
+      questWho: (q.alex ? 'Alex a fait' : 'Alex pas encore') + ' · ' + (q.antoine ? 'Antoine a fait' : 'Antoine pas encore'),
+      questStreak: '🔥 ' + (11 + (qDone ? 1 : 0)) + ' j',
+      homeRows: my.slice(0, 4).map(h => this.row(h)),
+      doneTxt: done + ' / ' + total,
+      ringBg: 'conic-gradient(' + me.c + ' ' + Math.round(done / total * 360) + 'deg, #e6d6c4 0)',
+      headline: left === 0 ? 'Journée bouclée, bravo' : left === 1 ? 'Plus qu’une habitude' : 'Encore ' + left + ' à cocher',
+      goHabits: () => this.go('habits'), goHome: () => this.go('home'), goTravel: () => this.go('travel'), goJournal: () => this.go('journal'), goReel: () => this.go('reel'),
+      tabs: tabsDef.map(([k, label]) => ({ label, bg: st.tab === k ? '#f9f2ea' : 'transparent', weight: st.tab === k ? 800 : 600, color: st.tab === k ? '#3a2c24' : '#6f5a4a', go: () => this.setState({ tab: k }) })),
+      tabToday: st.tab === 'today' ? 'grid' : 'none', tabSeries: st.tab === 'series' ? 'flex' : 'none', tabGoals: st.tab === 'goals' ? 'grid' : 'none',
+      mine: mineH.map(h => this.row(h)), common: comH.map(h => this.row(h)), others: othH.map(h => this.row(h)),
+      streakRows: my.map(h => ({ e: h.e, bg: h.bg, t: h.t, n: h.s + (h.d[u] ? 1 : 0) })).sort((a, b) => b.n - a.n).slice(0, 4),
+      heat, goals,
+      ...this.extra(st, u, other, me, ot, mob, comH, my),
+      ...this.extra2(st, u, other, me, ot, mob),
+      ...(() => {
+        const F = this.facts(), day = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+        const f = F[(day + st.factOff) % F.length];
+        return { factText: f.t, factCat: f.cat, factE: f.e, factDeep: f.deep.map(t => ({ t })), factSrc: f.src, factDisp: st.factOpen ? 'flex' : 'none',
+          openFact: () => this.setState({ factOpen: true }), closeFact: () => this.setState({ factOpen: false }), nextFact: () => this.setState(s => ({ factOff: s.factOff + 1 })) };
+      })()
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "new-aa-s-preprod",
+    "dev": "new-aa-s-preprod",
+    "prod": "new-aa-s-prod"
+  }
+}
