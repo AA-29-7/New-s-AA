@@ -190,3 +190,14 @@
 - Démo : `VITE_SEED_DEMO=true` (préprod seulement) ; chaque personne sème ses propres
   documents, la première arrivée sème aussi les communs ; un semis ne se fait que si
   le serveur est vide (lecture serveur, jamais le cache).
+
+## 2026-11-13 — Une seule base (préprod) pour l'instant, `main` plus tard
+- Décision : appli à usage interne (deux personnes). On travaille sur la branche
+  `preprod` et sur la seule base Firebase créée à ce jour (préprod). Pas de
+  fusion `preprod` → `main` tant qu'il n'y a pas de base de production.
+- Écarté : fusionner dans `main` dès maintenant (sans base de production, ça ne
+  déploie ni ne change rien) ; créer tout de suite une seconde base.
+- Conséquences : `main` reste au commit initial. Le jour où l'appli sert au
+  quotidien avec les vraies données, on crée le projet Firebase de production,
+  on fusionne `preprod` dans `main` par pull request, et on déploie depuis `main`
+  (une seule personne à la fois, comme décidé le 2026-09-27).
