@@ -11,7 +11,7 @@ import { useQuests } from './useQuests'
 export function QuestCard() {
   const { me, other } = usePerson()
   const quests = useQuests()
-  const { current, month, day, length, chooser, isLastDay } = quests
+  const { current, month, day, length, chooser, isLastDay, loading } = quests
   const [sheet, setSheet] = useState<'choose' | 'receive' | 'review' | null>(null)
   const label = monthName(monthDate(month))
 
@@ -20,6 +20,18 @@ export function QuestCard() {
   useEffect(() => {
     if (needsReview) setSheet('review')
   }, [needsReview])
+
+  if (loading) {
+    return (
+      <section className="card quest" aria-label="La quête du QG" aria-busy="true">
+        <div className="quest__head">
+          <span className="quest__label">🏁 La quête du QG</span>
+        </div>
+        <div className="skeleton skeleton--row" />
+        <div className="skeleton skeleton--bar" />
+      </section>
+    )
+  }
 
   const head = (right?: string) => (
     <div className="quest__head">

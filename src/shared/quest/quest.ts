@@ -28,7 +28,8 @@ export interface Quest {
   /** Jours du mois cochés par chacun. */
   checks: Record<Person, number[]>
   /** Bilan de fin de mois, par personne. */
-  review: Partial<Record<Person, Review>>
+  /** Bilan de fin de mois par personne ; null = bilan retiré. */
+  review: Partial<Record<Person, Review | null>>
 }
 
 export type QuestBook = Record<string, Quest>

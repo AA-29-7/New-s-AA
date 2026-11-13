@@ -47,3 +47,6 @@ export type NewDoc<T extends BaseDoc> = Omit<T, keyof BaseDoc> & {
   ownerId?: string | null
   visibility?: Visibility
 }
+
+/** Comme Partial, y compris dans les objets imbriqués (fusion champ par champ à l'écriture). */
+export type DeepPartial<T> = T extends readonly unknown[] ? T : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> } : T
