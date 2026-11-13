@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react'
 import { CARNET_NAV, CarnetModule, useCarnetSummary } from '../modules/carnet'
-import { HabitsModule, HabitsTodayCard, useHabitsSummary } from '../modules/habitudes'
+import { HabitsModule, HabitsTodayCard, habitsSeeder, useHabitsSummary } from '../modules/habitudes'
+import type { DemoSeeder } from '../shared/seed/DemoSeed'
 import { ComingSoon, type StickerColor } from '../shared/ui'
 
 /** Entrée de navigation interne à un module (barre basse mobile, barre latérale bureau). */
@@ -45,6 +46,8 @@ export interface AppModule {
   subnav?: ModuleNavItem[]
   /** Carte du jour affichée sur l'accueil (remplace la carte du module). */
   TodayCard?: ComponentType
+  /** Semis de démonstration (actif seulement avec VITE_SEED_DEMO=true). */
+  seeder?: DemoSeeder
 }
 
 const soon = (emoji: string, color: StickerColor, title: string) => () => (
@@ -62,6 +65,7 @@ export const modules: AppModule[] = [
     summary: { title: 'Habitudes' },
     useSummary: useHabitsSummary,
     TodayCard: HabitsTodayCard,
+    seeder: habitsSeeder,
   },
   {
     id: 'carnet',

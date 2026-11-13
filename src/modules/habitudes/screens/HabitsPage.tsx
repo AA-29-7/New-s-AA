@@ -52,14 +52,24 @@ export function HabitsPage() {
         className="hseg"
         label="Onglets"
       />
-      {tab === 'today' && (
+      {store.loading && (
+        <div className="grid-auto hgrid" aria-busy="true">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="card hgroup">
+              <div className="skeleton skeleton--row" />
+              <div className="skeleton skeleton--row hskeleton" />
+            </div>
+          ))}
+        </div>
+      )}
+      {!store.loading && tab === 'today' && (
         <>
           <QuestCard />
           <TodayTab onOpen={setDetail} onCategories={() => setCats(true)} />
         </>
       )}
-      {tab === 'series' && <SeriesTab onStreaks={setStreaks} />}
-      {tab === 'goals' && <GoalsTab />}
+      {!store.loading && tab === 'series' && <SeriesTab onStreaks={setStreaks} />}
+      {!store.loading && tab === 'goals' && <GoalsTab />}
 
       <button type="button" className="fab only-mobile" onClick={() => setCreating(true)} aria-label="Nouvelle habitude">
         +

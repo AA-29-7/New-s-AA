@@ -1,6 +1,6 @@
 import { isoDate } from '../../../shared/lib/dates'
 import { nameOf, usePerson } from '../../../shared/person'
-import { CheckCircle, StreakPill, Sticker, cx } from '../../../shared/ui'
+import { CheckCircle, StreakPill, Sticker, cx, useOnline } from '../../../shared/ui'
 import { canCheck, currentStreak, didOn, type Habit } from '../logic'
 import { useHabits } from '../store'
 
@@ -11,6 +11,7 @@ import { useHabits } from '../store'
 export function HabitRow({ habit: h, first, onOpen, compact }: { habit: Habit; first?: boolean; onOpen?: () => void; compact?: boolean }) {
   const { me, other } = usePerson()
   const store = useHabits()
+  const online = useOnline()
   const mine = canCheck(h, me)
   const who = mine ? me : other
   const checks = store.history[h.id] ?? {}
@@ -33,6 +34,7 @@ export function HabitRow({ habit: h, first, onOpen, compact }: { habit: Habit; f
       <div className="row__body">
         <div className={cx('row__title', done && 'row__title--done')}>{h.title}</div>
         {!(h.owner === other && !compact) && <div className="meta">{meta}</div>}
+        {!online && store.isPending(h.id, who) && <div className="meta">en attente d’envoi</div>}
       </div>
       <StreakPill days={currentStreak(h, checks, who, store.today)} />
     </div>

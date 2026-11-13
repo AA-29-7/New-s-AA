@@ -165,11 +165,14 @@ export function makeRepo(db: Firestore) {
       },
 
       /**
-       * Vrai si le serveur ne renvoie aucun document (lecture directe du serveur, pas du cache).
+       * Vrai si le serveur ne renvoie aucun document (lecture directe du serveur, pas du cache) :
+       * tous les documents visibles, ou seulement les miens (`only: 'mine'`).
        * Lève une erreur hors connexion : le semis de démonstration s'abstient alors.
        */
-      async isEmptyOnServer(): Promise<boolean> {
-        const [s, m] = await Promise.all([getDocsFromServer(query(shared([]), limit(1))), getDocsFromServer(query(mine([]), limit(1)))])
+      async isEmptyOnServer(only: 'all' | 'mine' = 'all'): Promise<boolean> {
+        const m = await getDocsFromServer(query(mine([]), limit(1)))
+        if (only === 'mine') return m.empty
+        const s = await getDocsFromServer(query(shared([]), limit(1)))
         return s.empty && m.empty
       },
 

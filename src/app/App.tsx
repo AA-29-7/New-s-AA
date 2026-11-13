@@ -6,8 +6,8 @@ import { DemoSeed } from '../shared/seed/DemoSeed'
 import { questSeeder } from '../shared/quest/useQuests'
 import { modules } from './modules'
 
-/** Semis de démonstration (actifs seulement avec VITE_SEED_DEMO=true). */
-const seeders = [questSeeder]
+/** Semis de démonstration : la quête (partagée) et ceux des modules. */
+const seeders = [questSeeder, ...modules.flatMap((m) => (m.seeder ? [m.seeder] : []))]
 
 export function App() {
   return (
