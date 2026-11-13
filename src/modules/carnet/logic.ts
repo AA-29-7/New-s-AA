@@ -26,7 +26,7 @@ export function generatedExpenses(trip: Trip, dayLabel: string): Expense[] {
   return WEIGHTS.map(([cat, weight, label, who], i) => {
     const amount = i === WEIGHTS.length - 1 ? trip.total - acc : Math.round(trip.total * weight)
     acc += amount
-    return { id: `${trip.id}-${i}`, cat, label, amount, who: trip.owner === 'both' ? who : trip.owner, day: dayLabel }
+    return { id: `${trip.id}-gen${i}`, cat, label, amount, who: trip.owner === 'both' ? who : trip.owner, day: dayLabel, at: i }
   }).filter((e) => e.amount > 0)
 }
 

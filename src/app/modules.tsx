@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { CARNET_NAV, CarnetModule, useCarnetSummary } from '../modules/carnet'
+import { CARNET_NAV, CarnetModule, carnetSeeder, useCarnetSummary } from '../modules/carnet'
 import { HabitsModule, HabitsTodayCard, habitsSeeder, useHabitsSummary } from '../modules/habitudes'
 import type { DemoSeeder } from '../shared/seed/DemoSeed'
 import { ComingSoon, type StickerColor } from '../shared/ui'
@@ -78,6 +78,7 @@ export const modules: AppModule[] = [
     summary: { title: 'Carnet de voyage' },
     useSummary: useCarnetSummary,
     subnav: [...CARNET_NAV],
+    seeder: carnetSeeder,
   },
   {
     id: 'journal',

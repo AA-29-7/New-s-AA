@@ -64,12 +64,14 @@ export function DiscoverScreen() {
       setLeaving((l) => l.filter((x) => x !== o.id))
     }, still ? 0 : 400)
   }
-  const pickFilter = (gid: string, opt: string, multi?: boolean) =>
-    carnet.update((s) => {
-      const cur = s.filters[gid] ?? []
-      const next = multi ? (cur.includes(opt) ? cur.filter((x) => x !== opt) : [...cur, opt]) : cur[0] === opt && gid !== 'per' ? [] : [opt]
-      return { filters: { ...s.filters, [gid]: next } }
-    })
+  const pickFilter = (gid: string, opt: string, multi?: boolean) => {
+    const cur = state.filters[gid] ?? []
+    const next = multi ? (cur.includes(opt) ? cur.filter((x) => x !== opt) : [...cur, opt]) : cur[0] === opt && gid !== 'per' ? [] : [opt]
+    carnet.setPrefs({ filters: { [gid]: next } })
+  }
+  /** Remet tous les groupes à zéro (« Budget compté » revient à « Pour deux »). */
+  const resetFilters = () =>
+    carnet.setPrefs({ filters: Object.fromEntries(FILTER_GROUPS.map((g) => [g.id, g.id === 'per' ? ['Pour deux'] : []])) })
 
   return (
     <div className="page carnet">
@@ -96,7 +98,7 @@ export function DiscoverScreen() {
         <span className="sync">{refresh.label}</span>
         <label className="fresh__origin">
           Départ :
-          <select value={state.origin} onChange={(e) => carnet.update(() => ({ origin: e.target.value }))}>
+          <select value={state.origin} onChange={(e) => carnet.setPrefs({ origin: e.target.value })}>
             {ORIGINS.map((o) => (
               <option key={o}>{o}</option>
             ))}
@@ -280,7 +282,7 @@ export function DiscoverScreen() {
           </div>
         ))}
         <div className="spread">
-          <button type="button" className="btn btn--text" onClick={() => carnet.update(() => ({ filters: { per: ['Pour deux'] } }))}>
+          <button type="button" className="btn btn--text" onClick={resetFilters}>
             Réinitialiser
           </button>
           <button type="button" className="btn btn--primary" onClick={() => setFiltersOpen(false)}>

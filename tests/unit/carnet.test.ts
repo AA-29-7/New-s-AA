@@ -112,3 +112,38 @@ describe('corrections de revue', () => {
     expect(matchesFilters(tokyo, { quand: ["N'importe quand en mars"], visa: ['Sans visa uniquement'] })).toBe(true)
   })
 })
+
+describe('documents Firestore', () => {
+  // Firestore refuse les tableaux de tableaux : aucun document semé ne doit en contenir.
+  const nested = (v: unknown): boolean =>
+    Array.isArray(v) ? v.some((x) => Array.isArray(x) || nested(x)) : v && typeof v === 'object' ? Object.values(v).some(nested) : false
+
+  it('n’imbrique aucun tableau (voyages, préparation)', async () => {
+    const { tripToDoc, prepDoc } = await import('../../src/modules/carnet/docs')
+    for (const t of TRIPS) expect(nested(tripToDoc(t, null))).toBe(false)
+    expect(nested(prepDoc(lisbonPrep(), 1))).toBe(false)
+  })
+
+  it('reconstruit une préparation à l’identique depuis son document', async () => {
+    const { prepDoc, toPrep } = await import('../../src/modules/carnet/docs')
+    const prep = lisbonPrep()
+    const back = toPrep({ ...prepDoc(prep, 1), id: prep.id, hid: 'foyer', ownerId: null, visibility: 'household' })
+    expect(back).toEqual(prep)
+  })
+
+  it('ne réécrit que les étapes modifiées', async () => {
+    const { prepPatch } = await import('../../src/modules/carnet/docs')
+    const before = lisbonPrep()
+    const after = { ...before, steps: before.steps.map((s) => (s.id === 'dates' ? { ...s, status: 'wip' as const } : s)) }
+    expect(Object.keys(prepPatch(before, after).steps ?? {})).toEqual(['dates'])
+    expect(prepPatch(before, before)).toEqual({})
+  })
+
+  it('convertit les repères d’un voyage dans les deux sens', async () => {
+    const { tripToDoc, toTrip } = await import('../../src/modules/carnet/docs')
+    const rome = TRIPS.find((t) => t.id === 'rome')!
+    const doc = tripToDoc(rome, null)
+    expect(doc.pins[0]).toEqual({ label: 'Colisée', lon: 12.4922, lat: 41.8902 })
+    expect(toTrip({ ...doc, id: 'rome', hid: 'foyer', visibility: 'household' }).pins).toEqual(rome.pins)
+  })
+})

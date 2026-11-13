@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { nameOf, usePerson } from '../../../shared/person'
-import { CheckCircle, Chip, ProgressBar, Segment, Sheet, Sticker, cssVars, cx, useToast } from '../../../shared/ui'
-import { ADJUSTMENTS, CATEGORIES, NEXT_TRIP_ID, PACK_TEMPLATES } from '../data/demo'
+import { CheckCircle, Chip, DraftInput, DraftTextarea, ProgressBar, Segment, Sheet, Sticker, cssVars, cx, useToast } from '../../../shared/ui'
+import { ADJUSTMENTS, CATEGORIES, PACK_TEMPLATES } from '../data/demo'
 import { budgetTotal, claudePrompt, eur, importResponse, regenerate, stepsDone } from '../logic'
 import { CatDot, Cover, useConfetti } from '../parts/bits'
 import { BASE, Soon } from '../parts/common'
 import { TripMap } from '../parts/TripMap'
-import { tripById, useCarnet } from '../store'
+import { useCarnet } from '../store'
 import type { ActivityStatus, Payer, Step, StepId } from '../types'
 import { STATUS_LABEL } from './PrepScreen'
 
@@ -33,6 +33,7 @@ export function StepScreen() {
 
   const prep = carnet.state.preps[tripId]
   const step = prep?.steps.find((s) => s.id === stepId)
+  if (carnet.loading) return <div className="page carnet" aria-busy="true"><div className="skeleton skeleton--row" /><div className="skeleton skeleton--row" /></div>
   if (!prep || !step) return <Navigate to={`${BASE}/preparer`} replace />
 
   const setStep = (fn: (s: Step) => Step) => carnet.setStep(prep.id, step.id as StepId, fn)
@@ -40,7 +41,7 @@ export function StepScreen() {
   const lines = step.proposals[step.selected] ?? []
   const hasAlts = lines.some((l) => !l.locked && l.alts.length > 0)
   const done = stepsDone(prep.steps)
-  const pins = (tripById(prep.id) ?? tripById(NEXT_TRIP_ID))?.pins ?? []
+  const pins = (carnet.tripById(prep.id) ?? carnet.nextTrip)?.pins ?? []
 
   const flash = () => {
     setShimmer((n) => n + 1)
@@ -213,7 +214,7 @@ export function StepScreen() {
               <div key={`${shimmer}-${i}`} className={cx('row line', i === 0 && 'row--first', shimmer > 0 && !l.locked && 'is-shimmer')}>
                 <label className="row__body">
                   <span className="line__label">{l.k}</span>
-                  <textarea className="line__input" rows={1} value={l.v} placeholder="À remplir" onChange={(e) => editLine(i, e.target.value)} />
+                  <DraftTextarea className="line__input" rows={1} value={l.v} placeholder="À remplir" onCommit={(v) => editLine(i, v)} />
                 </label>
                 {auto && (
                   <button type="button" className={cx('btn btn--mini', l.locked ? 'btn--ink' : 'btn--secondary')} aria-pressed={l.locked} onClick={() => lockLine(i)}>
@@ -247,11 +248,12 @@ export function StepScreen() {
               </span>
               <label className="budgetline__field">
                 <span className="visually-hidden">Budget {c.name}</span>
-                <input
+                <DraftInput
                   inputMode="numeric"
                   value={String(step.budget![c.id])}
-                  onChange={(e) => {
-                    const v = parseInt(e.target.value.replace(/\D/g, ''), 10) || 0
+                  sanitize={(raw) => raw.replace(/\D/g, '')}
+                  onCommit={(raw) => {
+                    const v = parseInt(raw, 10) || 0
                     setStep((s) => ({ ...s, filled: true, status: s.status === 'todo' ? 'wip' : s.status, budget: { ...s.budget!, [c.id]: v } }))
                   }}
                 />

@@ -105,7 +105,7 @@ export const TRIPS: Trip[] = [
 export const FRISE_IDS = ['crozon', 'mrk', 'cph', 'seville', 'rome']
 
 const exp = (cat: CatId, label: string, amount: number, who: Payer, day: string, i: number): Expense => ({
-  id: `demo-${i}`, cat, label, amount, who, day,
+  id: `rome-${i}`, cat, label, amount, who, day, at: i,
 })
 export const ROME_EXPENSES: Expense[] = [
   exp('transport', 'Vols Paris – Rome A/R', 286, 'alex', 'Jeu. 9 avril', 0),
@@ -119,8 +119,6 @@ export const ROME_EXPENSES: Expense[] = [
 
 export const ROME_NOTEBOOK: Notebook = {
   mode: 'daily',
-  view: 'write',
-  current: 2,
   pages: [
     { title: 'Arrivée à Trastevere', text: '', photos: [] },
     { title: 'Vatican', text: '', photos: [] },
@@ -344,3 +342,16 @@ export const DOCUMENTS: { emoji: string; color: StickerColor; label: string }[] 
   { emoji: '🛡️', color: 'sage', label: 'Assurance voyage' },
   { emoji: '🪪', color: 'peach', label: 'Cartes d’identité' },
 ]
+
+/** Ordre des 9 étapes de préparation. */
+export const STEP_ORDER: Step['id'][] = ['dest', 'dates', 'budget', 'vols', 'logement', 'pack', 'acts', 'itin', 'docs']
+
+export const DEFAULT_PREFS = {
+  saved: [] as number[],
+  dismissed: [] as number[],
+  homeOrder: ['prep', 'frise', 'saved', 'souv', 'solde', 'budget'] as HomeSectionId[],
+  homeOn: { prep: true, frise: true, saved: true } as Partial<Record<HomeSectionId, boolean>>,
+  origin: 'Paris',
+  lastCat: 'resto' as CatId,
+  filters: { per: ['Pour deux'] } as Record<string, string[]>,
+}

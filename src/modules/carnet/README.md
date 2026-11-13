@@ -9,9 +9,11 @@ Préparer, vivre et garder en mémoire les voyages. Spécification :
 - `parts/` : feuille « Nouvelle dépense », photos, carnet, carte (Leaflet + OpenStreetMap).
 - `logic.ts` : règles métier pures (qui doit quoi, budget, étapes, filtres), testées
   dans `tests/unit/carnet.test.ts`.
-- `store.ts` : état gardé sur l'appareil (localStorage) ; photos en IndexedDB
-  (`photoStore.ts`, 1280 px max en JPEG).
-- `data/demo.ts` : données de démonstration du prototype.
+- `store.ts` : données Firestore (`trips`, `tripExpenses`, `tripNotes`, `tripPhotos`, `tripPreps`,
+  `userPrefs` privé) via les hooks de `src/lib/data/` ; fournisseur unique `CarnetProvider`.
+  `docs.ts` : types de documents et conversions pures (Firestore refuse les tableaux imbriqués).
+  `imageResize.ts` : photos redimensionnées à 1280 px max en JPEG, < 1 Mo, stockées dans `tripPhotos`.
+- `data/demo.ts` : données de démonstration du prototype, semées dans Firestore si `VITE_SEED_DEMO=true`.
 
-À faire : brancher les collections Firestore `trips` et `tripPhotos` via
-`src/lib/data/`, génération IA dans l'app, partage en lecture, convertisseur.
+À faire : création / modification d'un voyage, import de l'Excel, génération IA dans l'app,
+partage en lecture, convertisseur.

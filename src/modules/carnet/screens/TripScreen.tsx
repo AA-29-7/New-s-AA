@@ -9,7 +9,7 @@ import { ExpenseSheet } from '../parts/ExpenseSheet'
 import { Notebook } from '../parts/Notebook'
 import { Photos } from '../parts/Photos'
 import { TripMap } from '../parts/TripMap'
-import { tripById, useCarnet } from '../store'
+import { useCarnet } from '../store'
 
 type Section = 'dep' | 'itin' | 'souv'
 const SECTIONS: { id: Section; label: string }[] = [
@@ -23,11 +23,22 @@ const BACK: Record<string, { label: string; to: string }> = {
   trips: { label: 'Nos voyages', to: `${BASE}/voyages` },
 }
 
+/** Formes grises en attendant les données (jamais d'écran vide). */
+function TripSkeleton() {
+  return (
+    <div className="page carnet" aria-busy="true">
+      <div className="skeleton tripskeleton" />
+      <div className="skeleton skeleton--row" />
+      <div className="skeleton skeleton--row" />
+    </div>
+  )
+}
+
 /** Fiche d'un voyage : dépenses, itinéraire, souvenirs. */
 export function TripScreen() {
   const { id } = useParams()
-  const trip = tripById(id)
   const carnet = useCarnet()
+  const trip = carnet.tripById(id)
   const desktop = useIsDesktop()
   const online = useOnline()
   const confetti = useConfetti()
@@ -37,6 +48,7 @@ export function TripScreen() {
   const [section, setSection] = useState<Section>((params.get('section') as Section) || 'dep')
   const [adding, setAdding] = useState(false)
 
+  if (carnet.loading) return <TripSkeleton />
   if (!trip) return <Navigate to={`${BASE}/voyages`} replace />
 
   const back = BACK[(location.state as { from?: string } | null)?.from ?? 'trips'] ?? BACK.trips
@@ -160,7 +172,7 @@ export function TripScreen() {
                   type="button"
                   className="btn btn--primary btn--block"
                   onClick={() => {
-                    carnet.settle(trip.id)
+                    carnet.settle(trip)
                     confetti()
                     toast('Comptes à zéro !')
                   }}

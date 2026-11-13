@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { usePerson, type Person } from '../../../shared/person'
 import { Chip, Segment, cssVars } from '../../../shared/ui'
-import { CATEGORIES, TRIPS } from '../data/demo'
+import { CATEGORIES } from '../data/demo'
 import { eur, totalOf, tripStats } from '../logic'
 import { Cover, OwnerTag, formatRange, shortMonth } from '../parts/bits'
 import { BASE, ScreenHead } from '../parts/common'
@@ -20,7 +20,7 @@ export function TripsScreen() {
   const [view, setView] = useState<'list' | 'grid'>('list')
 
   // Les voyages en cours ou à venir ne comptent pas dans les statistiques ni dans la liste.
-  const trips = TRIPS.filter((t) => isPast(t))
+  const trips = carnet.trips.filter((t) => isPast(t))
     .filter((t) => (tab === 'commun' ? t.owner === 'both' : t.owner !== 'both'))
     .filter((t) => tab === 'commun' || perso === 'tous' || t.owner === perso)
     .sort((a, b) => b.start.localeCompare(a.start))

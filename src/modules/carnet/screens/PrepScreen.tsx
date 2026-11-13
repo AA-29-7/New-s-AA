@@ -23,6 +23,7 @@ export function PrepScreen() {
   const id = tripId ?? prepOrder[0]
   const prep = preps[id]
 
+  if (carnet.loading) return <div className="page carnet" aria-busy="true"><div className="skeleton skeleton--row" /><div className="skeleton tripskeleton" /></div>
   if (!prep) return <Navigate to={`${BASE}/preparer`} replace />
 
   const done = stepsDone(prep.steps)

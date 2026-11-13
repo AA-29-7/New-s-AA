@@ -1,49 +1,36 @@
-import { useRef, useState, type DragEvent } from 'react'
+import { useRef, useState, type DragEvent, type ReactNode } from 'react'
 import { Sheet, Sticker, cssVars, cx, useToast } from '../../../shared/ui'
-import { deletePhoto, savePhoto, usePhoto } from '../photoStore'
-import { useCarnet } from '../store'
+import { MAX_PHOTOS, useCarnet, useTripPhotos } from '../store'
 import type { Photo, Trip } from '../types'
 
-export const MAX_PHOTOS = 20
-
 /** Vignette : vraie photo, ou rayures pour une photo de démonstration. */
-export function PhotoTile({ photo, className, onClick, children }: { photo: Photo; className?: string; onClick?: () => void; children?: React.ReactNode }) {
-  const url = usePhoto(photo.color ? undefined : photo.id)
-  const style = url ? { backgroundImage: `url("${url}")` } : undefined
-  const cls = cx('phototile', photo.color && 'cv', className)
+export function PhotoTile({ photo, className, onClick, children }: { photo: Photo; className?: string; onClick?: () => void; children?: ReactNode }) {
+  const style = photo.data ? { backgroundImage: `url("${photo.data}")` } : undefined
+  const cls = cx('phototile', !photo.data && 'cv', className)
+  const color = photo.data ? undefined : (photo.color ?? 'neutral')
   return onClick ? (
-    <button type="button" className={cls} data-color={photo.color} style={style} onClick={onClick} aria-label="Ouvrir la photo">
+    <button type="button" className={cls} data-color={color} style={style} onClick={onClick} aria-label="Ouvrir la photo">
       {children}
     </button>
   ) : (
-    <span className={cls} data-color={photo.color} style={style}>
+    <span className={cls} data-color={color} style={style}>
       {children}
     </span>
   )
 }
 
-/** Ajoute des fichiers image au voyage, dans la limite de 20 photos. */
+/** Ajout d'images avec les messages de limite (20 photos max, image illisible). */
 export function useAddPhotos(trip: Trip) {
-  const carnet = useCarnet()
+  const gallery = useTripPhotos(trip)
   const toast = useToast()
   return async (files: FileList | File[] | null): Promise<string[]> => {
-    const images = Array.from(files ?? []).filter((f) => f.type.startsWith('image/'))
-    if (images.length === 0) return []
-    const room = MAX_PHOTOS - carnet.photosOf(trip).length
-    if (room <= 0) {
+    if (gallery.photos.length >= MAX_PHOTOS && (files?.length ?? 0) > 0) {
       toast('20 photos max par voyage')
       return []
     }
-    const ids: string[] = []
-    for (const f of images.slice(0, room)) {
-      try {
-        ids.push(await savePhoto(f))
-      } catch {
-        toast('Une image n’a pas pu être lue')
-      }
-    }
-    if (ids.length) carnet.setPhotos(trip, (p) => [...p, ...ids.map((id) => ({ id }))])
-    if (images.length > room) toast('20 photos max par voyage')
+    const { ids, skipped, failed } = await gallery.add(files)
+    if (skipped > 0) toast('20 photos max par voyage')
+    else if (failed > 0) toast('Une image n’a pas pu être lue')
     return ids
   }
 }
@@ -51,11 +38,12 @@ export function useAddPhotos(trip: Trip) {
 /** Galerie d'un voyage : compteur n / 20, glisser-déposer, photo en grand. */
 export function Photos({ trip }: { trip: Trip }) {
   const carnet = useCarnet()
+  const gallery = useTripPhotos(trip)
   const add = useAddPhotos(trip)
   const input = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState<Photo | null>(null)
   const [over, setOver] = useState(false)
-  const photos = carnet.photosOf(trip)
+  const photos = gallery.photos
 
   const onDrop = (e: DragEvent) => {
     e.preventDefault()
@@ -63,9 +51,8 @@ export function Photos({ trip }: { trip: Trip }) {
     void add(e.dataTransfer.files)
   }
   const remove = (p: Photo) => {
-    carnet.setPhotos(trip, (list) => list.filter((x) => x.id !== p.id))
-    carnet.setNotebook(trip.id, (n) => ({ ...n, pages: n.pages.map((pg) => ({ ...pg, photos: pg.photos.filter((id) => id !== p.id) })) }))
-    if (!p.color) void deletePhoto(p.id)
+    gallery.remove(p)
+    carnet.removePhotoFromPages(trip.id, p.id)
     setOpen(null)
   }
 
@@ -89,7 +76,13 @@ export function Photos({ trip }: { trip: Trip }) {
         <span className="progress__fill progress__fill--ink" style={cssVars({ '--pct': photos.length / MAX_PHOTOS })} />
       </div>
       <input ref={input} type="file" accept="image/*" multiple hidden onChange={(e) => { void add(e.target.files); e.target.value = '' }} />
-      {photos.length === 0 ? (
+      {gallery.loading ? (
+        <div className="photos__grid" aria-busy="true">
+          {[0, 1, 2].map((i) => (
+            <span key={i} className="phototile skeleton" />
+          ))}
+        </div>
+      ) : photos.length === 0 ? (
         <div className="photos__empty">
           <Sticker emoji="📷" color="mist" size={56} rotate={-4} />
           <strong>Ajoutez vos premières photos</strong>
