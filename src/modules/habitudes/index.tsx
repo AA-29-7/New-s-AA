@@ -6,6 +6,7 @@ import { useHabits } from './store'
 import './habitudes.css'
 
 export { TodayCard as HabitsTodayCard } from './parts/TodayCard'
+export { habitsSeeder } from './store'
 
 /** Module Habitudes, monté sur /habitudes. */
 export function HabitsModule() {

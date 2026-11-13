@@ -505,3 +505,7 @@
 .hbtn-tall {
   min-height: var(--tap-cta);
 }
+
+.hskeleton {
+  margin-top: var(--space-2h);
+}

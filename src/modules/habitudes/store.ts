@@ -1,72 +1,157 @@
-import { useEffect, useMemo, useState } from 'react'
-import { isoDate } from '../../shared/lib/dates'
+import { useCallback, useMemo } from 'react'
+import { repo, useCollection, usePeople, useRepo, type BaseDoc } from '../../lib/data'
 import { useStored } from '../../shared/lib/localStore'
-import type { Person } from '../../shared/person'
+import { useToday } from '../../shared/lib/useToday'
+import { isoDate } from '../../shared/lib/dates'
+import { PERSONS, usePerson, type Owner, type Person } from '../../shared/person'
+import type { DemoSeeder } from '../../shared/seed/DemoSeed'
 import { DEMO_CATEGORIES, DEMO_GOALS, DEMO_HABITS, seedHistory } from './data/demo'
-import { toggleCheck, type Category, type Goal, type Habit, type History } from './logic'
+import { doers, type Category, type Goal, type Habit, type History } from './logic'
 
-interface HabitsState {
-  habits: Habit[]
-  categories: Category[]
-  goals: Goal[]
-  history: History
-  /** Mode d'affichage de l'onglet Aujourd'hui, gardé par appareil. */
-  mode: 'who' | 'theme'
+/** Documents Firestore ; l'identifiant du document est celui de l'habitude, de la catégorie, de l'objectif. */
+type HabitDoc = Omit<Habit, 'id'> & BaseDoc
+type CategoryDoc = Omit<Category, 'id'> & BaseDoc
+type GoalDoc = Omit<Goal, 'id'> & BaseDoc
+/** `habitLogs/<habitId>_<personne>` : dates ISO cochées par cette personne (elle seule écrit son document). */
+interface LogDoc extends BaseDoc {
+  checks?: string[]
 }
 
-const KEY = 'qg_habitudes_v1'
-let seed: HabitsState | null = null
-const initial = () =>
-  (seed ??= { habits: DEMO_HABITS, categories: DEMO_CATEGORIES, goals: DEMO_GOALS, history: seedHistory(new Date()), mode: 'who' })
+type Mode = 'who' | 'theme'
+const MODE_KEY = 'qg_habits_mode'
 
-/** Date du jour, qui change d'elle-même à minuit et au retour sur l'app. */
-function useToday(): Date {
-  const [today, setToday] = useState(() => new Date())
-  useEffect(() => {
-    const refresh = () => setToday((d) => (isoDate(d) === isoDate(new Date()) ? d : new Date()))
-    const now = new Date()
-    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() - now.getTime()
-    const timer = window.setTimeout(refresh, midnight + 1000)
-    document.addEventListener('visibilitychange', refresh)
-    return () => {
-      window.clearTimeout(timer)
-      document.removeEventListener('visibilitychange', refresh)
-    }
-  }, [today])
-  return today
+const newId = (prefix: string) => `${prefix}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
+/** Écritures lancées sans attendre : hors connexion, la promesse ne se résout qu'au retour du réseau. */
+const fire = (p: Promise<unknown>) => void p.catch((e) => console.error('Écriture refusée', e))
+
+/** « h1_alex » → { habitId: 'h1', person: 'alex' } */
+function parseLogId(id: string): { habitId: string; person: Person } {
+  const i = id.lastIndexOf('_')
+  return { habitId: id.slice(0, i), person: id.slice(i + 1) as Person }
 }
 
-/** Habitudes gardées sur l'appareil, avec leurs actions. */
+/** Habitudes, catégories, objectifs et coches, synchronisés en temps réel entre les deux personnes. */
 export function useHabits() {
-  const [stored, setStored] = useStored<HabitsState | null>(KEY, null)
+  const { me } = usePerson()
+  const { uidOf } = usePeople()
   const today = useToday()
-  const state = stored ?? initial()
+  const [mode, setMode] = useStored<Mode>(MODE_KEY, 'who')
+
+  const habitDocs = useCollection<HabitDoc>('habits')
+  const categoryDocs = useCollection<CategoryDoc>('habitCategories')
+  const goalDocs = useCollection<GoalDoc>('habitGoals')
+  const logDocs = useCollection<LogDoc>('habitLogs')
+  const habitsRepo = useRepo<HabitDoc>('habits')
+  const categoriesRepo = useRepo<CategoryDoc>('habitCategories')
+  const logsRepo = useRepo<LogDoc>('habitLogs')
+
+  const ownerUid = useCallback((owner: Owner) => (owner === 'both' ? null : uidOf(owner)), [uidOf])
+
+  const habits = useMemo<Habit[]>(
+    () => habitDocs.docs.map((d) => ({ ...d }) as unknown as Habit).sort((a, b) => a.id.localeCompare(b.id, 'fr', { numeric: true })),
+    [habitDocs.docs],
+  )
+  const categories = useMemo<Category[]>(
+    () => categoryDocs.docs.map((d) => ({ ...d }) as unknown as Category).sort((a, b) => a.id.localeCompare(b.id, 'fr', { numeric: true })),
+    [categoryDocs.docs],
+  )
+  const goals = useMemo<Goal[]>(() => goalDocs.docs.map((d) => ({ ...d }) as unknown as Goal), [goalDocs.docs])
+
+  const { history, pending } = useMemo(() => {
+    const history: History = {}
+    const pending = new Set<string>()
+    for (const d of logDocs.docs) {
+      const { habitId, person } = parseLogId(d.id)
+      if (d.pending) pending.add(d.id)
+      const byDay = (history[habitId] ??= {})
+      for (const iso of d.checks ?? []) (byDay[iso] ??= []).push(person)
+    }
+    return { history, pending }
+  }, [logDocs.docs])
 
   return useMemo(() => {
-    const set = (fn: (s: HabitsState) => Partial<HabitsState>) =>
-      setStored((prev) => {
-        const s = prev ?? initial()
-        return { ...s, ...fn(s) }
-      })
-    const categoryOf = (h: Habit) => state.categories.find((c) => c.id === h.categoryId)
+    const categoryOf = (h: Habit) => categories.find((c) => c.id === h.categoryId)
     return {
-      ...state,
+      habits,
+      categories,
+      goals,
+      history,
+      mode,
       today,
+      loading: habitDocs.loading || categoryDocs.loading || goalDocs.loading || logDocs.loading,
       categoryOf,
       /** Fond de la gommette : celui de la catégorie, sinon celui de l'habitude. */
       colorOf: (h: Habit) => categoryOf(h)?.color ?? h.color,
-      toggle: (habitId: string, p: Person, day = today) =>
-        set((s) => ({ history: { ...s.history, [habitId]: toggleCheck(s.history[habitId] ?? {}, isoDate(day), p) } })),
-      updateHabit: (id: string, patch: Partial<Habit>) => set((s) => ({ habits: s.habits.map((h) => (h.id === id ? { ...h, ...patch } : h)) })),
-      addHabit: (h: Omit<Habit, 'id'>) => set((s) => ({ habits: [...s.habits, { ...h, id: `h${Date.now()}` }] })),
+      /** La coche de `p` est partie sur ce téléphone mais pas encore sur le serveur. */
+      isPending: (habitId: string, p: Person) => pending.has(`${habitId}_${p}`),
+      /** Coche ou décoche pour moi (un document de coches par habitude et par personne). */
+      toggle: (habitId: string, p: Person, day = today) => {
+        if (p !== me) return
+        const iso = isoDate(day)
+        const on = !(history[habitId]?.[iso] ?? []).includes(p)
+        fire(logsRepo.arrayToggle(`${habitId}_${p}`, 'checks', iso, on))
+      },
+      updateHabit: (id: string, patch: Partial<Habit>) => {
+        const { id: _id, owner: _owner, ...rest } = patch
+        fire(habitsRepo.update(id, rest))
+      },
+      addHabit: (h: Omit<Habit, 'id'>) => {
+        const { owner } = h
+        fire(habitsRepo.upsert(newId('h'), { ...h, ownerId: ownerUid(owner) }))
+      },
       addCategory: (c: Omit<Category, 'id'>) => {
-        const id = `c${Date.now()}`
-        set((s) => ({ categories: [...s.categories, { ...c, id }] }))
+        const id = newId('c')
+        fire(categoriesRepo.upsert(id, { ...c, ownerId: null }))
         return id
       },
-      setMode: (mode: HabitsState['mode']) => set(() => ({ mode })),
+      setMode: (m: Mode) => setMode(m),
     }
-  }, [state, setStored, today])
+  }, [habits, categories, goals, history, mode, today, me, pending, habitDocs.loading, categoryDocs.loading, goalDocs.loading, logDocs.loading, habitsRepo, categoriesRepo, logsRepo, ownerUid, setMode])
 }
 
 export type HabitsStore = ReturnType<typeof useHabits>
+
+/**
+ * Démo (VITE_SEED_DEMO seulement). Chacun ne peut écrire que ses propres documents :
+ * chaque personne sème ses habitudes, ses objectifs et ses coches ; la première à
+ * arriver sème aussi les catégories et les éléments communs (identifiants fixes).
+ */
+export const habitsSeeder: DemoSeeder = {
+  name: 'habitudes',
+  async run({ scope, uidOf }) {
+    const me = PERSONS.find((p) => uidOf(p) === scope.uid)
+    if (!me) return
+    const habits = repo<HabitDoc>('habits', scope)
+    const logs = repo<LogDoc>('habitLogs', scope)
+    const goals = repo<GoalDoc>('habitGoals', scope)
+    const categories = repo<CategoryDoc>('habitCategories', scope)
+    const today = new Date()
+    const history = seedHistory(today)
+    const ownerUid = (o: Owner) => (o === 'both' ? null : uidOf(o))
+
+    if (await categories.isEmptyOnServer()) {
+      await Promise.all([
+        ...DEMO_CATEGORIES.map(({ id, ...c }) => categories.upsert(id, { ...c, ownerId: null })),
+        ...DEMO_HABITS.filter((h) => h.owner === 'both').map(({ id, ...h }) => habits.upsert(id, { ...h, ownerId: null })),
+        ...DEMO_GOALS.filter((g) => g.owner === 'both').map(({ id, ...g }) => goals.upsert(id, { ...g, ownerId: null })),
+      ])
+    }
+    if (await habits.isEmptyOnServer('mine')) {
+      await Promise.all([
+        ...DEMO_HABITS.filter((h) => h.owner === me).map(({ id, ...h }) => habits.upsert(id, { ...h, ownerId: ownerUid(h.owner) })),
+        ...DEMO_GOALS.filter((g) => g.owner === me).map(({ id, ...g }) => goals.upsert(id, { ...g, ownerId: ownerUid(g.owner) })),
+      ])
+    }
+    if (await logs.isEmptyOnServer('mine')) {
+      await Promise.all(
+        DEMO_HABITS.filter((h) => doers(h).includes(me)).map((h) => {
+          const days = Object.entries(history[h.id] ?? {})
+            .filter(([, people]) => people.includes(me))
+            .map(([iso]) => iso)
+            .sort()
+          return logs.upsert(`${h.id}_${me}`, { checks: days })
+        }),
+      )
+    }
+  },
+}
