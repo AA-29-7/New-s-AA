@@ -757,3 +757,21 @@ textarea.field {
 .page__head {
   padding: 0 var(--space-1h);
 }
+
+/* ---------- Chargement : formes grises, jamais une roue seule ---------- */
+.skeleton {
+  border-radius: var(--radius-sm);
+  background: var(--color-track);
+  animation: qg-skeleton 1.4s ease-in-out infinite;
+}
+.skeleton--row {
+  height: 48px;
+}
+.skeleton--bar {
+  height: 8px;
+}
+@keyframes qg-skeleton {
+  50% {
+    opacity: 0.55;
+  }
+}

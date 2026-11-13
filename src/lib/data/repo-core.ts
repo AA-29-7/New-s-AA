@@ -9,6 +9,8 @@ import {
   getDocFromServer,
   runTransaction,
   getDocs,
+  getDocsFromServer,
+  limit,
   onSnapshot,
   query,
   serverTimestamp,
@@ -19,7 +21,7 @@ import {
   type QueryConstraint,
   type QueryDocumentSnapshot,
 } from 'firebase/firestore'
-import type { BaseDoc, CollectionName, NewDoc, Visibility, WithId } from './types'
+import type { BaseDoc, CollectionName, DeepPartial, NewDoc, Visibility, WithId } from './types'
 
 export interface Scope {
   hid: string
@@ -122,7 +124,7 @@ export function makeRepo(db: Firestore) {
        * Crée ou complète un document à identifiant choisi (idempotent : deux appareils
        * peuvent l'exécuter en même temps). Les objets imbriqués sont fusionnés champ par champ.
        */
-      async upsert(id: string, data: NewDoc<T>) {
+      async upsert(id: string, data: DeepPartial<NewDoc<T>>) {
         const visibility: Visibility = data.visibility ?? 'household'
         const ownerId = data.ownerId === undefined ? uid : data.ownerId
         await setDoc(doc(col, id), { ...data, hid, ownerId, visibility, updatedAt: serverTimestamp() }, { merge: true })
@@ -133,7 +135,7 @@ export function makeRepo(db: Firestore) {
        * même si les deux téléphones l'exécutent en même temps). Nécessite le réseau ;
        * sert au semis de démonstration.
        */
-      async createIfMissing(id: string, data: NewDoc<T>) {
+      async createIfMissing(id: string, data: DeepPartial<NewDoc<T>>) {
         const visibility: Visibility = data.visibility ?? 'household'
         const ownerId = data.ownerId === undefined ? uid : data.ownerId
         const ref = doc(col, id)
@@ -155,11 +157,20 @@ export function makeRepo(db: Firestore) {
       async arrayToggle(id: string, field: string, value: string | number, on: boolean, defaults: Pick<NewDoc<T>, 'ownerId' | 'visibility'> = {}) {
         const visibility: Visibility = defaults.visibility ?? 'household'
         const ownerId = defaults.ownerId === undefined ? uid : defaults.ownerId
-        await setDoc(
-          doc(col, id),
-          { hid, ownerId, visibility, [field]: on ? arrayUnion(value) : arrayRemove(value), updatedAt: serverTimestamp() },
-          { merge: true },
-        )
+        // « checks.alex » écrit dans l'objet imbriqué `checks` sans toucher aux autres champs.
+        const path = field.split('.')
+        const op = on ? arrayUnion(value) : arrayRemove(value)
+        const nested = path.reduceRight<unknown>((inner, key) => ({ [key]: inner }), op)
+        await setDoc(doc(col, id), { hid, ownerId, visibility, ...(nested as object), updatedAt: serverTimestamp() }, { merge: true })
+      },
+
+      /**
+       * Vrai si le serveur ne renvoie aucun document (lecture directe du serveur, pas du cache).
+       * Lève une erreur hors connexion : le semis de démonstration s'abstient alors.
+       */
+      async isEmptyOnServer(): Promise<boolean> {
+        const [s, m] = await Promise.all([getDocsFromServer(query(shared([]), limit(1))), getDocsFromServer(query(mine([]), limit(1)))])
+        return s.empty && m.empty
       },
 
       remove(id: string) {

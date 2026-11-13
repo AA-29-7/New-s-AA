@@ -8,6 +8,7 @@ import { App } from './app/App'
 import { AuthProvider } from './lib/data'
 import { AuthGate } from './shared/components/AuthGate'
 import { PersonProvider } from './shared/person'
+import { QuestsProvider } from './shared/quest/useQuests'
 import { ThemeSync } from './shared/theme'
 import { ToastProvider } from './shared/ui'
 
@@ -18,9 +19,11 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <AuthGate>
           <PersonProvider>
-            <ToastProvider>
-              <App />
-            </ToastProvider>
+            <QuestsProvider>
+              <ToastProvider>
+                <App />
+              </ToastProvider>
+            </QuestsProvider>
           </PersonProvider>
         </AuthGate>
       </AuthProvider>
