@@ -63,5 +63,18 @@ export function AuthGate({ children }: { children: ReactNode }) {
       </main>
     )
   }
+  if (session.status === 'unmapped') {
+    return (
+      <main className="auth">
+        <h1 className="auth__title">Profil non configuré</h1>
+        <p className="muted">
+          Ton compte est dans le foyer, mais pas encore associé à Alex ou Antoine. Dans la console Firebase, ajoute ce
+          identifiant au champ <code>people</code> du foyer :
+        </p>
+        <code className="auth__uid">{session.user.uid}</code>
+        <button className="btn btn--secondary btn--block" onClick={() => void logOut()}>Changer de compte</button>
+      </main>
+    )
+  }
   return <>{children}</>
 }

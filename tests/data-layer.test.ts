@@ -107,8 +107,16 @@ describe('repo : écriture', () => {
     expect(await r.get(id)).toMatchObject({ name: 'Y', ownerId: ALICE, visibility: 'private' })
   })
 
-  it('un membre peut modifier et supprimer un document partagé de l\'autre', async () => {
+  it('un membre lit mais ne modifie ni ne supprime le document partagé de l\'autre', async () => {
     const id = await habitsOf(ALICE).create({ name: 'X', visibility: 'household' })
+    expect((await habitsOf(BOB).get(id))?.name).toBe('X')
+    await expect(habitsOf(BOB).update(id, { name: 'Z' })).rejects.toMatchObject({ code: 'permission-denied' })
+    await expect(habitsOf(BOB).remove(id)).rejects.toMatchObject({ code: 'permission-denied' })
+    expect((await habitsOf(ALICE).get(id))?.name).toBe('X')
+  })
+
+  it('les deux membres modifient et suppriment un document commun (ownerId null)', async () => {
+    const id = await habitsOf(ALICE).create({ name: 'X', ownerId: null, visibility: 'household' })
     await habitsOf(BOB).update(id, { name: 'Z' })
     expect((await habitsOf(ALICE).get(id))?.name).toBe('Z')
     await habitsOf(BOB).remove(id)
@@ -174,5 +182,65 @@ describe('isolation', () => {
     await expect(getDocs(query(collection(clientAs(null), 'habits'), where('hid', '==', HID), where('visibility', '==', 'household'))))
       .rejects.toMatchObject({ code: 'permission-denied' })
     await expect(deleteDoc(doc(clientAs(null), 'habits', 'x'))).rejects.toMatchObject({ code: 'permission-denied' })
+  })
+})
+
+interface Doc extends BaseDoc { checks?: string[]; label?: string; days?: number[]; m?: Record<string, string[]> }
+const col = <T extends BaseDoc = Doc>(uid: string, name: Parameters<ReturnType<typeof makeRepo>>[0]) =>
+  makeRepo(clientAs(uid))<T>(name, { hid: HID, uid })
+
+describe('repo : upsert et arrayToggle', () => {
+  it('upsert crée à identifiant choisi et complète sans écraser', async () => {
+    const r = col(ALICE, 'habitCategories')
+    await r.upsert('bien', { label: 'Bien-être', ownerId: null })
+    await r.upsert('bien', { label: 'Bien-être 2', ownerId: null })
+    expect(await r.get('bien')).toMatchObject({ id: 'bien', label: 'Bien-être 2', ownerId: null, hid: HID })
+    expect((await col(BOB, 'habitCategories').list()).map((d) => d.id)).toEqual(['bien'])
+  })
+
+  it('arrayToggle ajoute et retire une date, sans doublon', async () => {
+    const r = col(ALICE, 'habitLogs')
+    await r.arrayToggle('h1_alex', 'checks', '2026-11-13', true)
+    await r.arrayToggle('h1_alex', 'checks', '2026-11-13', true)
+    await r.arrayToggle('h1_alex', 'checks', '2026-11-12', true)
+    expect(((await r.get('h1_alex'))?.checks ?? []).sort()).toEqual(['2026-11-12', '2026-11-13'])
+    await r.arrayToggle('h1_alex', 'checks', '2026-11-13', false)
+    expect((await r.get('h1_alex'))?.checks).toEqual(['2026-11-12'])
+    expect(await r.get('h1_alex')).toMatchObject({ ownerId: ALICE, visibility: 'household' })
+  })
+
+  it('on ne coche pas dans les coches de l\'autre', async () => {
+    await col(ALICE, 'habitLogs').arrayToggle('h1_alex', 'checks', '2026-11-13', true)
+    await expect(col(BOB, 'habitLogs').arrayToggle('h1_alex', 'checks', '2026-11-14', true)).rejects.toMatchObject({ code: 'permission-denied' })
+    expect((await col(BOB, 'habitLogs').get('h1_alex'))?.checks).toEqual(['2026-11-13'])
+  })
+
+  it('deux personnes écrivent chacune leur champ d\'un document commun', async () => {
+    await col(ALICE, 'quests').upsert('2026-11', { m: { alex: ['1', '2'] }, ownerId: null })
+    await col(BOB, 'quests').upsert('2026-11', { m: { antoine: ['3'] }, ownerId: null })
+    expect((await col(ALICE, 'quests').get('2026-11'))?.m).toEqual({ alex: ['1', '2'], antoine: ['3'] })
+  })
+
+  it('un membre ne crée pas dans une collection inconnue', async () => {
+    await expect(setDoc(doc(clientAs(ALICE), 'nimporte', 'x'), { hid: HID, ownerId: ALICE, visibility: 'household' }))
+      .rejects.toMatchObject({ code: 'permission-denied' })
+  })
+})
+
+describe('collections du Carnet et préférences', () => {
+  it.each(['trips', 'tripExpenses', 'tripNotes', 'tripPhotos', 'tripPreps', 'habitGoals'] as const)('%s : document commun partagé', async (name) => {
+    await col(ALICE, name).create({ label: 'x', ownerId: null })
+    expect(await col(BOB, name).list()).toHaveLength(1)
+  })
+
+  it('userPrefs : créé privé par la personne, invisible pour l\'autre', async () => {
+    await col(ALICE, 'userPrefs').create({ label: 'x', visibility: 'private' })
+    expect(await col(ALICE, 'userPrefs').list()).toHaveLength(1)
+    expect(await col(BOB, 'userPrefs').list()).toEqual([])
+  })
+
+  it('userPrefs : partagé ou commun refusé', async () => {
+    await expect(col(ALICE, 'userPrefs').create({ label: 'x', visibility: 'household' })).rejects.toMatchObject({ code: 'permission-denied' })
+    await expect(col(ALICE, 'userPrefs').create({ label: 'x', visibility: 'private', ownerId: null })).rejects.toMatchObject({ code: 'permission-denied' })
   })
 })

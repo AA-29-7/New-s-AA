@@ -3,7 +3,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import {
-  addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where,
+  addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where,
 } from 'firebase/firestore'
 import { getFirestore } from 'firebase/firestore'
 
@@ -42,6 +42,11 @@ await expectOk('lecture du foyer', async () => {
   if (!s.exists()) throw new Error('households/' + HID + ' introuvable')
   if (s.data().members?.[user.uid] !== 'member') throw new Error('ton UID n\'est pas membre du foyer')
 })
+await expectOk('personne associée (households.people)', async () => {
+  const s = await getDoc(doc(db, 'households', HID))
+  const p = s.data().people?.[user.uid]
+  if (p !== 'alex' && p !== 'antoine') throw new Error('ton UID est absent de people (attendu "alex" ou "antoine")')
+})
 await expectOk('création document partagé (habits)', async () => {
   const r = await addDoc(collection(db, 'habits'), { hid: HID, ownerId: user.uid, visibility: 'household', name: '__check__' })
   created.push(r)
@@ -62,6 +67,13 @@ await expectDenied('journal partagé refusé', () =>
   addDoc(collection(db, 'journalEntries'), { hid: HID, ownerId: user.uid, visibility: 'household', text: '__check__' }))
 await expectDenied('écriture au nom d\'un autre refusée', () =>
   addDoc(collection(db, 'habits'), { hid: HID, ownerId: 'autre-uid', visibility: 'household', name: '__check__' }))
+await expectOk('document commun modifiable (habits, ownerId null)', async () => {
+  const r = await addDoc(collection(db, 'habits'), { hid: HID, ownerId: null, visibility: 'household', name: '__check__' })
+  created.push(r)
+  await setDoc(r, { name: '__check2__' }, { merge: true })
+})
+await expectDenied('préférences partagées refusées (userPrefs)', () =>
+  addDoc(collection(db, 'userPrefs'), { hid: HID, ownerId: user.uid, visibility: 'household', name: '__check__' }))
 await expectDenied('liste sans filtre hid refusée', () => getDocs(collection(db, 'habits')))
 await expectDenied('écriture dans households refusée', () =>
   addDoc(collection(db, 'households'), { members: { [user.uid]: 'member' } }))

@@ -1,5 +1,5 @@
 import { addDays, isoDate } from '../../shared/lib/dates'
-import { PERSONS, type Owner, type Person } from '../../shared/person'
+import { PERSONS, type Owner, type Person } from '../../shared/people'
 import type { StickerColor } from '../../shared/ui'
 
 /**

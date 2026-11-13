@@ -152,3 +152,22 @@
   reste grise mais les repères et le reste de l'écran s'affichent. Génération
   IA dans l'app, partage en lecture et convertisseur restent « Available
   soon… » ; « Importer depuis Claude » fonctionne par copier-coller.
+
+## 2026-11-13 — Branchement des données sur Firestore : modèle et règles
+- Décision : toutes les données des écrans passent par `src/lib/data/` (hooks
+  `useCollection` / `useRepo`). Collections ajoutées : `habitCategories`,
+  `habitGoals`, `quests`, `tripExpenses`, `tripNotes`, `tripPreps`, `userPrefs`.
+  Les coches sont un document par (habitude, personne), modifié par
+  `arrayUnion` / `arrayRemove` ; les dépenses et pages du carnet sont un
+  document chacune (pas de tableau partagé écrit par les deux).
+- Décision : l'identité Alex / Antoine vient de `households/<id>.people`
+  (uid → personne), saisi dans la console comme `members`. L'écran « Qui es-tu ? »
+  est supprimé.
+- Décision : règles resserrées — un document à propriétaire n'est modifiable ou
+  supprimable que par lui ; un document commun (`ownerId: null`) par les deux
+  membres. « Chez Antoine, lecture seule » est donc garanti par les règles et plus
+  seulement par l'interface. `userPrefs` est toujours privé.
+- Écarté : tableaux partagés écrits par les deux personnes (conflits hors
+  connexion) ; choix du profil sur l'appareil (usurpation possible).
+- Conséquences : les règles et `people` doivent être déployés / renseignés sur
+  Firebase avant d'ouvrir la préprod (sinon « Profil non configuré »).
